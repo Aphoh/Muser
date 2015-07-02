@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 22
@@ -12,7 +13,10 @@ android {
         versionName "1.0"
     }
     sourceSets{
-
+        main{
+            java.srcDirs += 'src/main/kotlin'
+        }
+        main.java.srcDirs += 'src/main/kotlin'
     }
     buildTypes {
         release {
@@ -25,4 +29,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "info.android15.nucleus:nucleus:$nucleus_version"
+    compile "info.android15.nucleus:nucleus-support-v7:$nucleus_version"
+    compile "com.squareup.retrofit:retrofit:$retrofit_version"
 }
