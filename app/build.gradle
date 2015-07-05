@@ -24,8 +24,8 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    sourceSets{
-        main{
+    sourceSets {
+        main {
             java.srcDirs += 'src/main/kotlin'
         }
     }
@@ -47,6 +47,7 @@ dependencies {
     apt "com.raizlabs.android:DBFlow-Compiler:$dbflow_version"
     compile "com.raizlabs.android:DBFlow-Core:$dbflow_version"
     compile "com.raizlabs.android:DBFlow:$dbflow_version"
+    compile 'io.reactivex:rxkotlin:0.22.12'
 }
 
 jsonSchema2Pojo {
