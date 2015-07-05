@@ -1,0 +1,141 @@
+{
+  "kind": "Listing",
+  "data": {
+    "modhash": "",
+    "children": [
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "soundcloud.com",
+          "banned_by": null,
+          "media_embed": {
+            "content": "&lt;iframe class=\"embedly-embed\" src=\"//cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fw.soundcloud.com%2Fplayer%2F%3Fvisual%3Dtrue%26url%3Dhttp%253A%252F%252Fapi.soundcloud.com%252Ftracks%252F213390541%26show_artwork%3Dtrue&amp;url=https%3A%2F%2Fsoundcloud.com%2Frevazz%2Fwd-43&amp;image=http%3A%2F%2Fi1.sndcdn.com%2Fartworks-000122323071-kmagfb-t500x500.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=soundcloud\" width=\"500\" height=\"500\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+            "width": 500,
+            "scrolling": false,
+            "height": 500
+          },
+          "subreddit": "trap",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": {
+            "oembed": {
+              "provider_url": "http://soundcloud.com",
+              "description": "I miss you..",
+              "title": "WD - 40 by Revazz",
+              "type": "rich",
+              "thumbnail_width": 500,
+              "height": 500,
+              "width": 500,
+              "html": "&lt;iframe class=\"embedly-embed\" src=\"https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fw.soundcloud.com%2Fplayer%2F%3Fvisual%3Dtrue%26url%3Dhttp%253A%252F%252Fapi.soundcloud.com%252Ftracks%252F213390541%26show_artwork%3Dtrue&amp;url=https%3A%2F%2Fsoundcloud.com%2Frevazz%2Fwd-43&amp;image=http%3A%2F%2Fi1.sndcdn.com%2Fartworks-000122323071-kmagfb-t500x500.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=soundcloud\" width=\"500\" height=\"500\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+              "author_name": "Revazz",
+              "version": "1.0",
+              "provider_name": "SoundCloud",
+              "thumbnail_url": "https://i.embed.ly/1/image?url=http%3A%2F%2Fi1.sndcdn.com%2Fartworks-000122323071-kmagfb-t500x500.jpg&amp;key=b1e305db91cf4aa5a86b732cc9fffceb",
+              "thumbnail_height": 500,
+              "author_url": "http://soundcloud.com/revazz"
+            },
+            "type": "soundcloud.com"
+          },
+          "link_flair_text": "",
+          "id": "3c866c",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Revazz",
+          "media": {
+            "oembed": {
+              "provider_url": "http://soundcloud.com",
+              "description": "I miss you..",
+              "title": "WD - 40 by Revazz",
+              "type": "rich",
+              "thumbnail_width": 500,
+              "height": 500,
+              "width": 500,
+              "html": "&lt;iframe class=\"embedly-embed\" src=\"//cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fw.soundcloud.com%2Fplayer%2F%3Fvisual%3Dtrue%26url%3Dhttp%253A%252F%252Fapi.soundcloud.com%252Ftracks%252F213390541%26show_artwork%3Dtrue&amp;url=https%3A%2F%2Fsoundcloud.com%2Frevazz%2Fwd-43&amp;image=http%3A%2F%2Fi1.sndcdn.com%2Fartworks-000122323071-kmagfb-t500x500.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=soundcloud\" width=\"500\" height=\"500\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+              "author_name": "Revazz",
+              "version": "1.0",
+              "provider_name": "SoundCloud",
+              "thumbnail_url": "http://i1.sndcdn.com/artworks-000122323071-kmagfb-t500x500.jpg",
+              "thumbnail_height": 500,
+              "author_url": "http://soundcloud.com/revazz"
+            },
+            "type": "soundcloud.com"
+          },
+          "score": 5,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/PqdpB3q55PzoKL-Tu2ufill3ak1mgUlqTTAuCzPbAtM.jpg?s=abfea6033d3a1b9e8e1300304230be18",
+                  "width": 500,
+                  "height": 500
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/PqdpB3q55PzoKL-Tu2ufill3ak1mgUlqTTAuCzPbAtM.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=f185b29e42d9aba1f31dc61b06dde4b9",
+                    "width": 108,
+                    "height": 108
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/PqdpB3q55PzoKL-Tu2ufill3ak1mgUlqTTAuCzPbAtM.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=71ca8823f6c35811155b340e256c05ef",
+                    "width": 216,
+                    "height": 216
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/PqdpB3q55PzoKL-Tu2ufill3ak1mgUlqTTAuCzPbAtM.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=7f29fd30027575c985b933cdcf0381c4",
+                    "width": 320,
+                    "height": 320
+                  }
+                ],
+                "variants": {},
+                "id": "vTEg09MMBCVAOdw1GsydlC7AQnJojWgt4CsyTHZxGrc"
+              }
+            ]
+          },
+          "num_comments": 0,
+          "thumbnail": "http://b.thumbs.redditmedia.com/H7OX1iR3-6n_HTPx3QfrUg5HLJTL8WCLI-WOXwBGCLE.jpg",
+          "subreddit_id": "t5_2qx81",
+          "edited": false,
+          "link_flair_css_class": "site-soundcloud",
+          "author_flair_css_class": null,
+          "downs": 0,
+          "secure_media_embed": {
+            "content": "&lt;iframe class=\"embedly-embed\" src=\"https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fw.soundcloud.com%2Fplayer%2F%3Fvisual%3Dtrue%26url%3Dhttp%253A%252F%252Fapi.soundcloud.com%252Ftracks%252F213390541%26show_artwork%3Dtrue&amp;url=https%3A%2F%2Fsoundcloud.com%2Frevazz%2Fwd-43&amp;image=http%3A%2F%2Fi1.sndcdn.com%2Fartworks-000122323071-kmagfb-t500x500.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=soundcloud\" width=\"500\" height=\"500\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+            "width": 500,
+            "scrolling": false,
+            "height": 500
+          },
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/trap/comments/3c866c/revazz_wd40/",
+          "name": "t3_3c866c",
+          "created": 1436156539,
+          "url": "https://soundcloud.com/revazz/wd-43",
+          "author_flair_text": null,
+          "title": "Revazz - WD-40",
+          "created_utc": 1436127739,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 5
+        }
+      }
+    ],
+    "after": "t3_3c866c",
+    "before": null
+  }
+}
