@@ -27,7 +27,7 @@ public class SongItem extends BaseModel {
     String url;
 
     @Column
-    int score;
+    long score;
 
     @Column
     @ForeignKey(
@@ -40,5 +40,45 @@ public class SongItem extends BaseModel {
     public void associateSubreddit(Subreddit subreddit){
         subredditModelContainer = new ForeignKeyContainer<>(Subreddit.class);
         subredditModelContainer.setModel(subreddit);
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public long getScore() {
+        return score;
+    }
+
+    public void setScore(long score) {
+        this.score = score;
     }
 }
