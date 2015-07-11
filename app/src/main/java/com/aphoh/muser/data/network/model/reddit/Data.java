@@ -1,5 +1,4 @@
-
-package com.aphoh.muser.data.network.model;
+package com.aphoh.muser.data.network.model.reddit;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -23,72 +22,56 @@ public class Data {
     private String before;
 
     /**
-     * 
-     * @return
-     *     The modhash
+     * @return The modhash
      */
     public String getModhash() {
         return modhash;
     }
 
     /**
-     * 
-     * @param modhash
-     *     The modhash
+     * @param modhash The modhash
      */
     public void setModhash(String modhash) {
         this.modhash = modhash;
     }
 
     /**
-     * 
-     * @return
-     *     The postItems
+     * @return The postItems
      */
     public List<PostItem> getPostItems() {
         return postItems;
     }
 
     /**
-     * 
-     * @param postItems
-     *     The postItems
+     * @param postItems The postItems
      */
     public void setPostItems(List<PostItem> postItems) {
         this.postItems = postItems;
     }
 
     /**
-     * 
-     * @return
-     *     The after
+     * @return The after
      */
     public String getAfter() {
         return after;
     }
 
     /**
-     * 
-     * @param after
-     *     The after
+     * @param after The after
      */
     public void setAfter(String after) {
         this.after = after;
     }
 
     /**
-     * 
-     * @return
-     *     The before
+     * @return The before
      */
     public Object getBefore() {
         return before;
     }
 
     /**
-     * 
-     * @param before
-     *     The before
+     * @param before The before
      */
     public void setBefore(String before) {
         this.before = before;

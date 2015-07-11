@@ -6,7 +6,7 @@ import com.aphoh.muser.base.BaseNucleusPresenter
 /**
  * Created by Will on 7/1/2015.
  */
-public class MainPresenter : BaseNucleusPresenter<MainActivity>(){
+public class MainPresenter : BaseNucleusPresenter<MainActivity>() {
 
 
 }

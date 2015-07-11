@@ -27,8 +27,8 @@ public class Subreddit extends BaseModel {
     List<SongItem> songs;
 
     @OneToMany(methods = OneToMany.Method.ALL, variableName = "songs")
-    public List<SongItem> getMySongItems(){
-        if (songs == null){
+    public List<SongItem> getMySongItems() {
+        if (songs == null) {
             songs = new Select().from(SongItem.class)
                     .where(Condition.column(SongItem$Table.SUBREDDITMODELCONTAINER_SUBREDDIT_ID).is(id))
                     .queryList();

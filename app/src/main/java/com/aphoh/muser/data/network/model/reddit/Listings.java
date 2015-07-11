@@ -1,5 +1,4 @@
-
-package com.aphoh.muser.data.network.model;
+package com.aphoh.muser.data.network.model.reddit;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -13,36 +12,28 @@ public class Listings {
     private Data data;
 
     /**
-     * 
-     * @return
-     *     The kind
+     * @return The kind
      */
     public String getKind() {
         return kind;
     }
 
     /**
-     * 
-     * @param kind
-     *     The kind
+     * @param kind The kind
      */
     public void setKind(String kind) {
         this.kind = kind;
     }
 
     /**
-     * 
-     * @return
-     *     The data
+     * @return The data
      */
     public Data getData() {
         return data;
     }
 
     /**
-     * 
-     * @param data
-     *     The data
+     * @param data The data
      */
     public void setData(Data data) {
         this.data = data;

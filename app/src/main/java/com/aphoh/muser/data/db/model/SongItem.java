@@ -32,12 +32,12 @@ public class SongItem extends BaseModel {
     @Column
     @ForeignKey(
             references = {@ForeignKeyReference(columnName = "subreddit_id",
-                                               columnType = Long.class,
-                                               foreignColumnName = "id")},
+                    columnType = Long.class,
+                    foreignColumnName = "id")},
             saveForeignKeyModel = false)
     ForeignKeyContainer<Subreddit> subredditModelContainer;
 
-    public void associateSubreddit(Subreddit subreddit){
+    public void associateSubreddit(Subreddit subreddit) {
         subredditModelContainer = new ForeignKeyContainer<>(Subreddit.class);
         subredditModelContainer.setModel(subreddit);
     }

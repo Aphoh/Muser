@@ -1,5 +1,4 @@
-
-package com.aphoh.muser.data.network.model;
+package com.aphoh.muser.data.network.model.reddit;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -14,36 +13,28 @@ public class Media {
     private String type;
 
     /**
-     * 
-     * @return
-     *     The oembed
+     * @return The oembed
      */
     public Oembed_ getOembed() {
         return oembed;
     }
 
     /**
-     * 
-     * @param oembed
-     *     The oembed
+     * @param oembed The oembed
      */
     public void setOembed(Oembed_ oembed) {
         this.oembed = oembed;
     }
 
     /**
-     * 
-     * @return
-     *     The type
+     * @return The type
      */
     public String getType() {
         return type;
     }
 
     /**
-     * 
-     * @param type
-     *     The type
+     * @param type The type
      */
     public void setType(String type) {
         this.type = type;

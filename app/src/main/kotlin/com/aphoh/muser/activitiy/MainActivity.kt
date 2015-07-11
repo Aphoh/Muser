@@ -1,8 +1,6 @@
 package com.aphoh.muser.activitiy
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import com.aphoh.muser.R
 import com.aphoh.muser.base.BaseNucleusActivity
 import com.aphoh.muser.presenter.MainPresenter

@@ -1,5 +1,4 @@
-
-package com.aphoh.muser.data.network.model;
+package com.aphoh.muser.data.network.model.reddit;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -14,18 +13,14 @@ public class Preview {
     private List<Image> images = new ArrayList<Image>();
 
     /**
-     * 
-     * @return
-     *     The images
+     * @return The images
      */
     public List<Image> getImages() {
         return images;
     }
 
     /**
-     * 
-     * @param images
-     *     The images
+     * @param images The images
      */
     public void setImages(List<Image> images) {
         this.images = images;

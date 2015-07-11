@@ -54,7 +54,7 @@ jsonSchema2Pojo {
 
     generateBuilders = false
     usePrimitives = true
-    source = files("${project.rootDir}/schema/")
+    source = files("${project.rootDir}/schema/track.json")
 
     targetDirectory = file("${project.rootDir}/app/build/generated/source/js2p/")
 

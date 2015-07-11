@@ -1,5 +1,4 @@
-
-package com.aphoh.muser.data.network.model;
+package com.aphoh.muser.data.network.model.reddit;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -23,72 +22,56 @@ public class Image {
     private String id;
 
     /**
-     * 
-     * @return
-     *     The source
+     * @return The source
      */
     public Source getSource() {
         return source;
     }
 
     /**
-     * 
-     * @param source
-     *     The source
+     * @param source The source
      */
     public void setSource(Source source) {
         this.source = source;
     }
 
     /**
-     * 
-     * @return
-     *     The resolutions
+     * @return The resolutions
      */
     public List<Resolution> getResolutions() {
         return resolutions;
     }
 
     /**
-     * 
-     * @param resolutions
-     *     The resolutions
+     * @param resolutions The resolutions
      */
     public void setResolutions(List<Resolution> resolutions) {
         this.resolutions = resolutions;
     }
 
     /**
-     * 
-     * @return
-     *     The variants
+     * @return The variants
      */
     public Variants getVariants() {
         return variants;
     }
 
     /**
-     * 
-     * @param variants
-     *     The variants
+     * @param variants The variants
      */
     public void setVariants(Variants variants) {
         this.variants = variants;
     }
 
     /**
-     * 
-     * @return
-     *     The id
+     * @return The id
      */
     public String getId() {
         return id;
     }
 
     /**
-     * 
-     * @param id
-     *     The id
+     * @param id The id
      */
     public void setId(String id) {
         this.id = id;
