@@ -19,4 +19,6 @@ public class DBTableAlias {
 
     public static final String SongItemSUBREDDITMODELCONTAINER_SUBREDDIT_ID = SongItem$Table.SUBREDDITMODELCONTAINER_SUBREDDIT_ID;
 
+    public static final String SubredditNAME = Subreddit$Table.NAME;
+
 }

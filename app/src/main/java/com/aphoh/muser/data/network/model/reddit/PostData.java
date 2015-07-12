@@ -91,7 +91,7 @@ public class PostData {
     private String subreddit_id;
     @SerializedName("edited")
     @Expose
-    private boolean edited;
+    private Object edited;
     @SerializedName("link_flair_css_class")
     @Expose
     private String link_flair_css_class;
@@ -543,14 +543,14 @@ public class PostData {
     /**
      * @return The edited
      */
-    public boolean isEdited() {
+    public Object getEdited() {
         return edited;
     }
 
     /**
      * @param edited The edited
      */
-    public void setEdited(boolean edited) {
+    public void setEdited(Object edited) {
         this.edited = edited;
     }
 

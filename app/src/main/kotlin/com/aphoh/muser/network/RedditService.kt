@@ -3,6 +3,7 @@ package com.aphoh.muser.network
 import com.aphoh.muser.data.network.model.reddit.Listings
 import retrofit.http.GET
 import retrofit.http.Path
+import retrofit.http.Query
 import rx.Observable
 
 /**
@@ -10,5 +11,5 @@ import rx.Observable
  */
 interface RedditService {
     GET("/r/{subreddit}/top.json?t=week")
-    fun getSubredditSubmissions(Path("subreddit") subreddit: String): Observable<Listings>;
+    fun getSubredditSubmissions(Path("subreddit") subreddit: String, Query("limit") limit : Int): Observable<Listings>;
 }

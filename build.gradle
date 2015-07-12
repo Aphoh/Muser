@@ -5,9 +5,11 @@ buildscript {
     ext.retrofit_version = '1.9.0'
     ext.androidapt_version = '1.4'
     ext.dbflow_version = '2.2.1'
+    ext.android_version = '22.2.0'
     repositories {
         mavenCentral()
         jcenter()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
