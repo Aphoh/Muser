@@ -26,6 +26,9 @@ public class SongItem extends BaseModel {
     @Column
     String url;
 
+    @Column(name = "stream_url")
+    String streamUrl;
+
     @Column
     long score;
 
@@ -78,6 +81,14 @@ public class SongItem extends BaseModel {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getStreamUrl() {
+        return streamUrl;
+    }
+
+    public void setStreamUrl(String streamUrl) {
+        this.streamUrl = streamUrl;
     }
 
     public long getScore() {

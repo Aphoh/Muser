@@ -4,4 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_field_padding_horizontal">16dp</dimen>
     <dimen name="text_padding_vertical">20dp</dimen>
+    <dimen name="toolbar_elevation">5dp</dimen>
+    <dimen name="controls_padding">8dp</dimen>
+    <dimen name="statusbar_height">25dp</dimen>
+    <dimen name="statusbar_negative_height">-25dp</dimen>
 </resources>

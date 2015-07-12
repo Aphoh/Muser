@@ -1,18 +1,26 @@
 <resources>
 
     <style name="AppTheme" parent="AppTheme.Base">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:navigationBarColor">@color/primary_dark</item>
-        <item name="android:colorAccent">@color/accent</item>
+
+
+    </style>
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
         <item name="android:textColorPrimary">@color/primary_text_light</item>
         <item name="android:textColorSecondary">@color/secondary_text</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
+        <!--These are fine, we are using AppCompat-->
+        <item name="android:colorPrimary">@color/primary</item>
+        <!--<item name="android:colorPrimaryDark">@color/primary_dark</item>-->
+        <item name="android:colorAccent">@color/accent</item>
     </style>
 
-    <style name="AppTheme.Base" parent="android:Theme.Material.Light">
-
+    <style name="ToolbarTheme" parent="ToolbarTheme.Base">
 
     </style>
+
+    <style name="ToolbarTheme.Base" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/primary</item>
+        </style>
 
 </resources>

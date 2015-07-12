@@ -1,14 +1,86 @@
-<android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/swiperefresh_main"
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawerlayout_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
+    <RelativeLayout android:id="@+id/relativelayout_main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recyclerview_main" />
+        android:layout_height="match_parent">
 
-</android.support.v4.widget.SwipeRefreshLayout>
+        <View android:id="@+id/status_bar_offset"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/statusbar_height"
+            android:background="@color/primary_dark"/>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_below="@id/status_bar_offset"
+            style="@style/ToolbarTheme"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"/>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swiperefresh_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/statusbar_negative_height"
+            android:layout_below="@id/toolbar">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:clipToPadding="false"/>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/drawercontent_main"
+        android:layout_width="320dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:paddingTop="@dimen/statusbar_height"
+        android:background="@color/primary_dark"
+        android:fitsSystemWindows="true">
+
+        <ImageView
+            android:id="@+id/imageview_main_song"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:orientation="vertical"
+            android:background="@drawable/text_backdrop"
+            android:padding="24dp"
+            android:paddingBottom="40dp">
+
+            <TextView
+                android:id="@+id/textview_main_song_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/abc_text_size_title_material"
+                android:textColor="@color/primary_text_light"
+                android:text="hi"/>
+
+            <TextView
+                android:id="@+id/textview_main_song_artist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/secondary_text_light"
+                android:textSize="@dimen/abc_text_size_subtitle_material_toolbar"
+                android:text="hi"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v4.widget.DrawerLayout>

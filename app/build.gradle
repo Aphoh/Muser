@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId "com.aphoh.muser"
-        minSdkVersion 21
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -42,20 +42,28 @@ repositories{
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //Support Libs/Req libs
     compile "com.android.support:design:$android_version"
+    compile "com.android.support:appcompat-v7:$android_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "info.android15.nucleus:nucleus:$nucleus_version"
-    compile "com.squareup.retrofit:retrofit:$retrofit_version"
+    compile "info.android15.nucleus:nucleus-support-v7:$nucleus_version"
+    //Data Persistence
     apt "com.raizlabs.android:DBFlow-Compiler:$dbflow_version"
     compile "com.raizlabs.android:DBFlow-Core:$dbflow_version"
     compile "com.raizlabs.android:DBFlow:$dbflow_version"
+    //UI Libs
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'jp.wasabeef:recyclerview-animators:1.2.1@aar'
+    //Networking Libs
+    compile "com.squareup.retrofit:retrofit:$retrofit_version"
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
+    //Util Libs
     compile 'io.reactivex:rxkotlin:0.22.12'
     compile 'io.reactivex:rxandroid:0.25.0'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
-    compile 'jp.wasabeef:recyclerview-animators:1.2.1@aar'
+
 }
 
 jsonSchema2Pojo {

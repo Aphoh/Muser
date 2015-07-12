@@ -1,11 +1,9 @@
 package com.aphoh.muser.network
 
-import android.content.Context
 import com.aphoh.muser.data.db.model.DBTableAlias
-import com.aphoh.muser.data.db.model.SongDatabase
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.data.db.model.Subreddit
-import com.raizlabs.android.dbflow.config.FlowManager
+import com.aphoh.muser.util.LogUtil
 import com.raizlabs.android.dbflow.sql.builder.Condition
 import com.raizlabs.android.dbflow.sql.language.Select
 import com.raizlabs.android.dbflow.structure.BaseModel
@@ -22,10 +20,21 @@ public class DataInteractor(var okClient: OkHttpClient) {
 
     private final val clientId = "81e4c3f234711ed893e32397d52cc2e6"
 
+    var log = LogUtil(javaClass<DataInteractor>().getSimpleName())
+
     var redditService: RedditService = RestAdapter.Builder()
-            .setEndpoint("http://reddit.com")
+            .setEndpoint("http://www.reddit.com")
             .setClient(OkClient(okClient))
             .build().create(javaClass<RedditService>())
+
+    var soundcloudService: SoundcloudService = RestAdapter.Builder()
+            .setEndpoint("http://api.soundcloud.com")
+            .setClient(OkClient(okClient))
+            .build().create(javaClass<SoundcloudService>())
+
+    // ===========================================
+    // Network Calls
+    // ===========================================
 
     public fun refresh(subreddit: String): Observable<ArrayList<SongItem>> {
         return redditService.getSubredditSubmissions(subreddit, 100)
@@ -34,10 +43,10 @@ public class DataInteractor(var okClient: OkHttpClient) {
                     var newItems = ArrayList<SongItem>()
                     var subs = Select().from(javaClass<Subreddit>()).where(Condition.column(DBTableAlias.SubredditNAME).`is`(subreddit)).queryList()
                     var sub = Subreddit()
-                    if(subs.size() == 0){
+                    if (subs.size() == 0) {
                         sub.setName(subreddit)
                         saveSub(sub)
-                    }else{
+                    } else {
                         sub = subs.get(0)
                     }
                     for (item in items) {
@@ -61,16 +70,29 @@ public class DataInteractor(var okClient: OkHttpClient) {
                 }
     }
 
+    public fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem> {
+        return soundcloudService.getSongFromUrl(songItem.getUrl(), clientId)
+                .map({track ->
+                    log.d("Track url returned: ${track.getStream_url()}")
+                    songItem.setStreamUrl(track.getStream_url())
+                    songItem.update()
+                    songItem
+                })
+    }
 
-    private fun clearSongs(sub : Subreddit) {
+    // ===========================================
+    // DB Utility Functions
+    // ===========================================
+
+    private fun clearSongs(sub: Subreddit) {
         var songs: List<BaseModel> = Select().from(javaClass<SongItem>()).queryList()
         sub.delete()
-        for(song in songs){
+        for (song in songs) {
             song.delete()
         }
     }
 
-    private fun saveSub(item : Subreddit){
+    private fun saveSub(item: Subreddit) {
         item.save()
     }
 
@@ -80,7 +102,7 @@ public class DataInteractor(var okClient: OkHttpClient) {
         }
     }
 
-    private fun removeByLine(s : String) : String = s.substringBeforeLast(" by")
+    private fun removeByLine(s: String): String = s.substringBeforeLast(" by")
 
     private fun isSoundcloudUrl(url: String): Boolean {
         return url.contains("soundcloud.com")
