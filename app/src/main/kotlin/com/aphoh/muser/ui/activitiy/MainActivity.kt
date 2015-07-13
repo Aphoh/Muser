@@ -20,7 +20,6 @@ import com.aphoh.muser.ui.adapter.MainAdapter
 import com.aphoh.muser.ui.presenter.MainPresenter
 import com.aphoh.muser.util.LogUtil
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Transformation
 import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter
 import nucleus.factory.RequiresPresenter
 
@@ -34,26 +33,39 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     val mainContent: RelativeLayout by bindView(R.id.relativelayout_main_content)
     val drawerLayout: DrawerLayout by bindView(R.id.drawerlayout_main)
     val songCover: ImageView by bindView(R.id.imageview_main_song)
+    val waveForm: ImageView by bindView(R.id.imageview_waveform)
     val titleText: TextView by bindView(R.id.textview_main_song_title)
     val artistText: TextView by bindView(R.id.textview_main_song_artist)
 
     var view = this
     var adapter: MainAdapter = MainAdapter(this)
+    var hasSong = false;
 
     override fun getLayoutId(): Int = R.layout.activity_main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(BuildConfig.DEBUG) Picasso.with(this).setIndicatorsEnabled(true)
+        if (BuildConfig.DEBUG) Picasso.with(this).setIndicatorsEnabled(true)
+
+        if (savedInstanceState != null) {
+            hasSong = savedInstanceState.getBoolean("hasSong")
+        }
 
         val top = getStatusBarHeight()
         log.d("top: ${top}")
         getToolbar().setBottom(getToolbar().getBottom() + top)
 
+        var params = waveForm.getLayoutParams() as RelativeLayout.LayoutParams
+        params.bottomMargin += getNavigationBarHeight(this)
+        waveForm.setLayoutParams(params)
+
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary))
-        drawerLayout.setDrawerListener(object : DrawerLayout.DrawerListener{
+        drawerLayout.setDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerClosed(drawerView: View?) {
-                mainContent.setClickable(true)
+                swipeRefreshLayout.setOnTouchListener { view, motionEvent ->
+                    log.d("OnTouch return false")
+                    false
+                }
                 log.d("SetClickable true")
             }
 
@@ -66,8 +78,10 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             }
 
             override fun onDrawerOpened(drawerView: View?) {
-                mainContent.setClickable(false)
-                log.d("SetClickable false")
+                swipeRefreshLayout.setOnTouchListener { view, motionEvent ->
+                    log.d("OnTouch return true")
+                    true
+                }
             }
         })
 
@@ -80,17 +94,30 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
-            var songItem = adapter.data.get(position)
-            /*var intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.getUrl()))
-            if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent)*/
-            getPresenter().onSongSelected(songItem)
-            Any()
+            if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+                var songItem = adapter.data.get(position)
+                /*var intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.getUrl()))
+                if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent)*/
+                getPresenter().onSongSelected(songItem)
+            }
         }
         recyclerView setAdapter ScaleInAnimationAdapter(adapter)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (!hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putBoolean("hasSong", hasSong)
+    }
+
     public fun publishSongPlay(songItem: SongItem) {
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         if (songItem.getStreamUrl() != null) {
+            hasSong = true
             if (!drawerLayout.isDrawerOpen(Gravity.END)) {
                 drawerLayout.openDrawer(Gravity.END)
             }
@@ -99,6 +126,9 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
                     .fit()
                     .centerCrop()
                     .into(songCover)
+            Picasso.with(this)
+                    .load(songItem.getWaveformUrl())
+                    .into(waveForm)
             titleText.setText(songItem.getSongTitle())
             artistText.setText(songItem.getArtist())
         }

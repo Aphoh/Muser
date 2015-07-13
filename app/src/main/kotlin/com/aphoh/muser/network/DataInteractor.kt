@@ -75,6 +75,7 @@ public class DataInteractor(var okClient: OkHttpClient) {
                 .map({track ->
                     log.d("Track url returned: ${track.getStream_url()}")
                     songItem.setStreamUrl(track.getStream_url())
+                    songItem.setWaveformUrl(track.getWaveform_url())
                     songItem.update()
                     songItem
                 })

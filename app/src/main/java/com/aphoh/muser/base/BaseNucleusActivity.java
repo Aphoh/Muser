@@ -1,5 +1,8 @@
 package com.aphoh.muser.base;
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
@@ -47,6 +50,21 @@ public abstract class BaseNucleusActivity<PresenterType extends BaseNucleusPrese
             result = getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    public int getNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+
+        int id = resources.getIdentifier(
+                resources.getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ?
+                        "navigation_bar_height" :
+                        "navigation_bar_height_landscape",
+                "dimen",
+                "android");
+        if (id > 0) {
+            return resources.getDimensionPixelSize(id);
+        }
+        return 0;
     }
 
     public abstract void publish(@NotNull DataType dataType);

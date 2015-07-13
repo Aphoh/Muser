@@ -6,6 +6,7 @@ buildscript {
     ext.androidapt_version = '1.4'
     ext.dbflow_version = '2.2.1'
     ext.android_version = '22.2.0'
+    ext.dagger_version = '2.0.1'
     repositories {
         mavenCentral()
         jcenter()

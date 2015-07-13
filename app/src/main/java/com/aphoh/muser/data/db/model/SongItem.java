@@ -29,6 +29,9 @@ public class SongItem extends BaseModel {
     @Column(name = "stream_url")
     String streamUrl;
 
+    @Column(name = "waveform_url")
+    String waveformUrl;
+
     @Column
     long score;
 
@@ -89,6 +92,14 @@ public class SongItem extends BaseModel {
 
     public void setStreamUrl(String streamUrl) {
         this.streamUrl = streamUrl;
+    }
+
+    public String getWaveformUrl() {
+        return waveformUrl;
+    }
+
+    public void setWaveformUrl(String waveformUrl) {
+        this.waveformUrl = waveformUrl;
     }
 
     public long getScore() {
