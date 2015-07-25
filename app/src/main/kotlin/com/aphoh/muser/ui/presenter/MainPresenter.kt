@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.aphoh.muser.App
 import com.aphoh.muser.base.BaseNucleusPresenter
 import com.aphoh.muser.data.db.model.SongItem
+import com.aphoh.muser.music.MusicInteractor
 import com.aphoh.muser.network.DataInteractor
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil
@@ -20,6 +21,8 @@ import javax.inject.Inject
 public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>() {
     private var log = LogUtil(javaClass<MainPresenter>().getSimpleName())
     var dataInteractor: DataInteractor? = null;
+        @Inject set
+    var musicInteractor: MusicInteractor? = null;
         @Inject set
     var subreddit: String = "trap"
 

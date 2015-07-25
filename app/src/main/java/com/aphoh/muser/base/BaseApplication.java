@@ -9,6 +9,8 @@ public abstract class BaseApplication extends Application{
 
     protected ApplicationComponent createApplicationComponent(){
         return DaggerApplicationComponent.builder()
-                .dataModule(new DataModule(this)).build();
+                .dataModule(new DataModule(this))
+                .musicModule(new MusicModule(this))
+                .build();
     }
 }

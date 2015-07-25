@@ -22,6 +22,6 @@ public class MusicModule {
     @Provides
     @Singleton
     public MusicInteractor provideMusicInteractor(){
-        return new MusicInteractor(appContext);
+        return new MusicInteractor();
     }
 }
