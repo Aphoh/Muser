@@ -22,8 +22,6 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     private var log = LogUtil(javaClass<MainPresenter>().getSimpleName())
     var dataInteractor: DataInteractor? = null;
         @Inject set
-    var musicInteractor: MusicInteractor? = null;
-        @Inject set
     var subreddit: String = "trap"
 
     override fun onCreate(savedState: Bundle?) {
