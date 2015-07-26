@@ -6,8 +6,10 @@ import com.aphoh.muser.data.db.model.SongItem
  * Created by Will on 7/25/15.
  */
 public interface MusicPlayer{
-    fun setQue(songs : List<SongItem>)
     fun playSong(song : SongItem)
-    fun setSongChangedListener(func : (SongItem, SongItem) -> Unit)
+    fun pause()
+    fun stop()
+    fun destroy()
+    fun setSongFinishedListener(func : (SongItem) -> Unit)
     fun getCurrentSong() : SongItem
 }
