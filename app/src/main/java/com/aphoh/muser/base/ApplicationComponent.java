@@ -1,5 +1,6 @@
 package com.aphoh.muser.base;
 
+import com.aphoh.muser.music.MusicInteractor;
 import com.aphoh.muser.music.MusicService;
 import com.aphoh.muser.network.DataInteractor;
 import com.aphoh.muser.ui.presenter.MainPresenter;
@@ -15,6 +16,6 @@ import dagger.Component;
 @Component(modules = {DataModule.class})
 public interface ApplicationComponent {
     void injectPresenter(MainPresenter presenter);
-    void injectMusicInteractor(DataInteractor dataInteractor);
+    void injectMusicInteractor(MusicInteractor musicInteractor);
     void injectService(MusicService service);
 }
