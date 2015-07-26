@@ -93,7 +93,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     }
 
     private fun notifyServiceStarted() {
-        if(mMusicServiceBinder!!.getMusicInteractor().isPlaying){
+        if(mMusicServiceBinder!!.getMusicInteractor().mIsPlaying){
             if(getView() != null){
                 if (mMusicServiceBinder.getMusicInteractor().mCurrentSong != null) {
                     getView().publishSongPlay(mMusicServiceBinder.getMusicInteractor().mCurrentSong)

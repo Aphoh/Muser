@@ -8,8 +8,9 @@ import com.aphoh.muser.data.db.model.SongItem
 public interface MusicPlayer{
     fun playSong(song : SongItem)
     fun pause()
+    fun resume()
     fun stop()
     fun destroy()
-    fun setSongFinishedListener(func : (SongItem) -> Unit)
+    fun addSongFinishedListener(func : (finishedSong: SongItem) -> Unit)
     fun getCurrentSong() : SongItem
 }
