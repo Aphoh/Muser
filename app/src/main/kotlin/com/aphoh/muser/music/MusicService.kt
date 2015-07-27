@@ -14,15 +14,11 @@ public class MusicService() : Service(), MusicPlayer{
 
     var mSongs: List<SongItem>? = null
     var mSongChangedListener : ((SongItem, SongItem) -> Unit)? = null
-    var mMusicInteractor : MusicInteractor? = null
-            @Inject set
+    var mMusicInteractor : MusicInteractor = MusicInteractor(this)
     private var binder = MusicBinder()
 
     override fun onCreate() {
         super<Service>.onCreate()
-        if(mMusicInteractor == null){
-            App.applicationComponent.injectService(this)
-        }
     }
 
     // ===========================================================

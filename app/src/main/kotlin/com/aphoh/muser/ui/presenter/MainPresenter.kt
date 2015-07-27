@@ -30,7 +30,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     var subreddit: String = "trap"
 
     override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
+        super<BaseNucleusPresenter>.onCreate(savedState)
         App.applicationComponent.injectPresenter(this)
         dataInteractor!!.getSongItems()
                 .flatMap {
@@ -47,6 +47,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     }
 
     public override fun refresh(view: MainActivity) {
+        mMusicServiceBinder?.getMusicInteractor()?.destroy()
         subreddit = "trap"
         dataInteractor!!.refresh(subreddit)
                 .compose(this.deliver<List<SongItem>>())
@@ -93,11 +94,11 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     }
 
     private fun notifyServiceStarted() {
-        if(mMusicServiceBinder!!.getMusicInteractor().mIsPlaying){
-            if(getView() != null){
-                if (mMusicServiceBinder.getMusicInteractor().mCurrentSong != null) {
-                    getView().publishSongPlay(mMusicServiceBinder.getMusicInteractor().mCurrentSong)
-                }
+        var interactor = mMusicServiceBinder!!.getMusicInteractor()
+        if(interactor.mIsPlaying){
+            getView().publishSongPlay(interactor.getCurrentSong())
+            interactor.mSongChangedListener = { prev, next ->
+                getView().publishSongPlay(next)
             }
         }
     }
@@ -108,7 +109,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
-
+        mMusicServiceBinder = null
     }
 
     private fun isMyServiceRunning(className: String): Boolean {
@@ -122,7 +123,6 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     }
 
     override fun onTakeView(view: MainActivity) {
-        super.onTakeView(view)
-
+        super<BaseNucleusPresenter>.onTakeView(view)
     }
 }
