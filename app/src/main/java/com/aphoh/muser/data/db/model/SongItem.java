@@ -13,6 +13,23 @@ import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
  */
 @Table(databaseName = SongDatabase.NAME, tableName = "SongItems")
 public class SongItem extends BaseModel {
+
+    public SongItem() {
+        super();
+    }
+
+    public SongItem(String id, String image, String thumbnail, String url, String streamUrl, String waveformUrl, long score, String artist, String songTitle) {
+        this.id = id;
+        this.image = image;
+        this.thumbnail = thumbnail;
+        this.url = url;
+        this.streamUrl = streamUrl;
+        this.waveformUrl = waveformUrl;
+        this.score = score;
+        this.artist = artist;
+        this.songTitle = songTitle;
+    }
+
     @Column
     @PrimaryKey
     public String id;
