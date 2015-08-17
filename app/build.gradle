@@ -31,6 +31,7 @@ android {
     sourceSets {
         main {
             java.srcDirs += 'src/main/kotlin'
+            //java.srcDirs += 'build/generated/source/apt/debug/com/raizlabs'
         }
     }
     buildTypes {
@@ -80,7 +81,7 @@ dependencies {
 jsonSchema2Pojo {
 
     generateBuilders = false
-    usePrimitives = true
+    usePrimitives = false
     source = files("${project.rootDir}/schema/track.json")
 
     targetDirectory = file("${project.rootDir}/app/build/generated/source/js2p/")

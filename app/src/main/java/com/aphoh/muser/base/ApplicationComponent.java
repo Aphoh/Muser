@@ -16,6 +16,5 @@ import dagger.Component;
 @Component(modules = {DataModule.class})
 public interface ApplicationComponent {
     void injectPresenter(MainPresenter presenter);
-    void injectMusicInteractor(MusicInteractor musicInteractor);
     void injectService(MusicService service);
 }
