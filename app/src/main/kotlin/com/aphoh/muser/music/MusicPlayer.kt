@@ -12,5 +12,5 @@ public interface MusicPlayer{
     fun stop()
     fun destroy()
     fun addSongFinishedListener(func : (finishedSong: SongItem) -> Unit)
-    fun getCurrentSong() : SongItem
+    fun getCurrentSong() : SongItem?
 }

@@ -96,7 +96,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     private fun notifyServiceStarted() {
         var interactor = mMusicServiceBinder!!.getMusicInteractor()
         if(interactor.mIsPlaying){
-            getView().publishSongPlay(interactor.getCurrentSong())
+            getView().publishSongPlay(interactor.getCurrentSong()!!)
             interactor.mSongChangedListener = { prev, next ->
                 getView().publishSongPlay(next)
             }

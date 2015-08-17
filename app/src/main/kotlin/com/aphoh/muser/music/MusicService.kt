@@ -24,12 +24,25 @@ public class MusicService() : Service(), MusicPlayer{
     // ===========================================================
     // MusicPlayer Interface methods
     // ===========================================================
-    override fun setQue(songs: List<SongItem>) {
-        this.mSongs = songs
+
+    override fun pause() {
+        throw UnsupportedOperationException()
     }
 
-    override fun setSongChangedListener(func: (SongItem, SongItem) -> Unit) {
-        mSongChangedListener = func
+    override fun resume() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun stop() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun destroy() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun addSongFinishedListener(func: (SongItem) -> Unit) {
+        throw UnsupportedOperationException()
     }
 
     override fun getCurrentSong(): SongItem {
