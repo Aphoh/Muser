@@ -96,7 +96,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         adapter.itemClickListener = { v, position ->
             if (!drawerLayout.isDrawerOpen(Gravity.END)) {
                 var songItem = adapter.data.get(position)
-                /*var intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.getUrl()))
+                /*var intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.getLinkUrl()))
                 if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent)*/
                 getPresenter().onSongSelected(songItem)
             }

@@ -18,11 +18,11 @@ public class SongItem extends BaseModel {
         super();
     }
 
-    public SongItem(String id, String image, String thumbnail, String url, String streamUrl, String waveformUrl, long score, String artist, String songTitle) {
+    public SongItem(String id, String image, String thumbnail, String linkUrl, String streamUrl, String waveformUrl, long score, String artist, String songTitle) {
         this.id = id;
         this.image = image;
         this.thumbnail = thumbnail;
-        this.url = url;
+        this.linkUrl = linkUrl;
         this.streamUrl = streamUrl;
         this.waveformUrl = waveformUrl;
         this.score = score;
@@ -40,8 +40,8 @@ public class SongItem extends BaseModel {
     @Column
     String thumbnail;
 
-    @Column
-    String url;
+    @Column(name = "link_url")
+    String linkUrl;
 
     @Column(name = "stream_url")
     String streamUrl;
@@ -95,12 +95,12 @@ public class SongItem extends BaseModel {
         this.thumbnail = thumbnail;
     }
 
-    public String getUrl() {
-        return url;
+    public String getLinkUrl() {
+        return linkUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl;
     }
 
     public String getStreamUrl() {
