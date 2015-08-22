@@ -12,6 +12,7 @@ import com.aphoh.muser.base.BaseNucleusPresenter
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.music.MusicService
 import com.aphoh.muser.network.DataInteractor
+import com.aphoh.muser.network.MuserDataInteractor
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil
 import retrofit.RetrofitError
@@ -24,7 +25,7 @@ import javax.inject.Inject
  */
 public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(), ServiceConnection {
     private var log = LogUtil(javaClass<MainPresenter>().getSimpleName())
-    var dataInteractor: DataInteractor? = null
+    var dataInteractor: MuserDataInteractor? = null
         @Inject set
     var mMusicServiceBinder: MusicService.MusicBinder? = null
     var subreddit: String = "trap"

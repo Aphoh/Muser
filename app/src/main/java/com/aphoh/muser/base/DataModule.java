@@ -40,7 +40,7 @@ public class DataModule {
 
     @Provides
     @Singleton
-    DataInteractor provideDataInteractor(OkHttpClient client){
+    MuserDataInteractor provideDataInteractor(OkHttpClient client){
         return new MuserDataInteractor(client);
     }
 
