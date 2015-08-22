@@ -16,7 +16,7 @@ import java.util.ArrayList
 /**
  * Created by Will on 7/5/2015.
  */
-public interface DataInteractor{
+interface DataInteractor{
 
     // ===========================================
     // Network Calls
@@ -43,6 +43,14 @@ public interface DataInteractor{
     public fun getSongItemsForSubreddit(subredditId: Int): Observable<List<SongItem>>
 }
 
-public interface RequestModel{
-
+public interface SongRequestModel{
+    public fun getId() : String
+    public fun getImage() : String
+    public fun getThumbnail() : String
+    public fun getLinkUrl() : String
+    public fun getStreamUrl() : String
+    public fun getWaveFormUrl() : String
+    public fun getScore() : Int
+    public fun getArtist() : String
+    public fun getSongTitle() : String
 }
