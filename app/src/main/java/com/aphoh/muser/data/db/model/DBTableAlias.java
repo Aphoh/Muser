@@ -13,7 +13,7 @@ public class DBTableAlias {
 
     public static final String SongItemTHUMBNAIL = SongItem$Table.THUMBNAIL;
 
-    public static final String SongItemURL = SongItem$Table.URL;
+    public static final String SongItemLINK_URL = SongItem$Table.LINK_URL;
 
     public static final String SongItemSCORE = SongItem$Table.SCORE;
 
