@@ -3,6 +3,7 @@ package com.aphoh.muser.base;
 import android.content.Context;
 
 import com.aphoh.muser.BuildConfig;
+import com.aphoh.muser.network.DataInteractor;
 import com.aphoh.muser.network.MuserDataInteractor;
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.OkHttpClient;
@@ -39,7 +40,7 @@ public class DataModule {
 
     @Provides
     @Singleton
-    MuserDataInteractor provideDataInteractor(OkHttpClient client){
+    DataInteractor provideDataInteractor(OkHttpClient client){
         return new MuserDataInteractor(client);
     }
 
