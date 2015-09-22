@@ -65,9 +65,8 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
     //Util Libs
-    compile 'io.reactivex:rxkotlin:0.22.12'
+    compile 'io.reactivex:rxkotlin:0.22.13'
     compile 'io.reactivex:rxandroid:0.25.0'
-    compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
     //Dependency Injection
     compile "com.google.dagger:dagger:$dagger_version"
     apt "com.google.dagger:dagger-compiler:$dagger_version"
