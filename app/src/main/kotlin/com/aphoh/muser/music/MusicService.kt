@@ -2,23 +2,34 @@ package com.aphoh.muser.music
 
 import android.app.Service
 import android.content.Intent
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.IBinder
-import com.aphoh.muser.App
+import android.os.PowerManager
 import com.aphoh.muser.data.db.model.SongItem
-import javax.inject.Inject
 
 /**
  * Created by Will on 7/12/15.
  */
-public class MusicService() : Service(), MusicPlayer{
+public class MusicService() : Service(), MusicPlayer {
 
-    var mSongs: List<SongItem>? = null
-    var mSongChangedListener : ((SongItem, SongItem) -> Unit)? = null
-    var mMusicInteractor : MusicInteractor = MusicInteractor(this)
-    private var binder = MusicBinder()
+    var mSong: SongItem? = null
+    var mSongChangedListener: ((SongItem, SongItem) -> Unit)? = null
+    var mMusicInteractor: MusicInteractor = MusicInteractor(this)
+
+    var mBinder = MusicBinder(mMusicInteractor)
+
+    private var mMediaPlayer = MediaPlayer()
 
     override fun onCreate() {
-        super<Service>.onCreate()
+        super.onCreate()
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        destroy()
     }
 
     // ===========================================================
@@ -26,40 +37,43 @@ public class MusicService() : Service(), MusicPlayer{
     // ===========================================================
 
     override fun pause() {
-        throw UnsupportedOperationException()
+        mMediaPlayer.pause()
     }
 
     override fun resume() {
-        throw UnsupportedOperationException()
+        mMediaPlayer.start()
     }
 
     override fun stop() {
-        throw UnsupportedOperationException()
+        mMediaPlayer.stop()
     }
 
     override fun destroy() {
-        throw UnsupportedOperationException()
+        mMediaPlayer.release()
     }
 
-    override fun addSongFinishedListener(func: (SongItem) -> Unit) {
-        throw UnsupportedOperationException()
+    override fun addSongFinishedListener(func: (SongItem?) -> Unit) {
+        mMediaPlayer.setOnCompletionListener { func.invoke(mSong) }
     }
 
-    override fun getCurrentSong(): SongItem {
-        throw UnsupportedOperationException()
+    override fun getCurrentSong(): SongItem? {
+        return mSong
     }
 
     override fun playSong(song: SongItem) {
-        throw UnsupportedOperationException()
+        mSong = song
+        mMediaPlayer.setDataSource(song.streamUrl)
+        mMediaPlayer.prepare()
+        mMediaPlayer.start()
     }
 
 
     override fun onBind(intent: Intent): IBinder? {
-        throw UnsupportedOperationException()
+        return mBinder
     }
 
-    public inner class MusicBinder : android.os.Binder(){
-        public fun getMusicInteractor(): MusicInteractor{
+    public inner class MusicBinder(musicInteractor : MusicInteractor) : android.os.Binder() {
+        public fun getMusicInteractor(): MusicInteractor {
             return mMusicInteractor
         }
     }

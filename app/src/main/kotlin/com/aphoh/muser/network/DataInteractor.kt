@@ -1,22 +1,14 @@
 package com.aphoh.muser.network
 
-import com.aphoh.muser.data.db.model.DBTableAlias
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.data.db.model.Subreddit
-import com.aphoh.muser.util.LogUtil
-import com.raizlabs.android.dbflow.sql.builder.Condition
-import com.raizlabs.android.dbflow.sql.language.Select
-import com.raizlabs.android.dbflow.structure.BaseModel
-import com.squareup.okhttp.OkHttpClient
-import retrofit.RestAdapter
-import retrofit.client.OkClient
 import rx.Observable
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Created by Will on 7/5/2015.
  */
-interface DataInteractor{
+interface DataInteractor {
 
     // ===========================================
     // Network Calls
@@ -43,14 +35,14 @@ interface DataInteractor{
     public fun getSongItemsForSubreddit(subredditId: Int): Observable<List<SongItem>>
 }
 
-public interface SongRequestModel{
-    public fun getId() : String
-    public fun getImage() : String
-    public fun getThumbnail() : String
-    public fun getLinkUrl() : String
-    public fun getStreamUrl() : String
-    public fun getWaveFormUrl() : String
-    public fun getScore() : Int
-    public fun getArtist() : String
-    public fun getSongTitle() : String
+public interface SongResponseModel {
+    var id: String;
+    var image: String
+    var thumbnail: String
+    var linkUrl: String
+    var streamUrl: String
+    var waveformUrl: String
+    var score: Int
+    var artist: String
+    var songTitle: String
 }

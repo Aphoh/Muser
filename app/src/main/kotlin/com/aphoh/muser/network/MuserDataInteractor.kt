@@ -20,7 +20,7 @@ public class MuserDataInteractor(var okClient: OkHttpClient) : DataInteractor{
 
     private final val clientId = "81e4c3f234711ed893e32397d52cc2e6"
 
-    var log = LogUtil(javaClass<MuserDataInteractor>().getSimpleName())
+    var log = LogUtil(javaClass<MuserDataInteractor>().simpleName)
 
     var redditService: RedditService = RestAdapter.Builder()
             .setEndpoint("http://www.reddit.com")
@@ -44,22 +44,22 @@ public class MuserDataInteractor(var okClient: OkHttpClient) : DataInteractor{
                     var subs = Select().from(javaClass<Subreddit>()).where(Condition.column(DBTableAlias.SubredditNAME).`is`(subreddit)).queryList()
                     var sub = Subreddit()
                     if (subs.size() == 0) {
-                        sub.setName(subreddit)
+                        sub.name = (subreddit)
                         saveSub(sub)
                     } else {
                         sub = subs.get(0)
                     }
                     for (item in items) {
-                        val data = item.getData()
-                        if (isSoundcloudUrl(data.getUrl())) {
+                        val data = item.data
+                        if (isSoundcloudUrl(data.url)) {
                             var songItem = SongItem()
-                            var oembed = data.getMedia().getOembed()
-                            songItem.setId(data.getId())
-                            songItem.setImage(oembed.getThumbnail_url())
-                            songItem.setArtist(oembed.getAuthor_name())
-                            songItem.setSongTitle(removeByLine(oembed.getTitle()))
-                            songItem.setLinkUrl(data.getUrl())
-                            songItem.setScore(data.getScore())
+                            var oembed = data.media.oembed
+                            songItem.id = data.id
+                            songItem.image = oembed.thumbnail_url
+                            songItem.artist = oembed.author_name
+                            songItem.songTitle = (removeByLine(oembed.title))
+                            songItem.linkUrl = data.url
+                            songItem.score = data.score.toInt()
                             songItem.associateSubreddit(sub)
                             newItems.add(songItem)
                         }
@@ -73,9 +73,9 @@ public class MuserDataInteractor(var okClient: OkHttpClient) : DataInteractor{
     public override fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem> {
         return soundcloudService.getSongFromUrl(songItem.getLinkUrl(), clientId)
                 .map({ track ->
-                    log.d("Track url returned: ${track.getStream_url()}")
-                    songItem.setStreamUrl(track.getStream_url())
-                    songItem.setWaveformUrl(track.getWaveform_url())
+                    log.d("Track url returned: ${track.stream_url}")
+                    songItem.streamUrl = track.stream_url
+                    songItem.waveformUrl = track.waveform_url
                     songItem.update()
                     songItem
                 })

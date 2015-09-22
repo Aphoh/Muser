@@ -1,5 +1,6 @@
 package com.aphoh.muser.data.db.model;
 
+import com.aphoh.muser.network.SongResponseModel;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.ForeignKeyReference;
@@ -12,13 +13,13 @@ import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
  * Created by Will on 7/5/2015.
  */
 @Table(databaseName = SongDatabase.NAME, tableName = "SongItems")
-public class SongItem extends BaseModel {
+public class SongItem extends BaseModel implements SongResponseModel{
 
     public SongItem() {
         super();
     }
 
-    public SongItem(String id, String image, String thumbnail, String linkUrl, String streamUrl, String waveformUrl, long score, String artist, String songTitle) {
+    public SongItem(String id, String image, String thumbnail, String linkUrl, String streamUrl, String waveformUrl, int score, String artist, String songTitle) {
         this.id = id;
         this.image = image;
         this.thumbnail = thumbnail;
@@ -50,7 +51,7 @@ public class SongItem extends BaseModel {
     String waveformUrl;
 
     @Column
-    long score;
+    int score;
 
     @Column
     String artist;
@@ -119,11 +120,11 @@ public class SongItem extends BaseModel {
         this.waveformUrl = waveformUrl;
     }
 
-    public long getScore() {
+    public int getScore() {
         return score;
     }
 
-    public void setScore(long score) {
+    public void setScore(int score) {
         this.score = score;
     }
 

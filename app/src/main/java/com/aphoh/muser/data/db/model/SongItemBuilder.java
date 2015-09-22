@@ -57,6 +57,6 @@ public class SongItemBuilder {
     }
 
     public SongItem createSongItem() {
-        return new SongItem(id, image, thumbnail, url, streamUrl, waveformUrl, score, artist, songTitle);
+        return new SongItem(id, image, thumbnail, url, streamUrl, waveformUrl, (int)score, artist, songTitle);
     }
 }
