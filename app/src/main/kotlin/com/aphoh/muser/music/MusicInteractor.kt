@@ -1,10 +1,7 @@
 package com.aphoh.muser.music
 
 import com.aphoh.muser.data.db.model.SongItem
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import java.util.ArrayList
-import java.util.NoSuchElementException
+import java.util.*
 
 /**
  * Created by Will on 7/25/15.
@@ -14,6 +11,9 @@ public class MusicInteractor(var mMusicPlayer: MusicPlayer) {
     var mSongChangedListener: ((prev: SongItem, next: SongItem) -> Unit)? = null
     var mErrorListener: (Throwable) -> Unit = {}
     var mIsPlaying = false
+        get() {
+            return mMusicPlayer.isPlaying
+        }
     var mIsFinished = false
 
     var mSongs: ArrayList<SongItem> = ArrayList()
@@ -47,32 +47,28 @@ public class MusicInteractor(var mMusicPlayer: MusicPlayer) {
 
     public fun pause() {
         mMusicPlayer.pause()
-        mIsPlaying = false
     }
 
     public fun destroy() {
         mMusicPlayer.destroy()
-        mIsPlaying = false
         mIsFinished = true
     }
 
     public fun resume() {
         mMusicPlayer.resume()
-        mIsPlaying = true
     }
 
-    public fun next(){
+    public fun next() {
         mCurrentIndex += 1
-        if(mCurrentIndex < mSongs.size()){
+        if (mCurrentIndex < mSongs.size()) {
             playSong(mSongs.get(mCurrentIndex))
         } else {
-           finish()
+            finish()
         }
     }
 
-    private fun finish(){
+    private fun finish() {
         mIsFinished = true
-        mIsPlaying = false
         mMusicPlayer.stop()
     }
 
@@ -82,13 +78,12 @@ public class MusicInteractor(var mMusicPlayer: MusicPlayer) {
     }
 
     public fun getCurrentSong(): SongItem? {
-        if(mSongs.isEmpty() || mCurrentIndex >= mSongs.size()) return null
+        if (mSongs.isEmpty() || mCurrentIndex >= mSongs.size()) return null
         return mSongs.get(mCurrentIndex)
     }
 
     public fun playSong(songItem: SongItem) {
         mMusicPlayer.playSong(songItem)
-        mIsPlaying = true
     }
 
 

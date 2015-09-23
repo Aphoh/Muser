@@ -13,4 +13,5 @@ public interface MusicPlayer{
     fun destroy()
     fun addSongFinishedListener(func : (finishedSong: SongItem?) -> Unit)
     fun getCurrentSong() : SongItem?
+    var isPlaying: Boolean
 }

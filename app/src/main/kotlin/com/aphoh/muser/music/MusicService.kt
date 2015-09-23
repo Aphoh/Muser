@@ -13,6 +13,11 @@ import com.aphoh.muser.data.db.model.SongItem
  */
 public class MusicService() : Service(), MusicPlayer {
 
+    override var isPlaying: Boolean
+        get() = mMediaPlayer.isPlaying
+        set(value) {
+            throw UnsupportedOperationException("Cannot set isPlaying, value: $value")
+        }
     var mSong: SongItem? = null
     var mSongChangedListener: ((SongItem, SongItem) -> Unit)? = null
     var mMusicInteractor: MusicInteractor = MusicInteractor(this)
@@ -72,9 +77,5 @@ public class MusicService() : Service(), MusicPlayer {
         return mBinder
     }
 
-    public inner class MusicBinder(musicInteractor : MusicInteractor) : android.os.Binder() {
-        public fun getMusicInteractor(): MusicInteractor {
-            return mMusicInteractor
-        }
-    }
+    public inner class MusicBinder(var musicInteractor: MusicInteractor) : android.os.Binder()
 }
