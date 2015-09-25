@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId "com.aphoh.muser"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -50,6 +50,8 @@ dependencies {
     //Support Libs/Req libs
     compile "com.android.support:design:$android_version"
     compile "com.android.support:appcompat-v7:$android_version"
+    compile "com.android.support:recyclerview-v7:$android_version"
+
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "info.android15.nucleus:nucleus:$nucleus_version"
     compile "info.android15.nucleus:nucleus-support-v7:$nucleus_version"

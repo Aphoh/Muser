@@ -9,6 +9,6 @@ import rx.Observable
  * Created by Will on 7/5/2015.
  */
 interface SoundcloudService {
-    GET("/resolve.json")
-    fun getSongFromUrl(Query("url") url: String, Query("client_id") clientId: String): Observable<Track>
+    @GET("/resolve.json")
+    fun getSongFromUrl(@Query("url") url: String, @Query("client_id") clientId: String): Observable<Track>
 }

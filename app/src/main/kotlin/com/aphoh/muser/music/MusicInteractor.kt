@@ -16,7 +16,7 @@ public class MusicInteractor(var mMusicPlayer: MusicPlayer) {
         }
     var mIsFinished = false
 
-    var mSongs: ArrayList<SongItem> = ArrayList()
+    var mSongs: List<SongItem> = ArrayList()
         set(value) {
             $mSongs = value
             mCurrentIndex = 0
@@ -56,6 +56,10 @@ public class MusicInteractor(var mMusicPlayer: MusicPlayer) {
 
     public fun resume() {
         mMusicPlayer.resume()
+    }
+
+    public fun stop() {
+        mMusicPlayer.stop()
     }
 
     public fun next() {

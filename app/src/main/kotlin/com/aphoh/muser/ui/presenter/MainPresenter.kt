@@ -11,7 +11,6 @@ import com.aphoh.muser.App
 import com.aphoh.muser.base.BaseNucleusPresenter
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.music.MusicService
-import com.aphoh.muser.network.DataInteractor
 import com.aphoh.muser.network.MuserDataInteractor
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil
@@ -23,15 +22,15 @@ import javax.inject.Inject
 /**
  * Created by Will on 7/1/2015.
  */
-public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(), ServiceConnection {
-    private var log = LogUtil(javaClass<MainPresenter>().getSimpleName())
+public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>() {
+    private var log = LogUtil(javaClass<MainPresenter>().simpleName)
     var dataInteractor: MuserDataInteractor? = null
         @Inject set
     var mMusicServiceBinder: MusicService.MusicBinder? = null
     var subreddit: String = "trap"
 
     override fun onCreate(savedState: Bundle?) {
-        super<BaseNucleusPresenter>.onCreate(savedState)
+        super.onCreate(savedState)
         App.applicationComponent.injectPresenter(this)
         dataInteractor!!.getSongItems()
                 .flatMap {
@@ -40,23 +39,40 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                 .compose(this.deliverLatestCache<List<SongItem>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ result ->
-                    if (getView() != null) {
-                        getView().publish(result)
-                    }
-                })
+                .subscribe(
+                        { result ->
+                            if (getView() != null) {
+                                getView().publish(result)
+                            }
+                        },
+                        { throwable ->
+                            log.e("Error retrieving songs", throwable)
+                        })
     }
 
     public override fun refresh(view: MainActivity) {
-        mMusicServiceBinder?.getMusicInteractor()?.destroy()
+        mMusicServiceBinder?.getInteractor()?.stop()
         subreddit = "trap"
         dataInteractor!!.refresh(subreddit)
                 .compose(this.deliver<List<SongItem>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { result ->
-                    getView().publish(result)
-                }
+                .subscribe (
+                        { result ->
+                            getView().publish(result)
+                        },
+                        { throwable ->
+                            log.e("Error refreshing", throwable)
+                        })
+    }
+
+    override fun onDestroy() {
+        val musicInteractor = mMusicServiceBinder?.musicInteractor
+
+        var playing = musicInteractor?.mIsPlaying
+        if (playing != null && !playing) {
+            musicInteractor?.destroy()
+        }
     }
 
     public fun onSongSelected(songItem: SongItem) {
@@ -66,51 +82,69 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ item ->
-                        log.d("item stream url: ${item.getStreamUrl()}")
+                        log.d("item stream url: ${item.streamUrl}")
                         if (getView() != null) {
                             getView().publishSongPlay(songItem)
                             notifyStartService()
                         }
                     }, { error ->
                         if (error is RetrofitError) {
-                            var code = error.getResponse().getStatus()
+                            var code = error.response.status
                             if (code == 404) getView().toast("Track not found")
                         }
-                        log.e("Failed to retrieve stream url: ${songItem.getLinkUrl()}", error)
+                        log.e("Failed to retrieve stream url: ${songItem.linkUrl}", error)
                     })
         } else {
             getView().publishSongPlay(songItem)
-            notifyStartService()
         }
     }
 
-    private fun notifyStartService() {
-        if (!isMyServiceRunning(javaClass<MusicService>().getName())) {
+    private fun notifyStartService(songItems: List<SongItem>) {
+
+        if (!isMyServiceRunning(javaClass<MusicService>().name)) {
             var intent = Intent(getView(), javaClass<MusicService>())
             getView().startService(intent)
-            getView().bindService(intent, this, 0)
+            getView().bindService(intent, object:ServiceConnection{
+                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                    if(service is MusicService.MusicBinder){
+                        mMusicServiceBinder = service
+                        service.musicInteractor.mSongs = songItems
+                        service.musicInteractor.playFromStart()
+                    }
+                }
+
+                override fun onServiceDisconnected(name: ComponentName?) {
+                    mMusicServiceBinder = null
+                }
+            }, 0)
         } else {
-            getView().bindService(Intent(getView(), javaClass<MusicService>()), this, 0)
+            getView().bindService(Intent(getView(), javaClass<MusicService>()), object : ServiceConnection {
+                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                    if(service is MusicService.MusicBinder) {
+                        mMusicServiceBinder = service
+                        service.musicInteractor.mSongs = songItems
+                        service.musicInteractor.playFromStart()
+                    }
+                }
+
+                override fun onServiceDisconnected(name: ComponentName?) {
+                    mMusicServiceBinder = null
+                }
+            }, 0)
         }
     }
 
     private fun notifyServiceStarted() {
-        var interactor = mMusicServiceBinder!!.getMusicInteractor()
+        var interactor = mMusicServiceBinder!!.musicInteractor
         if (interactor.mIsPlaying) {
             getView().publishSongPlay(interactor.getCurrentSong()!!)
             interactor.mSongChangedListener = { prev, next ->
-                getView().publishSongPlay(next)
+                if (getView() != null)
+                    getView().publishSongPlay(next)
             }
+        } else {
+            interactor.mSongs =
         }
-    }
-
-    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-        mMusicServiceBinder = service as MusicService.MusicBinder
-        notifyServiceStarted()
-    }
-
-    override fun onServiceDisconnected(name: ComponentName?) {
-        mMusicServiceBinder = null
     }
 
     private fun isMyServiceRunning(className: String): Boolean {
@@ -121,9 +155,5 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
             }
         }
         return false
-    }
-
-    override fun onTakeView(view: MainActivity) {
-        super<BaseNucleusPresenter>.onTakeView(view)
     }
 }

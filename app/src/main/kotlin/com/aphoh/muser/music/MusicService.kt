@@ -19,7 +19,7 @@ public class MusicService() : Service(), MusicPlayer {
             throw UnsupportedOperationException("Cannot set isPlaying, value: $value")
         }
     var mSong: SongItem? = null
-    var mSongChangedListener: ((SongItem, SongItem) -> Unit)? = null
+    var mSongFinishedListener: (SongItem) -> Unit = {}
     var mMusicInteractor: MusicInteractor = MusicInteractor(this)
 
     var mBinder = MusicBinder(mMusicInteractor)
@@ -58,7 +58,7 @@ public class MusicService() : Service(), MusicPlayer {
     }
 
     override fun addSongFinishedListener(func: (SongItem?) -> Unit) {
-        mMediaPlayer.setOnCompletionListener { func.invoke(mSong) }
+        mSongFinishedListener = func
     }
 
     override fun getCurrentSong(): SongItem? {
@@ -70,12 +70,15 @@ public class MusicService() : Service(), MusicPlayer {
         mMediaPlayer.setDataSource(song.streamUrl)
         mMediaPlayer.prepare()
         mMediaPlayer.start()
+        mMediaPlayer.setOnCompletionListener { mSongFinishedListener.invoke(song) }
     }
 
 
-    override fun onBind(intent: Intent): IBinder? {
-        return mBinder
-    }
+    override fun onBind(intent: Intent): IBinder? = mBinder
 
-    public inner class MusicBinder(var musicInteractor: MusicInteractor) : android.os.Binder()
+    public inner class MusicBinder(var musicInteractor: MusicInteractor) : android.os.Binder() {
+        public fun getInteractor(): MusicInteractor{
+            return musicInteractor
+        }
+    }
 }

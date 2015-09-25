@@ -1,5 +1,7 @@
 package com.aphoh.muser.ui.activitiy
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.SwipeRefreshLayout
@@ -11,7 +13,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import butterknife.bindView
+import bindView
 import com.aphoh.muser.BuildConfig
 import com.aphoh.muser.R
 import com.aphoh.muser.base.BaseNucleusActivity
@@ -23,9 +25,9 @@ import com.squareup.picasso.Picasso
 import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter
 import nucleus.factory.RequiresPresenter
 
-RequiresPresenter(MainPresenter::class)
+@RequiresPresenter(MainPresenter::class)
 public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
-    var log = LogUtil(javaClass<MainActivity>().getSimpleName())
+    var log = LogUtil(MainActivity::class.java.simpleName)
 
     val recyclerView: RecyclerView by bindView(R.id.recyclerview_main)
     val swipeRefreshLayout: SwipeRefreshLayout by bindView(R.id.swiperefresh_main)
@@ -53,11 +55,11 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         val top = getStatusBarHeight()
         log.d("top: ${top}")
-        getToolbar().setBottom(getToolbar().getBottom() + top)
+        getToolbar().bottom = (getToolbar().bottom + top)
 
-        var params = waveForm.getLayoutParams() as RelativeLayout.LayoutParams
+        var params = waveForm.layoutParams as RelativeLayout.LayoutParams
         params.bottomMargin += getNavigationBarHeight(this)
-        waveForm.setLayoutParams(params)
+        waveForm.layoutParams = params
 
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary))
         drawerLayout.setDrawerListener(object : DrawerLayout.DrawerListener {
@@ -74,7 +76,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             }
 
             override fun onDrawerStateChanged(newState: Int) {
-                log d("New drawer state: ${newState}")
+                log d("New drawer state: $newState")
             }
 
             override fun onDrawerOpened(drawerView: View?) {
@@ -86,7 +88,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         })
 
         swipeRefreshLayout setOnRefreshListener{
-            getPresenter().refresh(this)
+            presenter.refresh(this)
         }
 
         recyclerView setLayoutManager(LinearLayoutManager(this))
@@ -96,17 +98,29 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         adapter.itemClickListener = { v, position ->
             if (!drawerLayout.isDrawerOpen(Gravity.END)) {
                 var songItem = adapter.data.get(position)
-                /*var intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.getLinkUrl()))
-                if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent)*/
-                getPresenter().onSongSelected(songItem)
+                presenter.onSongSelected(songItem)
             }
         }
+
+        adapter.itemLongClickListener = { v, position ->
+            if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+                var songItem = adapter.data.get(position)
+                var intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.linkUrl))
+                if (intent.resolveActivity(packageManager) != null) startActivity(intent)
+            }
+        }
+
+
         recyclerView setAdapter ScaleInAnimationAdapter(adapter)
     }
 
     override fun onResume() {
         super.onResume()
         if (!hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
+    override fun onDestroy() {
+
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -116,7 +130,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     public fun publishSongPlay(songItem: SongItem) {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-        if (songItem.getStreamUrl() != null) {
+        if (songItem.streamUrl != null) {
             hasSong = true
             if (!drawerLayout.isDrawerOpen(Gravity.END)) {
                 drawerLayout.openDrawer(Gravity.END)
@@ -135,7 +149,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     }
 
     override fun publish(items: List<SongItem>) {
-        if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout setRefreshing(false)
+        if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(false)
         if (drawerLayout.isDrawerOpen(Gravity.END)) drawerLayout.closeDrawer(Gravity.END)
         adapter.updateItems(items)
     }

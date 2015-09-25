@@ -15,7 +15,7 @@ import kotlin.properties.Delegates
 public class App : BaseApplication() {
 
     companion object{
-        platformStatic public var applicationComponent : ApplicationComponent by Delegates.notNull()
+        @JvmStatic public var applicationComponent : ApplicationComponent by Delegates.notNull()
     }
 
     override fun onCreate() {
