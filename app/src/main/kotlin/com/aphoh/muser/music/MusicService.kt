@@ -79,19 +79,23 @@ public class MusicService() : Service() {
         }
 
         if (item.streamUrl == null) {
+            log.d("Stream url was null")
             mDataInteractor.requestUrlForSongItem(item)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe (
                             { item ->
+                                log.d("Retrieved stream url, playing...")
                                 mSongs.set(mIndex, item)
                                 playSong(mIndex)
                             },
                             { error ->
+                                log.e("Error getting stream url", error)
                                 mIndex += 1
                                 playSong(mIndex)
                             })
         } else {
+            log.d("Stream url was not null")
             mMediaPlayer.reset()
             tickerSub?.unsubscribe()
             mMediaPlayer.setDataSource(item.streamUrl)
@@ -110,8 +114,7 @@ public class MusicService() : Service() {
             }
             mMediaPlayer.setOnCompletionListener {
                 tickerSub?.unsubscribe()
-                mIndex += 1
-                if (mSongs.size() < mIndex) playSong(mIndex)
+                next()
             }
             mMediaPlayer.setOnErrorListener { mediaPlayer, what, extra ->
                 tickerSub?.unsubscribe()
@@ -132,7 +135,6 @@ public class MusicService() : Service() {
         for (i in 0..views.size() - 1) operation.invoke(views.valueAt(i))
     }
 
-
     public fun pause() {
         if (mMediaPlayer.isPlaying)
             mMediaPlayer.pause()
@@ -147,6 +149,10 @@ public class MusicService() : Service() {
         mMediaPlayer.reset()
     }
 
+    public fun next(){
+        mIndex += 1
+        if(mIndex < mSongs.size()) playSong(mIndex)
+    }
 
     companion object IntentFactory {
         public fun getIntent(context: Context): Intent = Intent(context, MusicService::class.java)
