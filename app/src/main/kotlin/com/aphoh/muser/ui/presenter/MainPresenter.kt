@@ -19,7 +19,7 @@ import java.util.*
 /**
  * Created by Will on 7/1/2015.
  */
-public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(), ServiceConnection {
+public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>() {
     private var log = LogUtil(MainPresenter::class.java.simpleName)
     var dataInteractor: DataInteractor = App.applicationComponent.interactor()
     var subreddit: String = "trap"
@@ -61,15 +61,18 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                         })
     }
 
-    override fun onTakeView(view: MainActivity?) {
+    override fun onTakeView(view: MainActivity) {
         super.onTakeView(view)
-        //TODO: Bind view
-        binder = null
+        autoBindOperation { it.service.bind(view) }
     }
 
     override fun dropView() {
         /*Do here so it's called before getView() is null*/
-        //TODO: Unbind View
+        if (binder != null) {
+            var bound = binder?.service?.isBound(getView())
+            if (bound != null && bound)
+                binder?.service?.unbind(getView())
+        }
         if (serviceConnection != null) getView().unbindService(serviceConnection)
         binder = null
         super.dropView()
@@ -79,19 +82,19 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         log.d("Song selected, playing song...")
         autoBindOperation {
             log.d("Got binder: $it")
-            it?.service?.playSongs(Arrays.asList(songItem))
+            it.service.playSongs(Arrays.asList(songItem))
         }
     }
 
-    private fun autoBindOperation(action: (MusicService.NotificationBinder?) -> Unit) {
+    private fun autoBindOperation(action: (MusicService.NotificationBinder) -> Unit) {
         if (binder == null) {
             var intent = MusicService.getIntent(view)
             getView().startService(intent)
             serviceConnection = object : ServiceConnection {
-                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                override fun onServiceConnected(name: ComponentName?, service: IBinder) {
                     log.d("Service bound")
                     binder = service as MusicService.NotificationBinder
-                    action.invoke(binder)
+                    action.invoke(binder!!)
                 }
 
                 override fun onServiceDisconnected(name: ComponentName?) {
@@ -100,7 +103,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
             }
             getView().bindService(intent, serviceConnection, Context.BIND_ABOVE_CLIENT)
         } else {
-            action.invoke(binder)
+            action.invoke(binder!!)
         }
     }
 }

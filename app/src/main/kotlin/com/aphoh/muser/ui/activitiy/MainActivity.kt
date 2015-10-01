@@ -19,6 +19,7 @@ import com.aphoh.muser.BuildConfig
 import com.aphoh.muser.R
 import com.aphoh.muser.base.BaseNucleusActivity
 import com.aphoh.muser.data.db.model.SongItem
+import com.aphoh.muser.music.MusicView
 import com.aphoh.muser.ui.adapter.MainAdapter
 import com.aphoh.muser.ui.presenter.MainPresenter
 import com.aphoh.muser.util.LogUtil
@@ -27,13 +28,14 @@ import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter
 import nucleus.factory.RequiresPresenter
 
 @RequiresPresenter(MainPresenter::class)
-public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
+public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>(), MusicView {
     var log = LogUtil(MainActivity::class.java.simpleName)
 
     val recyclerView: RecyclerView by bindView(R.id.recyclerview_main)
     val swipeRefreshLayout: SwipeRefreshLayout by bindView(R.id.swiperefresh_main)
 
     val mainContent: RelativeLayout by bindView(R.id.relativelayout_main_content)
+
     val drawerLayout: DrawerLayout by bindView(R.id.drawerlayout_main)
     val songCover: ImageView by bindView(R.id.imageview_main_song)
     val waveForm: ImageView by bindView(R.id.imageview_waveform)
@@ -130,10 +132,39 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         outState?.putBoolean("hasSong", hasSong)
     }
 
-
     override fun publish(items: List<SongItem>) {
         if (swipeRefreshLayout.isRefreshing) swipeRefreshLayout.isRefreshing = false
         if (drawerLayout.isDrawerOpen(Gravity.END)) drawerLayout.closeDrawer(Gravity.END)
         adapter.updateItems(items)
+    }
+
+    private fun publishToOpenDrawer(action: () -> Unit) {
+        if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+            drawerLayout.openDrawer(Gravity.END)
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        }
+        action.invoke()
+    }
+
+    override var id: Int = 0
+
+    override fun publishAlbumArt(albumArt: String) {
+        publishToOpenDrawer { Picasso.with(this).load(albumArt).fit().centerCrop().into(songCover) }
+    }
+
+    override fun publishSongName(songName: String) {
+        publishToOpenDrawer { titleText.text = songName }
+    }
+
+    override fun publishSongArtist(songArtist: String) {
+        publishToOpenDrawer { artistText.text = songArtist }
+    }
+
+    override fun publishProgress(seconds: Int) {
+        log.d("Secs: " + seconds)
+    }
+
+    override fun publishError(error: String) {
+        toast(error)
     }
 }

@@ -48,12 +48,16 @@ public class MusicService() : Service() {
 
     }
 
-    public fun bind(id: Int, musicView: MusicView) {
-        views.put(id, musicView)
+    public fun isBound(musicView: MusicView): Boolean{
+        return views.get(musicView.id, null) != null
     }
 
-    public fun unbind(id: Int) {
-        views.remove(id)
+    public fun bind(musicView: MusicView) {
+        views.put(musicView.id, musicView)
+    }
+
+    public fun unbind(musicView: MusicView) {
+        views.remove(musicView.id)
     }
 
     public fun playSongs(songItems: List<SongItem>) {
@@ -88,6 +92,8 @@ public class MusicService() : Service() {
                                 playSong(mIndex)
                             })
         } else {
+            mMediaPlayer.reset()
+            tickerSub?.unsubscribe()
             mMediaPlayer.setDataSource(item.streamUrl)
             mMediaPlayer.setOnPreparedListener {
                 log.d("Prepared, playing...")
