@@ -3,6 +3,7 @@ package com.aphoh.muser.ui.activitiy
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DefaultItemAnimator
@@ -53,15 +54,15 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             hasSong = savedInstanceState.getBoolean("hasSong")
         }
 
-        val top = getStatusBarHeight()
-        log.d("top: ${top}")
-        getToolbar().bottom = (getToolbar().bottom + top)
+        val top = statusBarHeight
+        log.d("top: $top")
+        toolbar.bottom = (toolbar.bottom + top)
 
         var params = waveForm.layoutParams as RelativeLayout.LayoutParams
         params.bottomMargin += getNavigationBarHeight(this)
         waveForm.layoutParams = params
 
-        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary))
+        drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.primary))
         drawerLayout.setDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerClosed(drawerView: View?) {
                 swipeRefreshLayout.setOnTouchListener { view, motionEvent ->
@@ -91,8 +92,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             presenter.refresh(this)
         }
 
-        recyclerView setLayoutManager(LinearLayoutManager(this))
-        recyclerView setItemAnimator(DefaultItemAnimator())
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.itemAnimator = DefaultItemAnimator()
 
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
@@ -120,6 +121,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     }
 
     override fun onDestroy() {
+        super.onDestroy()
 
     }
 
@@ -130,9 +132,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
 
     override fun publish(items: List<SongItem>) {
-        if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(false)
+        if (swipeRefreshLayout.isRefreshing) swipeRefreshLayout.isRefreshing = false
         if (drawerLayout.isDrawerOpen(Gravity.END)) drawerLayout.closeDrawer(Gravity.END)
         adapter.updateItems(items)
     }
-
 }
