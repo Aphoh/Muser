@@ -91,4 +91,7 @@ proguard/
 ### Android Patch ###
 gen-external-apklibs
 
+### Ignore gradle.properties with Soundcloud api key ###
+gradle.properties
+
 
