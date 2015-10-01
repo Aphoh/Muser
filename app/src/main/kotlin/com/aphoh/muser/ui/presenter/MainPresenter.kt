@@ -86,6 +86,13 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         }
     }
 
+    public fun requestPlayAll(songItems: List<SongItem>){
+        autoBindOperation {
+            log.d("Playing all songs")
+            it.service.playSongs(songItems)
+        }
+    }
+
     private fun autoBindOperation(action: (MusicService.NotificationBinder) -> Unit) {
         if (binder == null) {
             var intent = MusicService.getIntent(view)

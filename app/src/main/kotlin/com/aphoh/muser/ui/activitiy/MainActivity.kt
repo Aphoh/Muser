@@ -10,6 +10,8 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -26,6 +28,7 @@ import com.aphoh.muser.util.LogUtil
 import com.squareup.picasso.Picasso
 import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter
 import nucleus.factory.RequiresPresenter
+import java.util.*
 
 @RequiresPresenter(MainPresenter::class)
 public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>(), MusicView {
@@ -37,6 +40,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     val mainContent: RelativeLayout by bindView(R.id.relativelayout_main_content)
 
     val drawerLayout: DrawerLayout by bindView(R.id.drawerlayout_main)
+    val drawerContent: RelativeLayout by bindView(R.id.drawercontent_main)
     val songCover: ImageView by bindView(R.id.imageview_main_song)
     val waveForm: ImageView by bindView(R.id.imageview_waveform)
     val titleText: TextView by bindView(R.id.textview_main_song_title)
@@ -50,7 +54,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (BuildConfig.DEBUG) Picasso.with(this).setIndicatorsEnabled(true)
 
         if (savedInstanceState != null) {
             hasSong = savedInstanceState.getBoolean("hasSong")
@@ -100,8 +103,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
             if (!drawerLayout.isDrawerOpen(Gravity.END)) {
-                var songItem = adapter.data.get(position)
-                presenter.onSongSelected(songItem)
+                val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size()))
+                presenter.requestPlayAll(afterPositions)
             }
         }
 
@@ -115,6 +118,9 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
 
         recyclerView setAdapter ScaleInAnimationAdapter(adapter)
+
+        /*Consume all touch events so none are passed to the recyclerview below*/
+        drawerContent.setOnTouchListener { view, motionEvent -> true }
     }
 
     override fun onResume() {
@@ -166,5 +172,20 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     override fun publishError(error: String) {
         toast(error)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_play_all -> {
+                presenter.requestPlayAll(adapter.data)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
