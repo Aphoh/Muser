@@ -1,5 +1,6 @@
 package com.aphoh.muser.base;
 
+import com.aphoh.muser.BuildConfig;
 import com.aphoh.muser.network.SoundcloudKeys;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,6 @@ public class MuserSoundcloudKeys implements SoundcloudKeys{
     @NotNull
     @Override
     public String getClientId() {
-        return "81e4c3f234711ed893e32397d52cc2e6";
+        return BuildConfig.SC_CLIENT_ID;
     }
 }

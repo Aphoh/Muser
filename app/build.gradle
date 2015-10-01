@@ -35,6 +35,9 @@ android {
         }
     }
     buildTypes {
+        all{
+            buildConfigField 'String', 'SC_CLIENT_ID', "\"$SC_CLIENT_ID\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
