@@ -128,25 +128,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         outState?.putBoolean("hasSong", hasSong)
     }
 
-    public fun publishSongPlay(songItem: SongItem) {
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-        if (songItem.streamUrl != null) {
-            hasSong = true
-            if (!drawerLayout.isDrawerOpen(Gravity.END)) {
-                drawerLayout.openDrawer(Gravity.END)
-            }
-            Picasso.with(this)
-                    .load(songItem.getImage())
-                    .fit()
-                    .centerCrop()
-                    .into(songCover)
-            Picasso.with(this)
-                    .load(songItem.getWaveformUrl())
-                    .into(waveForm)
-            titleText.setText(songItem.getSongTitle())
-            artistText.setText(songItem.getArtist())
-        }
-    }
 
     override fun publish(items: List<SongItem>) {
         if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(false)
