@@ -16,9 +16,7 @@ import java.util.*
 /**
  * Created by Will on 7/5/2015.
  */
-public class MuserDataInteractor(var okClient: OkHttpClient) : DataInteractor {
-
-    private final val clientId = "81e4c3f234711ed893e32397d52cc2e6"
+public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys: SoundcloudKeys) : DataInteractor {
 
     var log = LogUtil(MuserDataInteractor::class.java.simpleName)
 
@@ -75,10 +73,11 @@ public class MuserDataInteractor(var okClient: OkHttpClient) : DataInteractor {
     }
 
     public override fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem> {
-        return soundcloudService.getSongFromUrl(songItem.getLinkUrl(), clientId)
+        return soundcloudService.getSongFromUrl(songItem.getLinkUrl(), soundcloudKeys.clientId)
                 .map({ track ->
                     log.d("Track url returned: ${track.stream_url}")
-                    songItem.streamUrl = track.stream_url
+                    var stream = "${track.stream_url}?client_id=${soundcloudKeys.clientId}"
+                    songItem.streamUrl = stream
                     songItem.waveformUrl = track.waveform_url
                     songItem.update()
                     songItem

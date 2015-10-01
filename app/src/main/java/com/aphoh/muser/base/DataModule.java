@@ -5,6 +5,7 @@ import android.content.Context;
 import com.aphoh.muser.BuildConfig;
 import com.aphoh.muser.network.DataInteractor;
 import com.aphoh.muser.network.MuserDataInteractor;
+import com.aphoh.muser.network.SoundcloudKeys;
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -40,8 +41,13 @@ public class DataModule {
 
     @Provides
     @Singleton
-    MuserDataInteractor provideDataInteractor(OkHttpClient client){
-        return new MuserDataInteractor(client);
+    DataInteractor provideDataInteractor(OkHttpClient client, SoundcloudKeys keys){
+        return new MuserDataInteractor(client, keys);
     }
 
+    @Provides
+    @Singleton
+    SoundcloudKeys provideSoundcloudKeys(){
+        return new MuserSoundcloudKeys();
+    }
 }
