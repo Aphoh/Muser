@@ -11,6 +11,7 @@ import android.util.SparseArray
 import com.aphoh.muser.App
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.util.LogUtil
+import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
@@ -26,7 +27,9 @@ public class MusicService() : Service() {
     private var mMediaPlayer = MediaPlayer()
     private var mSongs: MutableList<SongItem> = ArrayList()
     private var mIndex = 0
+    private val mBinder = NotificationBinder()
     var views = SparseArray<MusicView>()
+    var tickerSub: Subscription? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -34,10 +37,15 @@ public class MusicService() : Service() {
         mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK)
     }
 
-    override fun onBind(intent: Intent?): IBinder? = NotificationBinder()
+    override fun onBind(intent: Intent?): IBinder = mBinder
 
     public inner class NotificationBinder() : android.os.Binder() {
+        init {
+            log.d("Created Notification binder")
+        }
+
         public var service: MusicService = this@MusicService
+
     }
 
     public fun bind(id: Int, musicView: MusicView) {
@@ -49,6 +57,7 @@ public class MusicService() : Service() {
     }
 
     public fun playSongs(songItems: List<SongItem>) {
+        log.d("PlaySongs called with songs: $songItems")
         mSongs = ArrayList(songItems)
         if (!mSongs.isEmpty()) {
             mIndex = 0
@@ -58,8 +67,7 @@ public class MusicService() : Service() {
 
     public fun playSong(index: Int) {
         var item = mSongs.get(index)
-        for (i in 0..views.size()) {
-            val view = views.valueAt(i)
+        doOnViews { view ->
             view.publishProgress(-1)
             view.publishAlbumArt(item.image)
             view.publishSongName(item.songTitle)
@@ -82,26 +90,40 @@ public class MusicService() : Service() {
         } else {
             mMediaPlayer.setDataSource(item.streamUrl)
             mMediaPlayer.setOnPreparedListener {
+                log.d("Prepared, playing...")
                 mMediaPlayer.start()
-                rx.Observable.timer(200, TimeUnit.MILLISECONDS)
+                tickerSub = rx.Observable.interval(200, TimeUnit.MILLISECONDS)
+                        .repeat()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
                             log.d("Emitted long $it")
                             var position = (mMediaPlayer.currentPosition.toDouble() / 1000.0).toInt()
-                            doOnViews(views, { it.publishProgress(position) })
+                            doOnViews { it.publishProgress(position) }
                         }
             }
             mMediaPlayer.setOnCompletionListener {
+                tickerSub?.unsubscribe()
                 mIndex += 1
-                playSong(mIndex)
+                if (mSongs.size() < mIndex) playSong(mIndex)
+            }
+            mMediaPlayer.setOnErrorListener { mediaPlayer, what, extra ->
+                tickerSub?.unsubscribe()
+                log.e("Error in mediaPlayer $what-$extra")
+                doOnViews { it.publishError("Error playing media: $what-$extra") }
+                true
             }
             mMediaPlayer.prepareAsync()
         }
     }
 
-    private fun doOnViews(views: SparseArray<MusicView>, operation: (MusicView) -> Unit) {
-        for (i in 0..views.size()) operation.invoke(views.valueAt(i))
+    override fun onDestroy() {
+        super.onDestroy()
+        tickerSub?.unsubscribe()
+    }
+
+    private fun doOnViews(operation: (MusicView) -> Unit) {
+        for (i in 0..views.size() - 1) operation.invoke(views.valueAt(i))
     }
 
 
@@ -119,7 +141,8 @@ public class MusicService() : Service() {
         mMediaPlayer.reset()
     }
 
-    companion object IntentFactory{
+
+    companion object IntentFactory {
         public fun getIntent(context: Context): Intent = Intent(context, MusicService::class.java)
     }
 }

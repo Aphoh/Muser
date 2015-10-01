@@ -1,12 +1,9 @@
 package com.aphoh.muser
 
-import android.app.Application
 import com.aphoh.muser.base.ApplicationComponent
 import com.aphoh.muser.base.BaseApplication
-import com.aphoh.muser.base.DataModule
 import com.facebook.stetho.Stetho
 import com.raizlabs.android.dbflow.config.FlowManager
-import kotlin.platform.platformStatic
 import kotlin.properties.Delegates
 
 /**
@@ -14,8 +11,8 @@ import kotlin.properties.Delegates
  */
 public class App : BaseApplication() {
 
-    companion object{
-        @JvmStatic public var applicationComponent : ApplicationComponent by Delegates.notNull()
+    companion object {
+        @JvmStatic public var applicationComponent: ApplicationComponent by Delegates.notNull()
     }
 
     override fun onCreate() {
