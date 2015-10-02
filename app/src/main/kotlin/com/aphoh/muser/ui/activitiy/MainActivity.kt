@@ -71,7 +71,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         drawerLayout.setDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerClosed(drawerView: View?) {
                 swipeRefreshLayout.setOnTouchListener { view, motionEvent ->
-                    log.d("OnTouch return false")
                     false
                 }
                 log.d("SetClickable true")
@@ -93,7 +92,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             }
         })
 
-        swipeRefreshLayout setOnRefreshListener{
+        swipeRefreshLayout.setOnRefreshListener {
             presenter.refresh(this)
         }
 
@@ -117,7 +116,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         }
 
 
-        recyclerView setAdapter ScaleInAnimationAdapter(adapter)
+        recyclerView.adapter = ScaleInAnimationAdapter(adapter)
 
         /*Consume all touch events so none are passed to the recyclerview below*/
         drawerContent.setOnTouchListener { view, motionEvent -> true }
@@ -126,11 +125,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     override fun onResume() {
         super.onResume()
         if (!hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -182,6 +176,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_play_all -> {
+                toast("Playy ")
                 presenter.requestPlayAll(adapter.data)
                 return true
             }
