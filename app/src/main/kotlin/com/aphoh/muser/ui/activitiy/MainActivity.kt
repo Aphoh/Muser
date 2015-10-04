@@ -34,17 +34,19 @@ import java.util.*
 public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>(), MusicView {
     var log = LogUtil(MainActivity::class.java.simpleName)
 
-    val recyclerView: RecyclerView by bindView(R.id.recyclerview_main)
+    val recyclerViewMain: RecyclerView by bindView(R.id.recyclerview_main)
     val swipeRefreshLayout: SwipeRefreshLayout by bindView(R.id.swiperefresh_main)
-
     val mainContent: RelativeLayout by bindView(R.id.relativelayout_main_content)
 
     val drawerLayout: DrawerLayout by bindView(R.id.drawerlayout_main)
-    val drawerContent: RelativeLayout by bindView(R.id.drawercontent_main)
+
+    val drawerContentSongView: RelativeLayout by bindView(R.id.drawercontent_main)
     val songCover: ImageView by bindView(R.id.imageview_main_song)
     val waveForm: ImageView by bindView(R.id.imageview_waveform)
     val titleText: TextView by bindView(R.id.textview_main_song_title)
     val artistText: TextView by bindView(R.id.textview_main_song_artist)
+
+    val recyclerViewSubreddits: RecyclerView by bindView(R.id.recyclerview_subreddits)
 
     var view = this
     var adapter: MainAdapter = MainAdapter(this)
@@ -96,8 +98,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             presenter.refresh(this)
         }
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerViewMain.layoutManager = LinearLayoutManager(this)
+        recyclerViewMain.itemAnimator = DefaultItemAnimator()
 
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
@@ -116,15 +118,15 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         }
 
 
-        recyclerView.adapter = ScaleInAnimationAdapter(adapter)
+        recyclerViewMain.adapter = ScaleInAnimationAdapter(adapter)
 
         /*Consume all touch events so none are passed to the recyclerview below*/
-        drawerContent.setOnTouchListener { view, motionEvent -> true }
+        drawerContentSongView.setOnTouchListener { view, motionEvent -> true }
     }
 
     override fun onResume() {
         super.onResume()
-        if (!hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        if (!hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, drawerContentSongView)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

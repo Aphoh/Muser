@@ -40,4 +40,6 @@
 
     <include layout="@layout/drawer_main"/>
 
+    <include layout="@layout/drawer_subreddits"/>
+
 </android.support.v4.widget.DrawerLayout>

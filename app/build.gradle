@@ -63,6 +63,7 @@ dependencies {
     compile "com.raizlabs.android:DBFlow-Core:$dbflow_version"
     compile "com.raizlabs.android:DBFlow:$dbflow_version"
     //UI Libs
+    compile 'me.grantland:autofittextview:0.2.+'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'jp.wasabeef:recyclerview-animators:1.2.1@aar'
     //Networking Libs
