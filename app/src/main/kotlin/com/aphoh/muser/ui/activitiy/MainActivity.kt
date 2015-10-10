@@ -46,8 +46,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     val titleText: TextView by bindView(R.id.textview_main_song_title)
     val artistText: TextView by bindView(R.id.textview_main_song_artist)
 
-    val recyclerViewSubreddits: RecyclerView by bindView(R.id.recyclerview_subreddits)
-
     var view = this
     var adapter: MainAdapter = MainAdapter(this)
     var hasSong = false;
@@ -60,10 +58,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         if (savedInstanceState != null) {
             hasSong = savedInstanceState.getBoolean("hasSong")
         }
-
-        val top = statusBarHeight
-        log.d("top: $top")
-        toolbar.bottom = (toolbar.bottom + top)
 
         var params = waveForm.layoutParams as RelativeLayout.LayoutParams
         params.bottomMargin += getNavigationBarHeight(this)
@@ -116,7 +110,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
                 if (intent.resolveActivity(packageManager) != null) startActivity(intent)
             }
         }
-
 
         recyclerViewMain.adapter = ScaleInAnimationAdapter(adapter)
 
