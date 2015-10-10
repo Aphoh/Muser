@@ -37,6 +37,14 @@ public class Subreddit extends BaseModel {
         return songs;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public List<SongItem> getSongs() {
+        return songs;
+    }
+
     public String getName() {
         return name;
     }

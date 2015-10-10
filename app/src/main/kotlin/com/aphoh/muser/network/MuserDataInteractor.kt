@@ -35,46 +35,36 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
     // Network Calls
     // ===========================================
 
+
     public override fun refresh(subreddit: String): Observable<ArrayList<SongItem>> {
         return redditService.getSubredditSubmissions(subreddit, 100)
-                .map { it.getData().getPostItems() }
+                .map { it.data.postItems }
                 .map { items ->
-                    var newItems = ArrayList<SongItem>()
                     var subs = Select().from(Subreddit::class.java).where(Condition.column(DBTableAlias.SubredditNAME).`is`(subreddit)).queryList()
                     var sub = Subreddit()
-                    if (subs.size() == 0) {
-                        sub.name = (subreddit)
+
+                    if (subs.isEmpty() && items.isNotEmpty()) {
+                        sub.name = subreddit
                         saveSub(sub)
-                    } else {
+                    } else if (items.isNotEmpty() && subs.size() > 0) {
                         sub = subs.get(0)
                     }
-                    for (item in items) {
-                        val data = item.data
-                        if (isSoundcloudUrl(data.url)) {
-                            var songItem = SongItem()
-                            if (data.media == null) {
-                                log.e("Media is null for data with url ${data.url}, item url ${data.url}}")
-                            } else {
-                                var oembed = data.media.oembed
-                                songItem.id = data.id
-                                songItem.image = oembed.thumbnail_url
-                                songItem.artist = oembed.author_name
-                                songItem.songTitle = (removeByLine(oembed.title))
-                                songItem.linkUrl = data.url
-                                songItem.score = data.score.toInt()
-                                songItem.associateSubreddit(sub)
-                                newItems.add(songItem)
-                            }
-                        }
-                    }
+
+                    var result =
+                            items.map { it.data }
+                                    .filter { isSoundcloudUrl(it.url) }
+                                    .map { SongItem.fromPostData(it) }
+                                    .toArrayList()
+                    result.forEach { it.associateSubreddit(sub) }
+
                     clearSongs(sub)
-                    saveItems(newItems)
-                    newItems
+                    saveItems(result)
+                    result
                 }
     }
 
     public override fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem> {
-        return soundcloudService.getSongFromUrl(songItem.getLinkUrl(), soundcloudKeys.clientId)
+        return soundcloudService.getSongFromUrl(songItem.linkUrl, soundcloudKeys.clientId)
                 .map({ track ->
                     log.d("Track url returned: ${track.stream_url}")
                     var stream = "${track.stream_url}?client_id=${soundcloudKeys.clientId}"
@@ -90,11 +80,11 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
     // ===========================================
 
     private fun clearSongs(sub: Subreddit) {
-        var songs: List<BaseModel> = Select().from(SongItem::class.java).queryList()
-        sub.delete()
-        for (song in songs) {
-            song.delete()
-        }
+        var songs: List<BaseModel> = Select()
+                .from(SongItem::class.java)
+                .where(Condition.column(DBTableAlias.SubredditID).`is`(sub.id))
+                .queryList()
+        songs.forEach { it.delete() }
     }
 
     private fun saveSub(item: Subreddit) {
@@ -102,12 +92,9 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
     }
 
     private fun saveItems(items: ArrayList<SongItem>) {
-        for (item in items) {
-            item.save()
-        }
+        items.forEach { it.save() }
     }
 
-    private fun removeByLine(s: String): String = s.substringBeforeLast(" by")
 
     protected override fun isSoundcloudUrl(url: String): Boolean {
         return url.startsWith("http://soundcloud.com") || url.startsWith("https://soundcloud.com")
@@ -139,4 +126,8 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
                     .from(SongItem::class.java)
                     .where(Condition.column(DBTableAlias.SongItemSUBREDDITMODELCONTAINER_SUBREDDIT_ID).`is`(subredditId))
                     .queryList())
+
+    companion object Utils {
+        public fun removeByLine(s: String): String = s.substringBeforeLast(" by")
+    }
 }

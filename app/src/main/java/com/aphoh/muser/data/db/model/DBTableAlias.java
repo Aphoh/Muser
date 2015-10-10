@@ -21,4 +21,6 @@ public class DBTableAlias {
 
     public static final String SubredditNAME = Subreddit$Table.NAME;
 
+    public static final String SubredditID = Subreddit$Table.ID;
+
 }
