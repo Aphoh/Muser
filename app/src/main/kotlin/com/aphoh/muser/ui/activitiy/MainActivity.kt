@@ -3,6 +3,7 @@ package com.aphoh.muser.ui.activitiy
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.SwipeRefreshLayout
@@ -17,7 +18,6 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import bindView
-import com.aphoh.muser.BuildConfig
 import com.aphoh.muser.R
 import com.aphoh.muser.base.BaseNucleusActivity
 import com.aphoh.muser.data.db.model.SongItem
@@ -32,6 +32,9 @@ import java.util.*
 
 @RequiresPresenter(MainPresenter::class)
 public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>(), MusicView {
+    private final val HAS_SONG = "HAS_SONG"
+    private final val NAV_MENU_SELECTED = "NAV_MENU_SELECTED"
+
     var log = LogUtil(MainActivity::class.java.simpleName)
 
     val recyclerViewMain: RecyclerView by bindView(R.id.recyclerview_main)
@@ -46,6 +49,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     val titleText: TextView by bindView(R.id.textview_main_song_title)
     val artistText: TextView by bindView(R.id.textview_main_song_artist)
 
+    val navigationView: NavigationView by bindView(R.id.navigation_view)
+
     var view = this
     var adapter: MainAdapter = MainAdapter(this)
     var hasSong = false;
@@ -56,7 +61,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState != null) {
-            hasSong = savedInstanceState.getBoolean("hasSong")
+            hasSong = savedInstanceState.getBoolean(HAS_SONG)
         }
 
         var params = waveForm.layoutParams as RelativeLayout.LayoutParams
@@ -115,6 +120,12 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         /*Consume all touch events so none are passed to the recyclerview below*/
         drawerContentSongView.setOnTouchListener { view, motionEvent -> true }
+
+        navigationView.setNavigationItemSelectedListener {
+            presenter.refresh(this)
+            swipeRefreshLayout.isRefreshing = true
+            true
+        }
     }
 
     override fun onResume() {
@@ -124,11 +135,21 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putBoolean("hasSong", hasSong)
+        outState?.putBoolean(HAS_SONG, hasSong)
+        var selected = getSelectedId(navigationView.menu)
+        if(selected != null)
+            outState?.putInt(NAV_MENU_SELECTED, selected)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val selected = savedInstanceState?.getInt(NAV_MENU_SELECTED, -1)
+        if(selected != null && selected != -1)
+            navigationView.setCheckedItem(selected)
     }
 
     override fun publish(items: List<SongItem>) {
-        if (swipeRefreshLayout.isRefreshing) swipeRefreshLayout.isRefreshing = false
+        swipeRefreshLayout.isRefreshing = false
         if (drawerLayout.isDrawerOpen(Gravity.END)) drawerLayout.closeDrawer(Gravity.END)
         adapter.updateItems(items)
     }
@@ -177,5 +198,24 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    public fun getSelectedId(menu: Menu): Int?{
+        for(i in 0..menu.size() - 1){
+            if(menu.getItem(i).isChecked) return menu.getItem(i).itemId
+        }
+        return null
+    }
+
+    public fun getSubreddit(): String {
+        var subreddit = "nothing"
+        IntRange(0, navigationView.menu.size())
+                .forEach { }
+        for (i in 0..navigationView.menu.size() - 1) {
+            val item = navigationView.menu.getItem(i);
+            if (item.isChecked) subreddit = item.title.toString()
+        }
+        log.d("Subreddit: " + subreddit)
+        return subreddit
     }
 }

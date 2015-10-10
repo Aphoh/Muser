@@ -47,7 +47,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     }
 
     public override fun refresh(view: MainActivity) {
-        subreddit = "trap"
+        this.subreddit = view.getSubreddit()
         dataInteractor.refresh(subreddit)
                 .compose(this.deliver<List<SongItem>>())
                 .subscribeOn(Schedulers.io())
