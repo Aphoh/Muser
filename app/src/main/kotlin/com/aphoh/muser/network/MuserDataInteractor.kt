@@ -54,8 +54,12 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
                             items.map { it.data }
                                     .filter { isSoundcloudUrl(it.url) }
                                     .map { SongItem.fromPostData(it) }
+                                    .map {
+                                        it.associateSubreddit(sub)
+                                        it
+                                    }
                                     .toArrayList()
-                    result.forEach { it.associateSubreddit(sub) }
+
 
                     clearSongs(sub)
                     saveItems(result)

@@ -42,18 +42,8 @@ public class MainAdapter(val context: Context) : RecyclerView.Adapter<MainAdapte
     }
 
     public fun updateItems(songItems: List<SongItem>) {
-        if (!data.isEmpty()) {
-            var s = data.size() - 1
-            for (i in s downTo 0) {
-                data.remove(i)
-                notifyItemRemoved(i)
-            }
-        }
-        log.d("songItems size: ${songItems.size()}")
-        for (i in songItems.indices) {
-            data.add(songItems.get(i))
-            notifyItemInserted(i)
-        }
+        data = ArrayList(songItems)
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

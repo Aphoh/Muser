@@ -62,6 +62,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         if (savedInstanceState != null) {
             hasSong = savedInstanceState.getBoolean(HAS_SONG)
+            if(hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END)
         }
 
         var params = waveForm.layoutParams as RelativeLayout.LayoutParams
@@ -123,7 +124,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         navigationView.setNavigationItemSelectedListener {
             presenter.refresh(this)
-            swipeRefreshLayout.isRefreshing = true
+            swipeRefreshLayout.setRefreshing(true)
             true
         }
     }
@@ -192,7 +193,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_play_all -> {
-                toast("Playy ")
+                toast("Play all")
                 presenter.requestPlayAll(adapter.data)
                 return true
             }
