@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/drawer_trap"
-            android:checked="true"
-            android:icon="@drawable/fire_emoji"
-            android:title="@string/trap"/>
+  <group android:checkableBehavior="single">
+    <item
+        android:id="@+id/drawer_trap"
+        android:checked="true"
+        android:icon="@drawable/fire_emoji"
+        android:title="@string/trap"
+        />
 
-        <item
-            android:id="@+id/drawer_chillmusic"
-            android:checked="false"
-            android:icon="@drawable/droplet_emoji"
-            android:title="@string/chillmusic"/>
-    </group>
+    <item
+        android:id="@+id/drawer_chillmusic"
+        android:checked="false"
+        android:icon="@drawable/droplet_emoji"
+        android:title="@string/chillmusic"
+        />
+  </group>
+
 </menu>

@@ -16,7 +16,7 @@ public class App : BaseApplication() {
     }
 
     override fun onCreate() {
-        super<BaseApplication>.onCreate()
+        super.onCreate()
         Stetho.initialize(Stetho.newInitializerBuilder(this)
                 .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                 .enableDumpapp(Stetho.defaultDumperPluginsProvider(this)).build())
