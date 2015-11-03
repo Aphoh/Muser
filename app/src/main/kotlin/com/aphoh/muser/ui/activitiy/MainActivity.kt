@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import bindView
+import com.aphoh.muser.BuildConfig
 import com.aphoh.muser.R
 import com.aphoh.muser.base.BaseNucleusActivity
 import com.aphoh.muser.data.db.model.SongItem
@@ -59,6 +60,9 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Picasso.with(this).isLoggingEnabled = BuildConfig.DEBUG
+
 
         if (savedInstanceState != null) {
             hasSong = savedInstanceState.getBoolean(HAS_SONG)
