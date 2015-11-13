@@ -18,7 +18,7 @@ import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
  * Created by Will on 7/5/2015.
  */
 @Table(databaseName = SongDatabase.NAME, tableName = "SongItems")
-public class SongItem extends BaseModel implements SongResponseModel {
+public class SongItem extends BaseModel {
 
     public SongItem() {
         super();
@@ -41,28 +41,28 @@ public class SongItem extends BaseModel implements SongResponseModel {
     public String id;
 
     @Column
-    String image;
+    public String image;
 
     @Column
-    String thumbnail;
+    public String thumbnail;
 
     @Column(name = "link_url")
-    String linkUrl;
+    public String linkUrl;
 
     @Column(name = "stream_url")
-    String streamUrl;
+    public String streamUrl;
 
     @Column(name = "waveform_url")
-    String waveformUrl;
+    public String waveformUrl;
 
     @Column
-    int score;
+    public int score;
 
     @Column
-    String artist;
+    public String artist;
 
     @Column
-    String songTitle;
+    public String songTitle;
 
     @Column
     @ForeignKey(
@@ -75,78 +75,6 @@ public class SongItem extends BaseModel implements SongResponseModel {
     public void associateSubreddit(Subreddit subreddit) {
         subredditModelContainer = new ForeignKeyContainer<>(Subreddit.class);
         subredditModelContainer.setModel(subreddit);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public String getLinkUrl() {
-        return linkUrl;
-    }
-
-    public void setLinkUrl(String linkUrl) {
-        this.linkUrl = linkUrl;
-    }
-
-    public String getStreamUrl() {
-        return streamUrl;
-    }
-
-    public void setStreamUrl(String streamUrl) {
-        this.streamUrl = streamUrl;
-    }
-
-    public String getWaveformUrl() {
-        return waveformUrl;
-    }
-
-    public void setWaveformUrl(String waveformUrl) {
-        this.waveformUrl = waveformUrl;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public String getSongTitle() {
-        return songTitle;
-    }
-
-    public void setSongTitle(String songTitle) {
-        this.songTitle = songTitle;
     }
 
     public static SongItem fromPostData(PostData data) {
