@@ -100,7 +100,7 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
     }
 
 
-    protected override fun isSoundcloudUrl(url: String): Boolean {
+    private fun isSoundcloudUrl(url: String): Boolean {
         return url.startsWith("http://soundcloud.com") || url.startsWith("https://soundcloud.com")
     }
 

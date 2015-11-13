@@ -18,12 +18,6 @@ interface DataInteractor {
 
     public fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem>
 
-    // ===========================================
-    // DB Utility Functions
-    // ===========================================
-
-    protected fun isSoundcloudUrl(url: String): Boolean
-
     //Observable Getters
 
     public fun getSongItem(songId: String): Observable<List<SongItem>>
