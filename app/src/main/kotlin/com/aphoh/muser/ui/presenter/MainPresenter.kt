@@ -12,9 +12,9 @@ import com.aphoh.muser.music.MusicService
 import com.aphoh.muser.network.DataInteractor
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil
+import retrofit.RetrofitError
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.util.*
 
 /**
  * Created by Will on 7/1/2015.
@@ -30,7 +30,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         super.onCreate(savedState)
         dataInteractor.getSongItems()
                 .flatMap {
-                    if (it.size() == 0) dataInteractor.refresh(subreddit) else dataInteractor.getSongItems()
+                    if (it.size == 0) dataInteractor.refresh(subreddit) else dataInteractor.getSongItems()
                 }
                 .compose(this.deliverLatestCache<List<SongItem>>())
                 .subscribeOn(Schedulers.io())
@@ -54,9 +54,18 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe (
                         { result ->
-                            getView().publish(result)
+                            if (getView() != null) {
+                                getView().publish(result)
+                            }
                         },
                         { throwable ->
+                            getView()?.let {
+                                var error = "Non-network error refreshing, this is a bug"
+                                if (throwable is RetrofitError) {
+                                    error = "Network Error ${throwable.response.status}, check your connection"
+                                }
+                                it.publishError(error)
+                            }
                             log.e("Error refreshing", throwable)
                         })
     }
@@ -70,23 +79,14 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         /*Do here so it's called before getView() is null*/
         if (binder != null) {
             var bound = binder?.service?.isBound(getView())
-            if (bound != null && bound)
-                binder?.service?.unbind(getView())
+            if (bound != null && bound) binder?.service?.unbind(getView())
         }
         if (serviceConnection != null) getView().unbindService(serviceConnection)
         binder = null
         super.dropView()
     }
 
-    public fun onSongSelected(songItem: SongItem) {
-        log.d("Song selected, playing song...")
-        autoBindOperation {
-            log.d("Got binder: $it")
-            it.service.playSongs(Arrays.asList(songItem))
-        }
-    }
-
-    public fun requestPlayAll(songItems: List<SongItem>){
+    public fun requestPlayAll(songItems: List<SongItem>) {
         autoBindOperation {
             log.d("Playing all songs")
             it.service.playSongs(songItems)

@@ -8,6 +8,7 @@
     <dimen name="controls_padding">8dp</dimen>
     <dimen name="statusbar_height">25dp</dimen>
     <dimen name="statusbar_negative_height">-25dp</dimen>
+    <dimen name="navbar_height">55dp</dimen>
 
     <dimen name="pause_bar_width">48dp</dimen>
     <dimen name="pause_bar_distance">40dp</dimen>

@@ -6,7 +6,7 @@ package com.aphoh.muser.util
 public class LogUtil(logTag: String) {
     private val logTag = logTag
 
-    public fun d(message: String) {
+    public infix fun d(message: String) {
         android.util.Log.d(logTag, message)
     }
 

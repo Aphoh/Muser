@@ -1,55 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/drawercontent_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawercontent_main"
     android:layout_width="320dp"
     android:layout_height="match_parent"
     android:layout_gravity="end"
     android:background="@color/primary_dark"
     android:fitsSystemWindows="true"
-    android:paddingTop="@dimen/statusbar_height">
+    android:paddingTop="@dimen/statusbar_height"
+    >
 
-    <ImageView
-        android:id="@+id/imageview_main_song"
+  <ImageView
+      android:id="@+id/imageview_main_song"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_alignParentTop="true"
+      />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal|top"
+      android:background="@drawable/text_backdrop"
+      android:orientation="vertical"
+      android:padding="24dp"
+      android:paddingBottom="40dp"
+      >
+
+    <TextView
+        android:id="@+id/textview_main_song_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"/>
+        android:layout_gravity="center_horizontal"
+        android:text="hi"
+        android:textColor="@color/primary_text_light"
+        android:textSize="@dimen/abc_text_size_title_material"
+        />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textview_main_song_artist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top"
-        android:background="@drawable/text_backdrop"
-        android:orientation="vertical"
-        android:padding="24dp"
-        android:paddingBottom="40dp">
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:text="hi"
+        android:textColor="@color/secondary_text_light"
+        android:textSize="@dimen/abc_text_size_subtitle_material_toolbar"
+        />
+  </LinearLayout>
 
-        <TextView
-            android:id="@+id/textview_main_song_title"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:text="hi"
-            android:textColor="@color/primary_text_light"
-            android:textSize="@dimen/abc_text_size_title_material"/>
+  <ImageView
+      android:id="@+id/imageview_waveform"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_margin="24dp"
+      android:adjustViewBounds="true"
+      />
 
-        <TextView
-            android:id="@+id/textview_main_song_artist"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:text="hi"
-            android:textColor="@color/secondary_text_light"
-            android:textSize="@dimen/abc_text_size_subtitle_material_toolbar"/>
-    </LinearLayout>
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="@dimen/navbar_height"
+      android:layout_centerHorizontal="true"
+      >
 
     <ImageView
-        android:id="@+id/imageview_waveform"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="24dp"
-        android:adjustViewBounds="true"/>
+        android:id="@+id/drawer_rewind"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_fast_rewind"
+        />
+
+    <com.aphoh.muser.ui.view.PausePlayView
+        android:id="@+id/drawer_pause_play_view"
+        android:layout_width="56dp"
+        android:layout_weight="1"
+        android:layout_height="56dp"
+        />
+
+      <ImageView
+          android:layout_width="56dp"
+          android:layout_height="56dp"
+          android:layout_weight="1"
+          android:src="@drawable/ic_fast_forward"
+          />
+
+  </LinearLayout>
 
 
 </RelativeLayout>

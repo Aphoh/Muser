@@ -66,7 +66,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         if (savedInstanceState != null) {
             hasSong = savedInstanceState.getBoolean(HAS_SONG)
-            if(hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END)
+            if (hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END)
         }
 
         var params = waveForm.layoutParams as RelativeLayout.LayoutParams
@@ -108,7 +108,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
             if (!drawerLayout.isDrawerOpen(Gravity.END)) {
-                val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size()))
+                val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size))
                 presenter.requestPlayAll(afterPositions)
             }
         }
@@ -128,7 +128,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         navigationView.setNavigationItemSelectedListener {
             presenter.refresh(this)
-            swipeRefreshLayout.setRefreshing(true)
+            swipeRefreshLayout.isRefreshing = true
+            drawerLayout.closeDrawer(Gravity.START)
             true
         }
     }
@@ -142,15 +143,13 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         super.onSaveInstanceState(outState)
         outState?.putBoolean(HAS_SONG, hasSong)
         var selected = getSelectedId(navigationView.menu)
-        if(selected != null)
-            outState?.putInt(NAV_MENU_SELECTED, selected)
+        if (selected != null) outState?.putInt(NAV_MENU_SELECTED, selected)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         val selected = savedInstanceState?.getInt(NAV_MENU_SELECTED, -1)
-        if(selected != null && selected != -1)
-            navigationView.setCheckedItem(selected)
+        if (selected != null && selected != -1) navigationView.setCheckedItem(selected)
     }
 
     override fun publish(items: List<SongItem>) {
@@ -187,6 +186,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     override fun publishError(error: String) {
         toast(error)
+        swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -205,17 +205,15 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         return super.onOptionsItemSelected(item)
     }
 
-    public fun getSelectedId(menu: Menu): Int?{
-        for(i in 0..menu.size() - 1){
-            if(menu.getItem(i).isChecked) return menu.getItem(i).itemId
+    public fun getSelectedId(menu: Menu): Int? {
+        for (i in 0..menu.size() - 1) {
+            if (menu.getItem(i).isChecked) return menu.getItem(i).itemId
         }
         return null
     }
 
     public fun getSubreddit(): String {
-        var subreddit = "nothing"
-        IntRange(0, navigationView.menu.size())
-                .forEach { }
+        var subreddit = ""
         for (i in 0..navigationView.menu.size() - 1) {
             val item = navigationView.menu.getItem(i);
             if (item.isChecked) subreddit = item.title.toString()

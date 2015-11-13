@@ -42,17 +42,22 @@ public class MainAdapter(val context: Context) : RecyclerView.Adapter<MainAdapte
     }
 
     public fun updateItems(songItems: List<SongItem>) {
-        data = ArrayList(songItems)
-        notifyDataSetChanged()
+        for (i in 0..(data.size - 1)) {
+            data.removeAt(i)
+            notifyItemRemoved(i)
+        }
+
+        for (i in 0..songItems.size - 1) {
+            data.add(songItems[i])
+            notifyItemInserted(i)
+        }
     }
 
     override fun getItemCount(): Int {
-        return data.size()
+        return data.size
     }
 
-    override fun getItemId(position: Int): Long {
-        return data.get(position).getId().hashCode().toLong()
-    }
+    override fun getItemId(position: Int): Long = data[position].id.hashCode().toLong()
 
     override fun onBindViewHolder(holder: SongHolder, position: Int) {
         val songItem = data.get(position)
