@@ -13,8 +13,6 @@ import com.aphoh.muser.network.DataInteractor
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil
 import retrofit.RetrofitError
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 
 /**
  * Created by Will on 7/1/2015.
@@ -22,6 +20,7 @@ import rx.schedulers.Schedulers
 public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>() {
     private var log = LogUtil(MainPresenter::class.java.simpleName)
     var dataInteractor: DataInteractor = App.applicationComponent.interactor()
+    var transformer = App.applicationComponent.transformer()
     var subreddit: String = "trap"
     public var binder: MusicService.NotificationBinder? = null
     private var serviceConnection: ServiceConnection? = null
@@ -32,14 +31,11 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                 .flatMap {
                     if (it.size == 0) dataInteractor.refresh(subreddit) else dataInteractor.getSongItems()
                 }
-                .compose(this.deliverLatestCache<List<SongItem>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.deliver<List<SongItem>>())
+                .compose(transformer.get<List<SongItem>>())
                 .subscribe(
                         { result ->
-                            if (getView() != null) {
-                                getView().publish(result)
-                            }
+                            view.publish(result)
                         },
                         { throwable ->
                             log.e("Error retrieving songs", throwable)
@@ -48,15 +44,13 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
 
     public override fun refresh(view: MainActivity) {
         this.subreddit = view.getSubreddit()
+        view.invalidateDataset()
         dataInteractor.refresh(subreddit)
                 .compose(this.deliver<List<SongItem>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(transformer.get<List<SongItem>>())
                 .subscribe (
                         { result ->
-                            if (getView() != null) {
-                                getView().publish(result)
-                            }
+                            getView().publish(result)
                         },
                         { throwable ->
                             getView()?.let {
@@ -72,16 +66,23 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
 
     override fun onTakeView(view: MainActivity) {
         super.onTakeView(view)
-        autoBindOperation { it.service.bind(view) }
+        autoBindOperation {
+            it.service.bind(view)
+            it.service.bind(view.playPauseView)
+        }
     }
 
     override fun dropView() {
         /*Do here so it's called before getView() is null*/
-        if (binder != null) {
-            var bound = binder?.service?.isBound(getView())
-            if (bound != null && bound) binder?.service?.unbind(getView())
+        binder?.apply {
+            if (service.isBound(view))
+                service.unbind(view)
+            if (service.isBound(view.playPauseView))
+                service.unbind(view.playPauseView)
         }
-        if (serviceConnection != null) getView().unbindService(serviceConnection)
+        serviceConnection?.let {
+            view.unbindService(it)
+        }
         binder = null
         super.dropView()
     }
@@ -96,7 +97,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     private fun autoBindOperation(action: (MusicService.NotificationBinder) -> Unit) {
         if (binder == null) {
             var intent = MusicService.getIntent(view)
-            getView().startService(intent)
+            view.startService(intent)
             serviceConnection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder) {
                     log.d("Service bound")
@@ -108,9 +109,11 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                     binder = null
                 }
             }
-            getView().bindService(intent, serviceConnection, Context.BIND_ABOVE_CLIENT)
+            view.bindService(intent, serviceConnection, Context.BIND_ABOVE_CLIENT)
         } else {
-            action.invoke(binder!!)
+            binder?.apply {
+                action.invoke(this)
+            }
         }
     }
 }
