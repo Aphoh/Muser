@@ -42,15 +42,19 @@ public class MainAdapter(val context: Context) : RecyclerView.Adapter<MainAdapte
     }
 
     public fun updateItems(songItems: List<SongItem>) {
-        for (i in 0..(data.size - 1)) {
-            data.removeAt(i)
-            notifyItemRemoved(i)
-        }
+        if(!data.isEmpty()) clearSongs()
+        data.addAll(songItems)
+        notifyItemRangeInserted(0, data.size)
+    }
 
-        for (i in 0..songItems.size - 1) {
-            data.add(songItems[i])
-            notifyItemInserted(i)
-        }
+    private fun clearSongs(){
+        val size = data.size
+        data.clear()
+        notifyItemRangeRemoved(0, size)
+    }
+
+    public fun invalidateData(){
+        clearSongs()
     }
 
     override fun getItemCount(): Int {

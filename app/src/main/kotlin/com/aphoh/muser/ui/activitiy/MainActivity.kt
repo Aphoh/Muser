@@ -7,7 +7,6 @@ import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
@@ -25,9 +24,10 @@ import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.music.MusicView
 import com.aphoh.muser.ui.adapter.MainAdapter
 import com.aphoh.muser.ui.presenter.MainPresenter
+import com.aphoh.muser.ui.view.PlayPauseView
 import com.aphoh.muser.util.LogUtil
 import com.squareup.picasso.Picasso
-import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter
+import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import nucleus.factory.RequiresPresenter
 import java.util.*
 
@@ -49,6 +49,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     val waveForm: ImageView by bindView(R.id.imageview_waveform)
     val titleText: TextView by bindView(R.id.textview_main_song_title)
     val artistText: TextView by bindView(R.id.textview_main_song_artist)
+    val playPauseView: PlayPauseView by bindView(R.id.drawer_pause_play_view)
 
     val navigationView: NavigationView by bindView(R.id.navigation_view)
 
@@ -103,7 +104,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         }
 
         recyclerViewMain.layoutManager = LinearLayoutManager(this)
-        recyclerViewMain.itemAnimator = DefaultItemAnimator()
+        recyclerViewMain.itemAnimator = FadeInUpAnimator()
 
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
@@ -121,7 +122,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             }
         }
 
-        recyclerViewMain.adapter = ScaleInAnimationAdapter(adapter)
+        recyclerViewMain.adapter = adapter
 
         /*Consume all touch events so none are passed to the recyclerview below*/
         drawerContentSongView.setOnTouchListener { view, motionEvent -> true }
@@ -130,13 +131,26 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             presenter.refresh(this)
             swipeRefreshLayout.isRefreshing = true
             drawerLayout.closeDrawer(Gravity.START)
+            setToolbarText(it.title)
             true
+        }
+        navigationView.itemIconTintList = null
+
+        for (i in 0..navigationView.menu.size() - 1) {
+            val item = navigationView.menu.getItem(i)
+            if (item.isChecked) {
+                setToolbarText(item.title)
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
         if (!hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, drawerContentSongView)
+    }
+
+    private fun setToolbarText(text: CharSequence) {
+        toolbar.title = text
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -150,6 +164,10 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         super.onRestoreInstanceState(savedInstanceState)
         val selected = savedInstanceState?.getInt(NAV_MENU_SELECTED, -1)
         if (selected != null && selected != -1) navigationView.setCheckedItem(selected)
+    }
+
+    public fun invalidateDataset() {
+        adapter.invalidateData()
     }
 
     override fun publish(items: List<SongItem>) {
@@ -176,8 +194,10 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         publishToOpenDrawer { titleText.text = songName }
     }
 
-    override fun publishSongArtist(songArtist: String) {
-        publishToOpenDrawer { artistText.text = songArtist }
+    override fun publishSongArtist(songArtist: String?) {
+        songArtist?.let {
+            publishToOpenDrawer { artistText.text = it }
+        }
     }
 
     override fun publishProgress(seconds: Int) {

@@ -46,13 +46,15 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
                     if (subs.isEmpty() && items.isNotEmpty()) {
                         sub.name = subreddit
                         saveSub(sub)
-                    } else if (items.isNotEmpty() && subs.size() > 0) {
+                    } else if (items.isNotEmpty() && subs.size > 0) {
                         sub = subs.get(0)
                     }
 
                     var result =
                             items.map { it.data }
                                     .filter { isSoundcloudUrl(it.url) }
+                                    .filter { it.media != null}
+                                    .filter { it.media.oembed != null }
                                     .map { SongItem.fromPostData(it) }
                                     .map {
                                         it.associateSubreddit(sub)

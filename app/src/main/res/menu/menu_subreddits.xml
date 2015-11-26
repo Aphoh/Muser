@@ -5,15 +5,21 @@
     <item
         android:id="@+id/drawer_trap"
         android:checked="true"
-        android:icon="@drawable/fire_emoji"
+        android:icon="@drawable/fireemoji"
         android:title="@string/trap"
         />
 
     <item
         android:id="@+id/drawer_chillmusic"
         android:checked="false"
-        android:icon="@drawable/droplet_emoji"
+        android:icon="@drawable/dropletemoji"
         android:title="@string/chillmusic"
+        />
+    <item
+        android:id="@+id/drawer_futurebass"
+        android:checked="false"
+        android:icon="@drawable/fishemoji"
+        android:title="@string/futurebass"
         />
   </group>
 

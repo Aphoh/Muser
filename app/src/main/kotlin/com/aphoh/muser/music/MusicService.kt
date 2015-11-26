@@ -10,6 +10,7 @@ import android.os.PowerManager
 import android.util.SparseArray
 import com.aphoh.muser.App
 import com.aphoh.muser.data.db.model.SongItem
+import com.aphoh.muser.ui.view.ControlsView
 import com.aphoh.muser.util.LogUtil
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -28,7 +29,8 @@ public class MusicService() : Service() {
     private var mSongs: MutableList<SongItem> = ArrayList()
     private var mIndex = 0
     private val mBinder = NotificationBinder()
-    var views = SparseArray<MusicView>()
+    val views = SparseArray<MusicView>()
+    val pauseables = ArrayList<ControlsView>()
     var tickerSub: Subscription? = null
 
     override fun onCreate() {
@@ -48,8 +50,25 @@ public class MusicService() : Service() {
 
     }
 
-    public fun isBound(musicView: MusicView): Boolean{
+    public fun isBound(musicView: MusicView): Boolean {
         return views.get(musicView.id, null) != null
+    }
+
+    public fun isBound(controlsView: ControlsView): Boolean {
+        return pauseables.contains(controlsView)
+    }
+
+    public fun bind(controlsView: ControlsView) {
+        pauseables.add(controlsView)
+        controlsView.removeCallbacks()
+        controlsView.addPlayPauseCallback {
+            if (it) resume() else pause()
+        }
+    }
+
+    public fun unbind(controlsView: ControlsView) {
+        pauseables.remove(controlsView)
+        controlsView.removeCallbacks()
     }
 
     public fun bind(musicView: MusicView) {
@@ -102,6 +121,7 @@ public class MusicService() : Service() {
             mMediaPlayer.setOnPreparedListener {
                 log.d("Prepared, playing...")
                 mMediaPlayer.start()
+                doOnPauseables { it.playing = true }
                 tickerSub = rx.Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
                         .subscribeOn(Schedulers.newThread())
@@ -114,11 +134,13 @@ public class MusicService() : Service() {
             }
             mMediaPlayer.setOnCompletionListener {
                 tickerSub?.unsubscribe()
+                doOnPauseables { it.playing = false }
                 next()
             }
             mMediaPlayer.setOnErrorListener { mediaPlayer, what, extra ->
                 tickerSub?.unsubscribe()
                 log.e("Error in mediaPlayer $what-$extra")
+                doOnPauseables { it.playing = false }
                 doOnViews { it.publishError("Error playing media: $what-$extra") }
                 true
             }
@@ -135,23 +157,31 @@ public class MusicService() : Service() {
         for (i in 0..views.size() - 1) operation.invoke(views.valueAt(i))
     }
 
+    private fun doOnPauseables(operation: (ControlsView) -> Unit) {
+        for (pauseable in pauseables) operation.invoke(pauseable)
+    }
+
     public fun pause() {
-        if (mMediaPlayer.isPlaying)
+        if (mMediaPlayer.isPlaying){
             mMediaPlayer.pause()
+        }
     }
 
     public fun resume() {
-        if (!mMediaPlayer.isPlaying)
+        if (!mMediaPlayer.isPlaying){
             mMediaPlayer.start()
+        }
+
     }
 
     public fun stop() {
         mMediaPlayer.reset()
+        doOnPauseables { it.playing = false }
     }
 
-    public fun next(){
+    public fun next() {
         mIndex += 1
-        if(mIndex < mSongs.size()) playSong(mIndex)
+        if (mIndex < mSongs.size) playSong(mIndex)
     }
 
     companion object IntentFactory {

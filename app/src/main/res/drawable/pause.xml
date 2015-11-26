@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:height="@dimen/playpauseheight"
+        android:width="@dimen/playpausewidth"
+        android:viewportHeight="36"
+        android:viewportWidth="36">
+    <path android:name="v"
+            android:fillColor="@color/white"
+            android:fillAlpha="0.8"
+            android:pathData="@string/pause"/>
+</vector>
