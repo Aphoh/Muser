@@ -24,6 +24,7 @@ import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.music.MusicView
 import com.aphoh.muser.ui.adapter.MainAdapter
 import com.aphoh.muser.ui.presenter.MainPresenter
+import com.aphoh.muser.ui.view.ControlsView
 import com.aphoh.muser.ui.view.PlayPauseView
 import com.aphoh.muser.util.LogUtil
 import com.squareup.picasso.Picasso
@@ -40,7 +41,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     val recyclerViewMain: RecyclerView by bindView(R.id.recyclerview_main)
     val swipeRefreshLayout: SwipeRefreshLayout by bindView(R.id.swiperefresh_main)
-    val mainContent: RelativeLayout by bindView(R.id.relativelayout_main_content)
 
     val drawerLayout: DrawerLayout by bindView(R.id.drawerlayout_main)
 
@@ -59,16 +59,14 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     override fun getLayoutId(): Int = R.layout.activity_main
 
+    /*
+    * Android-specific methods
+    * */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Picasso.with(this).isLoggingEnabled = BuildConfig.DEBUG
-
-
-        if (savedInstanceState != null) {
-            hasSong = savedInstanceState.getBoolean(HAS_SONG)
-            if (hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END)
-        }
 
         var params = waveForm.layoutParams as RelativeLayout.LayoutParams
         params.bottomMargin += getNavigationBarHeight(this)
@@ -153,9 +151,24 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         toolbar.title = text
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_play_all -> {
+                toast("Play all")
+                presenter.requestPlayAll(adapter.data)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putBoolean(HAS_SONG, hasSong)
         var selected = getSelectedId(navigationView.menu)
         if (selected != null) outState?.putInt(NAV_MENU_SELECTED, selected)
     }
@@ -165,6 +178,10 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         val selected = savedInstanceState?.getInt(NAV_MENU_SELECTED, -1)
         if (selected != null && selected != -1) navigationView.setCheckedItem(selected)
     }
+
+    /*
+    * Presenter-exposed methods
+    * */
 
     public fun invalidateDataset() {
         adapter.invalidateData()
@@ -183,6 +200,27 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         }
         action.invoke()
     }
+
+    public fun getSelectedId(menu: Menu): Int? {
+        for (i in 0..menu.size() - 1) {
+            if (menu.getItem(i).isChecked) return menu.getItem(i).itemId
+        }
+        return null
+    }
+
+    public fun getSubreddit(): String {
+        var subreddit = ""
+        for (i in 0..navigationView.menu.size() - 1) {
+            val item = navigationView.menu.getItem(i);
+            if (item.isChecked) subreddit = item.title.toString()
+        }
+        log.d("Subreddit: " + subreddit)
+        return subreddit
+    }
+
+    /*
+    * MusicView Methods
+    * */
 
     override var id: Int = 0
 
@@ -209,36 +247,4 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         swipeRefreshLayout.isRefreshing = false
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_play_all -> {
-                toast("Play all")
-                presenter.requestPlayAll(adapter.data)
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    public fun getSelectedId(menu: Menu): Int? {
-        for (i in 0..menu.size() - 1) {
-            if (menu.getItem(i).isChecked) return menu.getItem(i).itemId
-        }
-        return null
-    }
-
-    public fun getSubreddit(): String {
-        var subreddit = ""
-        for (i in 0..navigationView.menu.size() - 1) {
-            val item = navigationView.menu.getItem(i);
-            if (item.isChecked) subreddit = item.title.toString()
-        }
-        log.d("Subreddit: " + subreddit)
-        return subreddit
-    }
 }
