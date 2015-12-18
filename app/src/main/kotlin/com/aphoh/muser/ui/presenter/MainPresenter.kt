@@ -27,10 +27,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-        dataInteractor.getSongItems()
-                .flatMap {
-                    if (it.size == 0) dataInteractor.refresh(subreddit) else dataInteractor.getSongItems()
-                }
+        dataInteractor.refresh(subreddit)
                 .compose(this.deliver<List<SongItem>>())
                 .compose(transformer.get<List<SongItem>>())
                 .subscribe(

@@ -3,7 +3,6 @@ package com.aphoh.muser
 import com.aphoh.muser.base.ApplicationComponent
 import com.aphoh.muser.base.BaseApplication
 import com.facebook.stetho.Stetho
-import com.raizlabs.android.dbflow.config.FlowManager
 import kotlin.properties.Delegates
 
 /**
@@ -20,7 +19,6 @@ public class App : BaseApplication() {
         Stetho.initialize(Stetho.newInitializerBuilder(this)
                 .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                 .enableDumpapp(Stetho.defaultDumperPluginsProvider(this)).build())
-        FlowManager.init(this)
         applicationComponent = createApplicationComponent()
     }
 }
