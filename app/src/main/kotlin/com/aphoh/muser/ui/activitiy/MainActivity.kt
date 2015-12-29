@@ -24,7 +24,6 @@ import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.music.MusicView
 import com.aphoh.muser.ui.adapter.MainAdapter
 import com.aphoh.muser.ui.presenter.MainPresenter
-import com.aphoh.muser.ui.view.ControlsView
 import com.aphoh.muser.ui.view.PlayPauseView
 import com.aphoh.muser.util.LogUtil
 import com.squareup.picasso.Picasso
@@ -34,7 +33,6 @@ import java.util.*
 
 @RequiresPresenter(MainPresenter::class)
 public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>(), MusicView {
-    private final val HAS_SONG = "HAS_SONG"
     private final val NAV_MENU_SELECTED = "NAV_MENU_SELECTED"
 
     var log = LogUtil(MainActivity::class.java.simpleName)

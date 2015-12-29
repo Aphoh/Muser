@@ -33,6 +33,9 @@ public class MusicService() : Service() {
     val pauseables = ArrayList<ControlsView>()
     var tickerSub: Subscription? = null
 
+    private var mCurrentSong: SongItem? = null
+    private var mCurrentProgress = -1
+
     override fun onCreate() {
         super.onCreate()
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
@@ -73,6 +76,12 @@ public class MusicService() : Service() {
 
     public fun bind(musicView: MusicView) {
         views.put(musicView.id, musicView)
+        mCurrentSong?.let {
+            musicView.publishAlbumArt(it.image)
+            musicView.publishSongArtist(it.artist)
+            musicView.publishProgress(mCurrentProgress)
+            musicView.publishSongName(it.songTitle)
+        }
     }
 
     public fun unbind(musicView: MusicView) {
@@ -114,6 +123,7 @@ public class MusicService() : Service() {
                                 playSong(mIndex)
                             })
         } else {
+            mCurrentSong = item
             log.d("Stream url was not null")
             mMediaPlayer.reset()
             tickerSub?.unsubscribe()
@@ -162,21 +172,16 @@ public class MusicService() : Service() {
     }
 
     public fun pause() {
-        if (mMediaPlayer.isPlaying){
+        if (mMediaPlayer.isPlaying) {
             mMediaPlayer.pause()
         }
     }
 
     public fun resume() {
-        if (!mMediaPlayer.isPlaying){
+        if (!mMediaPlayer.isPlaying) {
             mMediaPlayer.start()
         }
 
-    }
-
-    public fun stop() {
-        mMediaPlayer.reset()
-        doOnPauseables { it.playing = false }
     }
 
     public fun next() {
