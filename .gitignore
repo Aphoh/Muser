@@ -94,4 +94,5 @@ gen-external-apklibs
 ### Ignore gradle.properties with Soundcloud api key ###
 gradle.properties
 
-
+# OSX files
+*.DS_Store

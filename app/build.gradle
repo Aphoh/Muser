@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'jsonschema2pojo'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.trello.victor'
 
 buildscript {
     repositories {
@@ -15,9 +16,9 @@ buildscript {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "23.0.2"
 
-    packagingOptions{
+    packagingOptions {
         exclude 'META-INF/LICENSE.txt'
     }
 
@@ -32,10 +33,11 @@ android {
         main {
             java.srcDirs += 'src/main/kotlin'
             //java.srcDirs += 'build/generated/source/apt/debug/com/raizlabs'
+            svg.srcDir '../imgres'
         }
     }
     buildTypes {
-        all{
+        all {
             buildConfigField 'String', 'SC_CLIENT_ID', "\"$SC_CLIENT_ID\""
         }
         release {
@@ -44,7 +46,7 @@ android {
         }
     }
 }
-repositories{
+repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
@@ -58,11 +60,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "info.android15.nucleus:nucleus:$nucleus_version"
     compile "info.android15.nucleus:nucleus-support-v7:$nucleus_version"
-    //Data Persistence
-    apt "com.raizlabs.android:DBFlow-Compiler:$dbflow_version"
-    compile "com.raizlabs.android:DBFlow-Core:$dbflow_version"
-    compile "com.raizlabs.android:DBFlow:$dbflow_version"
     //UI Libs
+    compile 'me.grantland:autofittextview:0.2.+'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'jp.wasabeef:recyclerview-animators:1.2.1@aar'
     //Networking Libs
@@ -70,7 +69,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
     //Util Libs
-    compile 'io.reactivex:rxkotlin:0.22.13'
+    compile 'io.reactivex:rxkotlin:0.24.100'
     compile 'io.reactivex:rxandroid:0.25.0'
     //Dependency Injection
     compile "com.google.dagger:dagger:$dagger_version"
@@ -80,6 +79,14 @@ dependencies {
     //Testing
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:1.10.19"
+}
+
+victor {
+    // Any assets defined in relative terms needs a base DPI specified
+    svgDpi = 72
+
+    // Do not generate these densities for SVG assets
+    excludeDensities = ['ldpi', 'xxxhdpi']
 }
 
 jsonSchema2Pojo {

@@ -31,17 +31,26 @@ public class MainAdapter(val context: Context) : RecyclerView.Adapter<MainAdapte
     }
 
     public fun updateItems(songItems: List<SongItem>) {
-        this.data = ArrayList(songItems)
-        notifyDataSetChanged()
+        if(!data.isEmpty()) clearSongs()
+        data.addAll(songItems)
+        notifyItemRangeInserted(0, data.size)
+    }
+
+    private fun clearSongs(){
+        val size = data.size
+        data.clear()
+        notifyItemRangeRemoved(0, size)
+    }
+
+    public fun invalidateData(){
+        clearSongs()
     }
 
     override fun getItemCount(): Int {
-        return data.size()
+        return data.size
     }
 
-    override fun getItemId(position: Int): Long {
-        return data.get(position).getId().hashCode().toLong()
-    }
+    override fun getItemId(position: Int): Long = data[position].id.hashCode().toLong()
 
     override fun onBindViewHolder(holder: SongHolder, position: Int) {
         val songItem = data.get(position)

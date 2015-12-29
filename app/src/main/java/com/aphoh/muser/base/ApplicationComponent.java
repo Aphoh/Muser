@@ -13,10 +13,11 @@ import dagger.Component;
  * Created by Will on 7/12/15.
  */
 @Singleton
-@Component(modules = {DataModule.class})
+@Component(modules = {DataModule.class, RxModule.class})
 public interface ApplicationComponent {
     void injectPresenter(MainPresenter presenter);
     void injectService(MusicService service);
     DataInteractor interactor();
+    TransformerContainer transformer();
     SoundcloudKeys keys();
 }

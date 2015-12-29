@@ -7,7 +7,7 @@ public interface MusicView {
     var id: Int
     fun publishAlbumArt(albumArt: String)
     fun publishSongName(songName: String)
-    fun publishSongArtist(songArtist: String)
+    fun publishSongArtist(songArtist: String?)
     fun publishProgress(seconds: Int)
     fun publishError(error: String)
 }

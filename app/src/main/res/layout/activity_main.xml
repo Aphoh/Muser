@@ -4,40 +4,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout android:id="@+id/relativelayout_main_content"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/relativelayout_main_content">
 
-        <View android:id="@+id/status_bar_offset"
+        <View
+            android:id="@+id/status_bar_offset"
             android:layout_width="match_parent"
             android:layout_height="@dimen/statusbar_height"
             android:background="@color/primary_dark"/>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_below="@id/status_bar_offset"
-            style="@style/ToolbarTheme"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swiperefresh_main"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/statusbar_negative_height"
-            android:layout_below="@id/toolbar">
+            android:layout_below="@id/status_bar_offset"
+            android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_main"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/ToolbarTheme"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"/>
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swiperefresh_main"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:clipToPadding="false"/>
+                android:layout_marginTop="-25dp">
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:fitsSystemWindows="true"/>
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+
+        </LinearLayout>
 
     </RelativeLayout>
 
     <include layout="@layout/drawer_main"/>
+
+    <include layout="@layout/drawer_subreddits"/>
 
 </android.support.v4.widget.DrawerLayout>

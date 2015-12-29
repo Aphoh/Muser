@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="192dp"
+             android:background="@color/primary_dark"
+             android:orientation="vertical">
+
+    <me.grantland.widget.AutofitTextView
+        android:layout_width="168dp"
+        android:layout_height="match_parent"
+        android:maxLines="1"
+        android:padding="20dp"
+        android:gravity="start|bottom"
+        android:singleLine="true"
+        android:text="@string/app_name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="200sp"
+        />
+
+
+</FrameLayout>

@@ -12,9 +12,7 @@ import com.aphoh.muser.music.MusicService
 import com.aphoh.muser.network.DataInteractor
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import java.util.*
+import retrofit.RetrofitError
 
 /**
  * Created by Will on 7/1/2015.
@@ -22,24 +20,19 @@ import java.util.*
 public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>() {
     private var log = LogUtil(MainPresenter::class.java.simpleName)
     var dataInteractor: DataInteractor = App.applicationComponent.interactor()
+    var transformer = App.applicationComponent.transformer()
     var subreddit: String = "trap"
     public var binder: MusicService.NotificationBinder? = null
     private var serviceConnection: ServiceConnection? = null
 
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
-        dataInteractor.getSongItems()
-                .flatMap {
-                    if (it.size() == 0) dataInteractor.refresh(subreddit) else dataInteractor.getSongItems()
-                }
-                .compose(this.deliverLatestCache<List<SongItem>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        dataInteractor.refresh(subreddit)
+                .compose(this.deliver<List<SongItem>>())
+                .compose(transformer.get<List<SongItem>>())
                 .subscribe(
                         { result ->
-                            if (getView() != null) {
-                                getView().publish(result)
-                            }
+                            view.publish(result)
                         },
                         { throwable ->
                             log.e("Error retrieving songs", throwable)
@@ -47,46 +40,51 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     }
 
     public override fun refresh(view: MainActivity) {
-        subreddit = "trap"
+        this.subreddit = view.getSubreddit()
+        view.invalidateDataset()
         dataInteractor.refresh(subreddit)
                 .compose(this.deliver<List<SongItem>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(transformer.get<List<SongItem>>())
                 .subscribe (
                         { result ->
                             getView().publish(result)
                         },
                         { throwable ->
+                            getView()?.let {
+                                var error = "Non-network error refreshing, this is a bug"
+                                if (throwable is RetrofitError) {
+                                    error = "Network Error ${throwable.response.status}, check your connection"
+                                }
+                                it.publishError(error)
+                            }
                             log.e("Error refreshing", throwable)
                         })
     }
 
     override fun onTakeView(view: MainActivity) {
         super.onTakeView(view)
-        autoBindOperation { it.service.bind(view) }
+        autoBindOperation {
+            it.service.bind(view)
+            it.service.bind(view.playPauseView)
+        }
     }
 
     override fun dropView() {
         /*Do here so it's called before getView() is null*/
-        if (binder != null) {
-            var bound = binder?.service?.isBound(getView())
-            if (bound != null && bound)
-                binder?.service?.unbind(getView())
+        binder?.apply {
+            if (service.isBound(view))
+                service.unbind(view)
+            if (service.isBound(view.playPauseView))
+                service.unbind(view.playPauseView)
         }
-        if (serviceConnection != null) getView().unbindService(serviceConnection)
+        serviceConnection?.let {
+            view.unbindService(it)
+        }
         binder = null
         super.dropView()
     }
 
-    public fun onSongSelected(songItem: SongItem) {
-        log.d("Song selected, playing song...")
-        autoBindOperation {
-            log.d("Got binder: $it")
-            it.service.playSongs(Arrays.asList(songItem))
-        }
-    }
-
-    public fun requestPlayAll(songItems: List<SongItem>){
+    public fun requestPlayAll(songItems: List<SongItem>) {
         autoBindOperation {
             log.d("Playing all songs")
             it.service.playSongs(songItems)
@@ -96,7 +94,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     private fun autoBindOperation(action: (MusicService.NotificationBinder) -> Unit) {
         if (binder == null) {
             var intent = MusicService.getIntent(view)
-            getView().startService(intent)
+            view.startService(intent)
             serviceConnection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder) {
                     log.d("Service bound")
@@ -108,9 +106,11 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                     binder = null
                 }
             }
-            getView().bindService(intent, serviceConnection, Context.BIND_ABOVE_CLIENT)
+            view.bindService(intent, serviceConnection, Context.BIND_ABOVE_CLIENT)
         } else {
-            action.invoke(binder!!)
+            binder?.apply {
+                action.invoke(this)
+            }
         }
     }
 }
