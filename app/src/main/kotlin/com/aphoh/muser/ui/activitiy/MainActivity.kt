@@ -104,7 +104,9 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
-            if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+            if(presenter.isPlaying(adapter.data.get(position))){
+                openDrawer()
+            } else if (!drawerLayout.isDrawerOpen(Gravity.END)) {
                 val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size))
                 presenter.requestPlayAll(afterPositions)
             }
@@ -192,11 +194,13 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     }
 
     private fun publishToOpenDrawer(action: () -> Unit) {
-        if (!drawerLayout.isDrawerOpen(Gravity.END)) {
-            drawerLayout.openDrawer(Gravity.END)
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-        }
+        if (!drawerLayout.isDrawerOpen(Gravity.END)) openDrawer()
         action.invoke()
+    }
+
+    private fun openDrawer(){
+        drawerLayout.openDrawer(Gravity.END)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 
     public fun getSelectedId(menu: Menu): Int? {

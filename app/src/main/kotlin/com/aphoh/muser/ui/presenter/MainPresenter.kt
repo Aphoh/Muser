@@ -91,6 +91,14 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         }
     }
 
+    public fun isPlaying(songItem: SongItem): Boolean{
+        var playing = false
+        autoBindOperation {
+            playing = it.service.isPlaying(songItem)
+        }
+        return playing
+    }
+
     private fun autoBindOperation(action: (MusicService.NotificationBinder) -> Unit) {
         if (binder == null) {
             var intent = MusicService.getIntent(view)

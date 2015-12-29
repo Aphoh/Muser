@@ -189,6 +189,8 @@ public class MusicService() : Service() {
         if (mIndex < mSongs.size) playSong(mIndex)
     }
 
+    public fun isPlaying(mSongItem: SongItem): Boolean = mSongItem.id == mCurrentSong?.id
+
     companion object IntentFactory {
         public fun getIntent(context: Context): Intent = Intent(context, MusicService::class.java)
     }
