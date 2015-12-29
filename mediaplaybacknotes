@@ -1,0 +1,264 @@
+Media Playback Notes
+
+/*
+
+LIFECYCLE
+
+	Services -> Created -> 
+		(Playing <-> Paused) -> Stopped -> Destroyed
+
+		Created - App is started
+			Create MediaPlayer
+			Create MediaSession
+				Set Flags
+				Set Callback
+			MediaBrowserService setSessionToken()
+		Playing - Song is playing, all info
+			MediaPlayer prepare -> play
+			Request Audio Focus
+			Register for BECOMING_NOISY
+			MediaSession
+				setActive(true)
+				set metadata
+				set state
+			Notification startForeground(true)
+		Paused - Song is paused, all info
+			MediaPlayer pause
+			Unregister for BECOMING_NOISY
+			MediaSession set state
+			Notification stopForgeground(false)
+		Stopped - Remove all audio playback, remove all info
+			MediaPlayer stop
+			Abandon Audio Focus
+			MediaSession setActive(false)
+			Notification stopForeground(true)
+		Destroyed - Service is destroyed
+			MediaPlayer release
+			MediaSesison release
+
+*/
+
+/* 
+
+AUDIO FOCUS - Intent to play audio
+	Notifies other apps to play (only you can play)
+	May not be granted if
+		* User is in a phone call,
+		* Someone else is requesting AudioFocus 
+*/
+	AudioManager am = (AudioManager) getSystemService(Context.AUIDO_SERVICE);
+
+	int result = am.requestAudioFocus(
+		mOnAudioFocusChangeListener,
+		AudioManager.STREAM_MUSIC,
+		AudioManager.AUDIOFOCUS_GAIN);
+
+	if(result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
+		//Play
+	}
+
+	//When Stopped
+	am.abandonAudioFocus(mOnAudioFocusChangeListener);
+/* 
+	Audio Focus LOSS
+
+	AUDIOFOCUS_LOSS -> Stop playback, await further instructions to play
+
+	AUDIOFOCUS_LOSS_TRANSIENT -> Temporary loss, simply pause.
+
+	AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> Notification incoming, etc. Lower volume, will regain audio focus to increase volume
+
+	AUDIOFOCUS_GAIN -> Play at full volume
+*/
+
+/* 
+
+BECOMING NOISY
+	Headphones removed, Audio playing device lost, etc. -> Pause music
+
+*/
+
+	private BroadcastReciever mNoisyReciever = new BroadcastReciever(){
+		@Override
+		public void onRecieve(Context context, Intent intent){
+			//Pause Music
+		}
+	};
+
+	//On Play
+	IntentFilter filter = new IntentFilter(
+		AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+	registerReciever(mNoisyReciever, filter);
+
+	//On Pause
+	unregisterReciever(mNoisyReciever);
+
+/* 
+
+MEDIA BUTTONS
+	Headphone buttons, physical buttons, etc.
+	Key events set to the system
+	Must capture from broadcast
+
+	MediaButtonReciever in Support Lib
+*/
+
+	//In AndroidManifest.xml
+	<reciver
+		android:name="android.support.v4.media.session.MediaButtonReciever">
+		<intent-filter>
+			<action android:name="android.intent.action.MEDIA_BUTTON" />
+		</intent-filter>
+	</reciver>
+
+	<service
+		android:name="your.media.playback.Service"
+		android:exported="false">
+		<intent-filter>
+			<action android:name="android.intent.action.MEDIA_BUTTON" />
+		</intent-filter>
+	</service>
+
+	//Intents recieved by MediaButtonReciever will be recieved in Service's onStartCommand()
+
+/*
+
+MEDIA SESSION COMPAT
+	Nofities system that you have the current media playback session ->
+	Starts listening for MediaButtonReciever intents
+*/
+
+	mMediaSession = new MediaSessionCompat(context, LOG_TAG);
+
+	mMediaSession.setFlags(
+		MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | 
+		MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
+		);
+
+	mMediaSession.setCallback(new ExampleCallbacks());
+
+	//Right after playback
+	mMediaSession.setActive(true);
+
+	//On Stop
+	mMediaSession.setActive(false)
+
+	//In onStartCommand() for handling MediaButtonReciever intents
+	MediaButtonReciever.handleIntent(
+		mMediaSession, intent);
+
+/* 
+
+PlAYBACKSTATECOMPAT
+	Notifies system of current playback state
+
+	State -> Playing, Paused, etc.
+	Actions - Supported actions (play, pause, skip, rewind, etc.)
+
+*/
+
+	mPlaybackState.setState()
+	mPlaybackState.setActions()
+
+/*
+
+MediaMetadataCompat
+	Setting the different pieces of audio metadata,
+
+	Text
+	METADATA_KEY_TITLE - Song Title
+	METADATA_KEY_ARTIST - Song Artist
+	METADATA_KEY_ALBUM - Song Album
+	METADATA_KEY_ALBUM_ARTIST - Song Album Artist
+
+	Long
+	METADATA_KEY_DURATION - Song Duration
+
+	Bitmap
+	METADATA_KEY_ART - idk
+	METADATA_KEY_ALBUM_ART - Album Art for song
+
+	Uri
+	METADATA_KEY_ART_URI - idk m8
+	METADATA_KEY_ALBUM_ART_URI - Album Art Uri
+*/
+
+/*
+
+NOTIFICATIONS
+	NotificationCompat.MediaStyle
+	Building notification w/controls
+*/
+
+	public static NotificationCompat.Builder from(
+		Context context, MediaSessionCompat mediaSession){
+		MediaControllerCompat controller = mediaSession.getController();
+		MediaMetadataCompat mediaMetadata = controller.getMetadata();
+		MediaDescriptionCompat description = mediaMetadata.getDescription();
+
+		NotificationCompat.Builder builder =
+			new NotificationCompat.Builder(context);
+
+		builder
+			.setContentTitle(description.getTitle())
+			.setContentText(description.getSubtitle())
+			.setSubText(description.getDescription())
+			.setLargeIcon(description.getIconBitmap())
+			.setContentIntent(controller.getSessionActivity())
+			.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+			.setDeleteIntent(getActionIntent(context, KeyEvent.KEYCODE_MEDIA_STOP));
+
+		return builder;
+	}
+
+	public static PendingIntent getActionIntent(
+		Context context, int mediaKeyEvent){
+		Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+		intent.setPackage(context.getPackageName());
+		//Triggers MediaButtonCompat reciever
+		intent.putExtra(Intent.EXTRA_KEY_EVENT,
+			new KeyEvent(KeyEvent.ACTION_DOWN, mediaKeyEvent));
+		return PendingIntent.getBroadcast(context, mediaKeyEvent, intent, 0);
+	}
+
+	//Building Notification
+	NotificationCompat.Builder builder = 
+		MediaStyleHelper.from(this, mediaSession);
+
+	builder
+		.setSmallIcon(R.drawable.notification_icon)
+		//Will set notification color
+		.setColor(ContextCompat.getColor(this, R.color.primary_dark));
+
+	builder
+		.addAction(
+			new NotificationCompat.Action(
+				R.drawable.pause, 
+				getString(R.string.pause),
+				MediaStyleHelper.getActionIntent(this, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+			)
+		);
+
+	builder
+		.setStyle(
+			new NotificationCompat.MediaStyle()
+				.setShowActionsInCompactView(0)
+				.setMediaSession(mediaSession.getSessionToken())
+				.setShowCancelButton(true)
+				.setCancelButtonIntent(MediaStyleHelper.getActionIntent(
+					context, KeyEvent.KEYCODE_MEDIA_STOP));
+			);
+
+/*
+MEDIA CONTROLLER COMPAT
+	getMetadata() -> MediaMetadataCompat
+	getPlaybackState() -> PlaybackStateCompat
+	getTransportControls() -> 1:1 with Callback
+	MediaControllerCompat.Callback
+*/
+
+
+
+
+
+
