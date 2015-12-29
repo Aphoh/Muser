@@ -44,7 +44,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     val drawerContentSongView: RelativeLayout by bindView(R.id.drawercontent_main)
     val songCover: ImageView by bindView(R.id.imageview_main_song)
-    val waveForm: ImageView by bindView(R.id.imageview_waveform)
     val titleText: TextView by bindView(R.id.textview_main_song_title)
     val artistText: TextView by bindView(R.id.textview_main_song_artist)
     val playPauseView: PlayPauseView by bindView(R.id.drawer_pause_play_view)
@@ -53,7 +52,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     var view = this
     var adapter: MainAdapter = MainAdapter(this)
-    var hasSong = false;
 
     override fun getLayoutId(): Int = R.layout.activity_main
 
@@ -66,11 +64,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         Picasso.with(this).isLoggingEnabled = BuildConfig.DEBUG
 
-        var params = waveForm.layoutParams as RelativeLayout.LayoutParams
-        params.bottomMargin += getNavigationBarHeight(this)
-        waveForm.layoutParams = params
-
         drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.primary))
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END) //By default lock the song drawer view
         drawerLayout.setDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerClosed(drawerView: View?) {
                 swipeRefreshLayout.setOnTouchListener { view, motionEvent ->
@@ -132,6 +127,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             setToolbarText(it.title)
             true
         }
+        //Allows for colored icons
         navigationView.itemIconTintList = null
 
         for (i in 0..navigationView.menu.size() - 1) {
@@ -140,11 +136,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
                 setToolbarText(item.title)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (!hasSong) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, drawerContentSongView)
     }
 
     private fun setToolbarText(text: CharSequence) {
