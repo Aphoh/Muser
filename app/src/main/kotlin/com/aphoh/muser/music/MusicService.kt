@@ -156,7 +156,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             mMediaPlayer.setOnPreparedListener {
                 log.d("Prepared, playing...")
                 play()
-                doOnPauseables { it.playing = true }
                 tickerSub = rx.Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
                         .subscribeOn(Schedulers.newThread())
@@ -192,12 +191,11 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
-                mMediaPlayer.start()
-                mMediaPlayer.setVolume(1.0f, 1.0f)
+                play()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> pause()
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> mMediaPlayer.setVolume(0.5f, 0.5f)
-            AudioManager.AUDIOFOCUS_LOSS -> mMediaPlayer.stop()
+            AudioManager.AUDIOFOCUS_LOSS -> stop()
         }
     }
 
@@ -214,17 +212,20 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     }
 
     public fun play() {
+        doOnPauseables { it.playing = true }
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val result = am.requestAudioFocus(this,
                 AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN)
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mMediaPlayer.setVolume(1.0f, 1.0f)
             mMediaPlayer.start()
             mMediaSession.value.isActive = true
         }
     }
 
     public fun pause() {
+        doOnPauseables { it.playing = false }
         unregisterReceiver(mNoisyReciever)
         if (mMediaPlayer.isPlaying) {
             mMediaPlayer.pause()
@@ -232,6 +233,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     }
 
     public fun stop() {
+        doOnPauseables { it.playing = false }
         (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
         mMediaPlayer.stop()
         mMediaSession.value.isActive = false
