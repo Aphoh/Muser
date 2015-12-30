@@ -5,10 +5,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.IBinder
 import android.os.PowerManager
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -17,8 +20,12 @@ import com.aphoh.muser.App
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.ui.view.ControlsView
 import com.aphoh.muser.util.LogUtil
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.RequestCreator
+import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
+import rx.lang.kotlin.observable
 import rx.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -170,7 +177,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             mMediaPlayer.setOnPreparedListener {
                 log.d("Prepared, playing...")
                 play()
-                tickerSub = rx.Observable.interval(200, TimeUnit.MILLISECONDS)
+                tickerSub = Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -231,7 +238,39 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             AudioManager.AUDIOFOCUS_LOSS -> stop()
         }
     }
-    
+
+    private fun SongItem.metadata(): Observable<MediaMetadataCompat> =
+            Picasso.with(this@MusicService)
+                    .load(image)
+                    .observable()
+                    .map {
+                        MediaMetadataCompat.Builder()
+                                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songTitle)
+                                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, songTitle)
+                                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, length)
+                                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, it)
+                                .build()
+                    }
+
+    private fun RequestCreator.observable(): Observable<Bitmap> =
+            observable { sub ->
+                into(object : com.squareup.picasso.Target {
+                    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+
+                    }
+
+                    override fun onBitmapFailed(errorDrawable: Drawable) {
+
+                    }
+
+                    override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
+                        if (sub != null && !sub.isUnsubscribed) sub.onNext(bitmap)
+                    }
+                })
+            }
+
+
     /*
     * Util with functions
     * */
@@ -256,6 +295,12 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             PlaybackStateCompat.ACTION_STOP)
 
     public fun play() {
+        mCurrentSong?.apply {
+            metadata()
+                    .subscribe {
+                        mMediaSession.value.setMetadata(it)
+                    }
+        }
         registerReceiver(mNoisyReciever, mNoisyFilter)
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val result = am.requestAudioFocus(this,
