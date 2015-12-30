@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Will on 7/12/15.
  */
-public class MusicService() : Service() {
+public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener {
     private val log = LogUtil(MusicService::class.java.simpleName)
 
     private var mDataInteractor = App.applicationComponent.interactor()
@@ -130,7 +130,7 @@ public class MusicService() : Service() {
             mMediaPlayer.setDataSource(item.streamUrl)
             mMediaPlayer.setOnPreparedListener {
                 log.d("Prepared, playing...")
-                mMediaPlayer.start()
+                withAudioFocus { mMediaPlayer.start() }
                 doOnPauseables { it.playing = true }
                 tickerSub = rx.Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
@@ -162,6 +162,30 @@ public class MusicService() : Service() {
         super.onDestroy()
         tickerSub?.unsubscribe()
     }
+
+    private fun withAudioFocus(action: () -> Unit) {
+        val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val result = am.requestAudioFocus(this,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN)
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) action.invoke()
+    }
+
+    override fun onAudioFocusChange(focusChange: Int) {
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                mMediaPlayer.start()
+                mMediaPlayer.setVolume(1.0f, 1.0f)
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> mMediaPlayer.pause()
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> mMediaPlayer.setVolume(0.5f, 0.5f)
+            AudioManager.AUDIOFOCUS_LOSS -> mMediaPlayer.stop()
+        }
+    }
+
+    /*
+    * Util with functions
+    * */
 
     private fun doOnViews(operation: (MusicView) -> Unit) {
         for (i in 0..views.size() - 1) operation.invoke(views.valueAt(i))
