@@ -9,6 +9,8 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.IBinder
 import android.os.PowerManager
+import android.support.v4.media.session.MediaButtonReceiver
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.SparseArray
 import com.aphoh.muser.App
 import com.aphoh.muser.data.db.model.SongItem
@@ -36,6 +38,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             pause()
         }
     }
+    private val mMediaSession = lazy { MediaSessionCompat(this, MusicService::class.java.simpleName) }
     val views = SparseArray<MusicView>()
     val pauseables = ArrayList<ControlsView>()
     var tickerSub: Subscription? = null
@@ -50,6 +53,18 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
         val filter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
         registerReceiver(mNoisyReciever, filter)
+
+        mMediaSession.value.setFlags(
+                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
+                        .or(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS)
+        )
+
+        mMediaSession.value.setCallback(callbacks)
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        MediaButtonReceiver.handleIntent(mMediaSession.value, intent)
+        return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onBind(intent: Intent?): IBinder = mBinder
@@ -75,7 +90,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         pauseables.add(controlsView)
         controlsView.removeCallbacks()
         controlsView.addPlayPauseCallback {
-            if (it) resume() else pause()
+            if (it) play() else pause()
         }
     }
 
@@ -140,7 +155,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             mMediaPlayer.setDataSource(item.streamUrl)
             mMediaPlayer.setOnPreparedListener {
                 log.d("Prepared, playing...")
-                withPlay { mMediaPlayer.start() }
+                play()
                 doOnPauseables { it.playing = true }
                 tickerSub = rx.Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
@@ -174,24 +189,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         stop()
     }
 
-    private fun withPlay(action: () -> Unit) {
-        val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val result = am.requestAudioFocus(this,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN)
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) action.invoke()
-    }
-
-    private fun withPause(action: () -> Unit) {
-        unregisterReceiver(mNoisyReciever)
-        action.invoke()
-    }
-
-    private fun withStop(action: () -> Unit) {
-        (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
-        action.invoke()
-    }
-
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
@@ -216,26 +213,28 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         for (pauseable in pauseables) operation.invoke(pauseable)
     }
 
-    public fun pause() {
-        withPause {
-            if (mMediaPlayer.isPlaying) {
-                mMediaPlayer.pause()
-            }
+    public fun play() {
+        val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val result = am.requestAudioFocus(this,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN)
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mMediaPlayer.start()
+            mMediaSession.value.isActive = true
         }
     }
 
-    public fun resume() {
-        withPlay {
-            if (!mMediaPlayer.isPlaying) {
-                mMediaPlayer.start()
-            }
+    public fun pause() {
+        unregisterReceiver(mNoisyReciever)
+        if (mMediaPlayer.isPlaying) {
+            mMediaPlayer.pause()
         }
     }
 
     public fun stop() {
-        withStop {
-            mMediaPlayer.stop()
-        }
+        (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
+        mMediaPlayer.stop()
+        mMediaSession.value.isActive = false
     }
 
     public fun next() {
@@ -243,9 +242,36 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         if (mIndex < mSongs.size) playSong(mIndex)
     }
 
+    public fun prev() {
+        mIndex -= 1
+        if (mIndex >= 0 && mIndex < mSongs.size) playSong(mIndex)
+    }
+
     public fun isPlaying(mSongItem: SongItem): Boolean = mSongItem.id == mCurrentSong?.id
 
     companion object IntentFactory {
         public fun getIntent(context: Context): Intent = Intent(context, MusicService::class.java)
+    }
+
+    private val callbacks = object : MediaSessionCompat.Callback() {
+        override fun onPlay() {
+            play()
+        }
+
+        override fun onStop() {
+            stop()
+        }
+
+        override fun onSkipToNext() {
+            next()
+        }
+
+        override fun onSeekTo(pos: Long) {
+            mMediaPlayer.seekTo(pos.toInt())
+        }
+
+        override fun onSkipToPrevious() {
+            prev()
+        }
     }
 }
