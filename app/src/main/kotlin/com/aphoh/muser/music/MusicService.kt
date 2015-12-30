@@ -1,8 +1,10 @@
 package com.aphoh.muser.music
 
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.IBinder
@@ -29,6 +31,11 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     private var mSongs: MutableList<SongItem> = ArrayList()
     private var mIndex = 0
     private val mBinder = NotificationBinder()
+    private val mNoisyReciever = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            pause()
+        }
+    }
     val views = SparseArray<MusicView>()
     val pauseables = ArrayList<ControlsView>()
     var tickerSub: Subscription? = null
@@ -40,6 +47,9 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         super.onCreate()
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
         mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK)
+
+        val filter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+        registerReceiver(mNoisyReciever, filter)
     }
 
     override fun onBind(intent: Intent?): IBinder = mBinder
@@ -130,7 +140,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             mMediaPlayer.setDataSource(item.streamUrl)
             mMediaPlayer.setOnPreparedListener {
                 log.d("Prepared, playing...")
-                withAudioFocus { mMediaPlayer.start() }
+                withPlay { mMediaPlayer.start() }
                 doOnPauseables { it.playing = true }
                 tickerSub = rx.Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
@@ -161,14 +171,24 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     override fun onDestroy() {
         super.onDestroy()
         tickerSub?.unsubscribe()
+        stop()
     }
 
-    private fun withAudioFocus(action: () -> Unit) {
+    private fun withPlay(action: () -> Unit) {
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val result = am.requestAudioFocus(this,
                 AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN)
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) action.invoke()
+    }
+
+    private fun withPause(action: () -> Unit) {
+        unregisterReceiver(mNoisyReciever)
+        action.invoke()
+    }
+
+    private fun withStop(action: () -> Unit) {
+        (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
     }
 
     override fun onAudioFocusChange(focusChange: Int) {
@@ -177,7 +197,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
                 mMediaPlayer.start()
                 mMediaPlayer.setVolume(1.0f, 1.0f)
             }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> mMediaPlayer.pause()
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> pause()
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> mMediaPlayer.setVolume(0.5f, 0.5f)
             AudioManager.AUDIOFOCUS_LOSS -> mMediaPlayer.stop()
         }
@@ -196,16 +216,25 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     }
 
     public fun pause() {
-        if (mMediaPlayer.isPlaying) {
-            mMediaPlayer.pause()
+        withPause {
+            if (mMediaPlayer.isPlaying) {
+                mMediaPlayer.pause()
+            }
         }
     }
 
     public fun resume() {
-        if (!mMediaPlayer.isPlaying) {
-            mMediaPlayer.start()
+        withPlay {
+            if (!mMediaPlayer.isPlaying) {
+                mMediaPlayer.start()
+            }
         }
+    }
 
+    public fun stop() {
+        withStop {
+            mMediaPlayer.stop()
+        }
     }
 
     public fun next() {
