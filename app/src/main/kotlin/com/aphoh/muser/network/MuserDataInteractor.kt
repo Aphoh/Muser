@@ -49,6 +49,7 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
                 .map({ track ->
                     log.d("Track url returned: ${track.stream_url}")
                     var stream = "${track.stream_url}?client_id=${soundcloudKeys.clientId}"
+                    songItem.length = track.duration
                     songItem.streamUrl = stream
                     songItem.waveformUrl = track.waveform_url
                     songItem

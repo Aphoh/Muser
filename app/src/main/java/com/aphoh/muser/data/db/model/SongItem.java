@@ -14,7 +14,7 @@ public class SongItem {
     super();
   }
 
-  public SongItem(String id, String image, String thumbnail, String linkUrl, String streamUrl, String waveformUrl, int score, String artist, String songTitle) {
+  public SongItem(String id, String image, String thumbnail, String linkUrl, String streamUrl, String waveformUrl, int score, long length, String artist, String songTitle) {
     this.id = id;
     this.image = image;
     this.thumbnail = thumbnail;
@@ -22,6 +22,7 @@ public class SongItem {
     this.streamUrl = streamUrl;
     this.waveformUrl = waveformUrl;
     this.score = score;
+    this.length = length;
     this.artist = artist;
     this.songTitle = songTitle;
   }
@@ -39,6 +40,8 @@ public class SongItem {
   public String waveformUrl;
 
   public int score;
+
+  public long length;
 
   public String artist;
 
@@ -58,6 +61,7 @@ public class SongItem {
         null,
         null,
         ((int) data.getScore()),
+        -1,
         oembed.getAuthor_name(),
         MuserDataInteractor.Utils.removeByLine(oembed.getTitle()));
   }
