@@ -189,6 +189,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     private fun withStop(action: () -> Unit) {
         (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
+        action.invoke()
     }
 
     override fun onAudioFocusChange(focusChange: Int) {
