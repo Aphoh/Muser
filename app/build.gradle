@@ -56,6 +56,7 @@ dependencies {
     compile "com.android.support:design:$android_version"
     compile "com.android.support:appcompat-v7:$android_version"
     compile "com.android.support:recyclerview-v7:$android_version"
+    compile "com.android.support:support-v4:$android_version"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "info.android15.nucleus:nucleus:$nucleus_version"
