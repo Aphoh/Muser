@@ -221,8 +221,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     fun publishMetadata(metadata: MediaMetadataCompat) {
         val iconUri = metadata.description.iconUri
-        if (iconUri != null)
-            publishAlbumArt(iconUri.toString())
+        if (iconUri != null) publishAlbumArt(iconUri.toString())
         publishSongName(metadata.description.title.toString())
         publishSongArtist(metadata.description.subtitle.toString())
         openDrawer()

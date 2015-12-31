@@ -7,11 +7,8 @@ import javax.inject.Singleton;
 /**
  * Created by Will on 11/14/15.
  */
-@Module
-public class RxModule {
-  @Provides
-  @Singleton
-  TransformerContainer provideTransformerContainer() {
+@Module public class RxModule {
+  @Provides @Singleton TransformerContainer provideTransformerContainer() {
     return new TransformerContainer();
   }
 }

@@ -11,5 +11,5 @@ import rx.Observable
  */
 interface RedditService {
     @GET("/r/{subreddit}/top.json?t=week")
-    fun getSubredditSubmissions(@Path("subreddit") subreddit: String, @Query("limit") limit : Int): Observable<Listings>;
+    fun getSubredditSubmissions(@Path("subreddit") subreddit: String, @Query("limit") limit: Int): Observable<Listings>;
 }

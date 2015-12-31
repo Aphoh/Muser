@@ -32,18 +32,18 @@ public class MainAdapter(val context: Context) : RecyclerView.Adapter<MainAdapte
     }
 
     public fun updateItems(songItems: List<SongItem>) {
-        if(!data.isEmpty()) clearSongs()
+        if (!data.isEmpty()) clearSongs()
         data.addAll(songItems)
         notifyItemRangeInserted(0, data.size)
     }
 
-    private fun clearSongs(){
+    private fun clearSongs() {
         val size = data.size
         data.clear()
         notifyItemRangeRemoved(0, size)
     }
 
-    public fun invalidateData(){
+    public fun invalidateData() {
         clearSongs()
     }
 

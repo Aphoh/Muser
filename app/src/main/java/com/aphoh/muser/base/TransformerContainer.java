@@ -11,10 +11,8 @@ import rx.schedulers.Schedulers;
 public class TransformerContainer {
   public <T> Transformer<T, T> get() {
     return new Transformer<T, T>() {
-      @Override
-      public Observable<T> call(Observable<T> tObservable) {
-        return tObservable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread());
+      @Override public Observable<T> call(Observable<T> tObservable) {
+        return tObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
       }
     };
   }

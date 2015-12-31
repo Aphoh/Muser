@@ -1,18 +1,18 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="text_field_padding_horizontal">16dp</dimen>
-    <dimen name="text_padding_vertical">20dp</dimen>
-    <dimen name="toolbar_elevation">5dp</dimen>
-    <dimen name="controls_padding">8dp</dimen>
-    <dimen name="statusbar_height">25dp</dimen>
-    <dimen name="statusbar_negative_height">-25dp</dimen>
-    <dimen name="navbar_height">55dp</dimen>
+  <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="activity_horizontal_margin">16dp</dimen>
+  <dimen name="activity_vertical_margin">16dp</dimen>
+  <dimen name="text_field_padding_horizontal">16dp</dimen>
+  <dimen name="text_padding_vertical">20dp</dimen>
+  <dimen name="toolbar_elevation">5dp</dimen>
+  <dimen name="controls_padding">8dp</dimen>
+  <dimen name="statusbar_height">25dp</dimen>
+  <dimen name="statusbar_negative_height">-25dp</dimen>
+  <dimen name="navbar_height">55dp</dimen>
 
-    <dimen name="pause_bar_width">48dp</dimen>
-    <dimen name="pause_bar_distance">40dp</dimen>
-    <dimen name="pause_bar_height">144dp</dimen>
-    <dimen name="playpausewidth">56dp</dimen>
-    <dimen name="playpauseheight">56dp</dimen>
+  <dimen name="pause_bar_width">48dp</dimen>
+  <dimen name="pause_bar_distance">40dp</dimen>
+  <dimen name="pause_bar_height">144dp</dimen>
+  <dimen name="playpausewidth">56dp</dimen>
+  <dimen name="playpauseheight">56dp</dimen>
 </resources>

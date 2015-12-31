@@ -5,52 +5,52 @@
     android:orientation="vertical"
     android:background="?attr/selectableItemBackground">
 
-    <ImageView
-        android:id="@+id/row_main_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:alpha=".5" />
+  <ImageView
+      android:id="@+id/row_main_thumb"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_alignParentStart="true"
+      android:layout_centerVertical="true"
+      android:alpha=".5"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/row_main_status"
-        android:layout_centerVertical="true"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/row_main_title"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:textSize="18sp"
-            android:textColor="@color/primary_text_light"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:paddingTop="@dimen/text_padding_vertical" />
-
-        <TextView
-            android:id="@+id/row_main_subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingBottom="@dimen/text_padding_vertical"
-            android:textColor="@color/secondary_text_default_material_dark"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:paddingLeft="16dp" />
-    </LinearLayout>
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_toStartOf="@+id/row_main_status"
+      android:layout_centerVertical="true"
+      android:orientation="vertical">
 
     <TextView
-        android:id="@+id/row_main_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:textColor="@color/secondary_text_light"
-        android:padding="@dimen/text_field_padding_horizontal" />
+        android:id="@+id/row_main_title"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingLeft="16dp"
+        android:textSize="18sp"
+        android:textColor="@color/primary_text_light"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingTop="@dimen/text_padding_vertical"/>
+
+    <TextView
+        android:id="@+id/row_main_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="@dimen/text_padding_vertical"
+        android:textColor="@color/secondary_text_default_material_dark"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingLeft="16dp"/>
+  </LinearLayout>
+
+  <TextView
+      android:id="@+id/row_main_status"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+      android:layout_centerVertical="true"
+      android:textColor="@color/secondary_text_light"
+      android:padding="@dimen/text_field_padding_horizontal"/>
 </RelativeLayout>

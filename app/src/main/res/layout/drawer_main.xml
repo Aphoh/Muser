@@ -8,90 +8,90 @@
     android:fitsSystemWindows="true"
     android:paddingTop="@dimen/statusbar_height">
 
-    <ImageView
-        android:id="@+id/imageview_main_song"
+  <ImageView
+      android:id="@+id/imageview_main_song"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_alignParentTop="true"/>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal|top"
+      android:background="@drawable/text_backdrop"
+      android:orientation="vertical"
+      android:padding="24dp"
+      android:paddingBottom="40dp">
+
+    <TextView
+        android:id="@+id/textview_main_song_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true" />
+        android:layout_gravity="center_horizontal"
+        android:text="sup fam"
+        android:textColor="@color/primary_text_light"
+        android:textSize="@dimen/abc_text_size_title_material"/>
+
+    <TextView
+        android:id="@+id/textview_main_song_artist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:text="if u see this tell me k thx bb"
+        android:textColor="@color/secondary_text_light"
+        android:textSize="@dimen/abc_text_size_subtitle_material_toolbar"/>
+  </LinearLayout>
+
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignBottom="@id/imageview_main_song"
+      android:background="@drawable/controls_backdrop">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top"
-        android:background="@drawable/text_backdrop"
-        android:orientation="vertical"
-        android:padding="24dp"
-        android:paddingBottom="40dp">
+        android:layout_marginBottom="@dimen/navbar_height">
 
-        <TextView
-            android:id="@+id/textview_main_song_title"
+      <ImageView
+          android:id="@+id/drawer_rewind"
+          android:layout_width="56dp"
+          android:layout_height="56dp"
+          android:layout_weight="1"
+          android:background="?attr/selectableItemBackgroundBorderless"
+          android:src="@drawable/ic_fast_rewind"/>
+
+      <FrameLayout
+          android:layout_width="56dp"
+          android:layout_height="56dp">
+
+        <com.aphoh.muser.ui.view.PlayPauseView
+            android:id="@+id/drawer_pause_play_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:text="sup fam"
-            android:textColor="@color/primary_text_light"
-            android:textSize="@dimen/abc_text_size_title_material" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/textview_main_song_artist"
+        <ProgressBar
+            android:id="@+id/progress_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:text="if u see this tell me k thx bb"
-            android:textColor="@color/secondary_text_light"
-            android:textSize="@dimen/abc_text_size_subtitle_material_toolbar" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:indeterminate="true"
+            android:visibility="visible"/>
+
+      </FrameLayout>
+
+      <ImageView
+          android:id="@+id/drawer_fast_forward"
+          android:layout_width="56dp"
+          android:layout_height="56dp"
+          android:layout_weight="1"
+          android:background="?attr/selectableItemBackgroundBorderless"
+          android:src="@drawable/ic_fast_forward"/>
+
     </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignBottom="@id/imageview_main_song"
-        android:background="@drawable/controls_backdrop">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/navbar_height">
-
-            <ImageView
-                android:id="@+id/drawer_rewind"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_fast_rewind" />
-
-            <FrameLayout
-                android:layout_width="56dp"
-                android:layout_height="56dp">
-
-                <com.aphoh.muser.ui.view.PlayPauseView
-                    android:id="@+id/drawer_pause_play_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:visibility="gone" />
-
-                <ProgressBar
-                    android:id="@+id/progress_loading"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:indeterminate="true"
-                    android:visibility="visible" />
-
-            </FrameLayout>
-
-            <ImageView
-                android:id="@+id/drawer_fast_forward"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_fast_forward" />
-
-        </LinearLayout>
-    </FrameLayout>
+  </FrameLayout>
 
 </RelativeLayout>

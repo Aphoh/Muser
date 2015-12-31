@@ -137,8 +137,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
                         .repeat()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            //Update playback state
+                        .subscribe { //Update playback state
                             if (mMediaPlayer.isPlaying) {
                                 mPlaybackState.setState(PlaybackStateCompat.STATE_PLAYING, mMediaPlayer.currentPosition.toLong(), PLAYBACK_SPEED_PLAYING)
                                 mPlaybackState.setActions(playState.configSeekState())

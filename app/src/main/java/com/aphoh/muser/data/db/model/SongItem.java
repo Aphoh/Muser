@@ -10,11 +10,23 @@ import com.aphoh.muser.util.LogUtil;
  */
 public class SongItem {
 
+  public String id;
+  public String image;
+  public String thumbnail;
+  public String linkUrl;
+  public String streamUrl;
+  public String waveformUrl;
+  public int score;
+  public long length;
+  public String artist;
+  public String songTitle;
+
   public SongItem() {
     super();
   }
 
-  public SongItem(String id, String image, String thumbnail, String linkUrl, String streamUrl, String waveformUrl, int score, long length, String artist, String songTitle) {
+  public SongItem(String id, String image, String thumbnail, String linkUrl, String streamUrl,
+      String waveformUrl, int score, long length, String artist, String songTitle) {
     this.id = id;
     this.image = image;
     this.thumbnail = thumbnail;
@@ -27,26 +39,6 @@ public class SongItem {
     this.songTitle = songTitle;
   }
 
-  public String id;
-
-  public String image;
-
-  public String thumbnail;
-
-  public String linkUrl;
-
-  public String streamUrl;
-
-  public String waveformUrl;
-
-  public int score;
-
-  public long length;
-
-  public String artist;
-
-  public String songTitle;
-
   public static SongItem fromPostData(PostData data) {
     LogUtil log = new LogUtil(SongItem.class.getSimpleName());
 
@@ -54,15 +46,8 @@ public class SongItem {
     if (oembed == null) {
       log.e("Media is null for data with url " + data.getUrl());
     }
-    return new SongItem(data.getId(),
-        oembed.getThumbnail_url(),
-        oembed.getThumbnail_url(),
-        data.getUrl(),
-        null,
-        null,
-        ((int) data.getScore()),
-        -1,
-        oembed.getAuthor_name(),
+    return new SongItem(data.getId(), oembed.getThumbnail_url(), oembed.getThumbnail_url(),
+        data.getUrl(), null, null, ((int) data.getScore()), -1, oembed.getAuthor_name(),
         MuserDataInteractor.Utils.removeByLine(oembed.getTitle()));
   }
 }
