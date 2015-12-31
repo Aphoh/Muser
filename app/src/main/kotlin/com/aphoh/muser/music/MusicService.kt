@@ -35,6 +35,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     private var mDataInteractor = App.applicationComponent.interactor()
     private var mMediaPlayer = MediaPlayer()
     private var mSongs: MutableList<SongItem> = ArrayList()
+    private var mIsPrepared = false
 
     private var mIndex = 0
     private val mBinder = NotificationBinder()
@@ -130,6 +131,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             mMediaPlayer.setDataSource(item.streamUrl)
             mMediaPlayer.setOnPreparedListener {
                 log.d("Prepared, playing...")
+                mIsPrepared = true
                 play()
                 tickerSub = Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
@@ -146,7 +148,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             }
 
             mMediaPlayer.setOnBufferingUpdateListener { mediaPlayer, progress ->
-                if (!mMediaPlayer.isPlaying) {
+                if (!mIsPrepared) {
                     mPlaybackState.setState(PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
                     mPlaybackState.setActions(stopState.configSeekState())
                     publishPlaybackState()
@@ -264,6 +266,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
         mMediaPlayer.stop()
         mMediaSession.value.isActive = false
+        mIsPrepared = false
     }
 
     private val skippingState = arrayOf(

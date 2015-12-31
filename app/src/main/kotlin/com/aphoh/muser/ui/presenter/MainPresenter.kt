@@ -186,8 +186,12 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         return len
     }
 
-    fun requestPause() = mTransportControls?.pause()
-    fun requestPlay() = mTransportControls?.play()
+    fun requestPause() = autoBindOperation {
+        it.service.pause()
+    }
+    fun requestPlay() = autoBindOperation {
+        it.service.play()
+    }
     fun requestPrevious() = mTransportControls?.skipToPrevious()
     fun requestNext() = mTransportControls?.skipToNext()
 
