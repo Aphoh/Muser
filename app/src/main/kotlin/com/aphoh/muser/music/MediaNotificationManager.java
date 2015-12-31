@@ -177,6 +177,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
 
   private PendingIntent createContentIntent() {
     Intent openUI = new Intent(mService, MainActivity.class);
+    openUI.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
     return PendingIntent.getActivity(mService, REQUEST_CODE, openUI,
         PendingIntent.FLAG_CANCEL_CURRENT);
   }
@@ -245,7 +246,6 @@ public class MediaNotificationManager extends BroadcastReceiver {
     }
 
     MediaDescriptionCompat description = mMetadata.getDescription();
-
 
     notificationBuilder
         .setStyle(new NotificationCompat.MediaStyle()
