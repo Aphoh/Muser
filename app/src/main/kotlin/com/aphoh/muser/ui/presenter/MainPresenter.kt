@@ -45,16 +45,19 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                 .subscribe(
                         { result ->
                             loading.set(false)
+                            view.setRefreshing(loading.get())
                             view.publish(result)
                         },
                         { throwable ->
+                            loading.set(false)
+                            view.setRefreshing(loading.get())
                             log.e("Error retrieving songs", throwable)
                         })
     }
 
     override fun onTakeView(view: MainActivity) {
         super.onTakeView(view)
-        view.setRefreshing(loading.get())
+        if(!view.hasData()) refresh(view)
         autoBindOperation {
             //Get session token, subscribe to publish media events to UI
             mSessionToken = it.service.getSessionToken()

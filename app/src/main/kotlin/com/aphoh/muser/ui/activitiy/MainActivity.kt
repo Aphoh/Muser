@@ -189,7 +189,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     private fun closeDrawer() {
         drawerLayout.closeDrawer(Gravity.END)
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END)
     }
 
     private fun publishToOpenDrawer(action: () -> Unit) {
@@ -261,6 +261,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         skipBack.visibility = if (state.actions.and(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) == 0.toLong()) View.INVISIBLE else View.VISIBLE
 
     }
+
+    public fun hasData(): Boolean = adapter.data.isNotEmpty()
 
     public fun getSelectedId(menu: Menu): Int? {
         for (i in 0..menu.size() - 1) {
