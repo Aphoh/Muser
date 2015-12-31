@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.IBinder
@@ -20,12 +18,9 @@ import com.aphoh.muser.App
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.ui.view.ControlsView
 import com.aphoh.muser.util.LogUtil
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.RequestCreator
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.observable
 import rx.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -61,6 +56,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     private var mCurrentProgress = -1
 
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+    private var mNotification: MediaNotificationManager? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -77,6 +73,8 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         mPlaybackState.setActions(0)
         mPlaybackState.setState(PlaybackStateCompat.STATE_NONE, 0, 0.toFloat())
         publishPlaybackState()
+
+        mNotification = MediaNotificationManager(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -151,7 +149,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         if (item.streamUrl == null) {
             log.d("Stream url was null")
             mPlaybackState.setState(PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
-            mPlaybackState.setActions(stopState.configSeekState().bitwise())
+            mPlaybackState.setActions(stopState.configSeekState())
             publishPlaybackState()
 
             mDataInteractor.requestUrlForSongItem(item)
@@ -170,6 +168,8 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
                             })
         } else {
             mCurrentSong = item
+            mMediaSession.value.setMetadata(item.metadata())
+            mNotification?.startNotification()
             log.d("Stream url was not null")
             mMediaPlayer.reset()
             tickerSub?.unsubscribe()
@@ -182,21 +182,19 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
-                            log.d("Emitted long $it")
                             //Update playback state
                             if (mMediaPlayer.isPlaying) {
                                 mPlaybackState.setState(PlaybackStateCompat.STATE_PLAYING, mMediaPlayer.currentPosition.toLong(), PLAYBACK_SPEED_PLAYING)
-                                mPlaybackState.setActions(playState.configSeekState().bitwise())
-                                publishPlaybackState()
-                                doOnViews { it.publishProgress(mMediaPlayer.currentPosition) }
+                                mPlaybackState.setActions(playState.configSeekState())
                             }
+
                         }
             }
 
             mMediaPlayer.setOnBufferingUpdateListener { mediaPlayer, progress ->
                 if (!mMediaPlayer.isPlaying) {
                     mPlaybackState.setState(PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
-                    mPlaybackState.setActions(stopState.configSeekState().bitwise())
+                    mPlaybackState.setActions(stopState.configSeekState())
                     publishPlaybackState()
                 }
             }
@@ -209,7 +207,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             }
             mMediaPlayer.setOnErrorListener { mediaPlayer, what, extra ->
                 mPlaybackState.setState(PlaybackStateCompat.STATE_ERROR, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
-                mPlaybackState.setActions(stopState.configSeekState().bitwise())
+                mPlaybackState.setActions(stopState.configSeekState())
                 publishPlaybackState()
                 tickerSub?.unsubscribe()
                 log.e("Error in mediaPlayer $what-$extra")
@@ -219,6 +217,11 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             }
             mMediaPlayer.prepareAsync()
         }
+    }
+
+    private fun PlaybackStateCompat.Builder.setActions(actions: Array<Long>) {
+        log.d("Actions: ${Arrays.toString(actions)}")
+        this.setActions(actions.bitwise())
     }
 
     override fun onDestroy() {
@@ -239,36 +242,15 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         }
     }
 
-    private fun SongItem.metadata(): Observable<MediaMetadataCompat> =
-            Picasso.with(this@MusicService)
-                    .load(image)
-                    .observable()
-                    .map {
-                        MediaMetadataCompat.Builder()
-                                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songTitle)
-                                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, songTitle)
-                                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, length)
-                                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, it)
-                                .build()
-                    }
-
-    private fun RequestCreator.observable(): Observable<Bitmap> =
-            observable { sub ->
-                into(object : com.squareup.picasso.Target {
-                    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-
-                    }
-
-                    override fun onBitmapFailed(errorDrawable: Drawable) {
-
-                    }
-
-                    override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
-                        if (sub != null && !sub.isUnsubscribed) sub.onNext(bitmap)
-                    }
-                })
-            }
+    private fun SongItem.metadata() =
+            MediaMetadataCompat.Builder()
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songTitle)
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, songTitle)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, length)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, image)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, image)
+                    .build()
 
 
     /*
@@ -278,7 +260,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     private fun publishPlaybackState() {
         val state = mPlaybackState.build()
         mMediaSession.value.setPlaybackState(state)
-        log.d("mPlaybackState: $state")
+        //log.d("mPlaybackState: $state")
     }
 
     private fun doOnViews(operation: (MusicView) -> Unit) {
@@ -295,12 +277,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             PlaybackStateCompat.ACTION_STOP)
 
     public fun play() {
-        mCurrentSong?.apply {
-            metadata()
-                    .subscribe {
-                        mMediaSession.value.setMetadata(it)
-                    }
-        }
         registerReceiver(mNoisyReciever, mNoisyFilter)
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val result = am.requestAudioFocus(this,
@@ -313,7 +289,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             doOnPauseables { it.playing = true }
 
             mPlaybackState.setState(PlaybackStateCompat.STATE_PLAYING, mMediaPlayer.currentPosition.toLong(), PLAYBACK_SPEED_PLAYING)
-            mPlaybackState.setActions(playState.configSeekState().bitwise())
+            mPlaybackState.setActions(playState.configSeekState())
             publishPlaybackState()
         }
     }
@@ -331,7 +307,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             mMediaPlayer.pause()
         }
         mPlaybackState.setState(PlaybackStateCompat.STATE_PAUSED, mMediaPlayer.currentPosition.toLong(), PLAYBACK_SPEED_PAUSED)
-        mPlaybackState.setActions(pauseState.configSeekState().bitwise())
+        mPlaybackState.setActions(pauseState.configSeekState())
         publishPlaybackState()
     }
 
@@ -342,7 +318,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     public fun stop() {
         doOnPauseables { it.playing = false }
         mPlaybackState.setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
-        mPlaybackState.setActions(stopState.configSeekState().bitwise())
+        mPlaybackState.setActions(stopState.configSeekState())
         publishPlaybackState()
         (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
         mMediaPlayer.stop()
@@ -358,7 +334,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         if (mIndex < mSongs.size) {
             playSong(mIndex)
             mPlaybackState.setState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
-            mPlaybackState.setActions(skippingState.configSeekState().bitwise())
+            mPlaybackState.setActions(skippingState.configSeekState())
             publishPlaybackState()
         }
     }
@@ -368,7 +344,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         if (mIndex >= 0 && mIndex < mSongs.size) {
             playSong(mIndex)
             mPlaybackState.setState(PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
-            mPlaybackState.setActions(skippingState.configSeekState().bitwise())
+            mPlaybackState.setActions(skippingState.configSeekState())
             publishPlaybackState()
         }
     }
@@ -402,29 +378,39 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         }
     }
 
+    public fun getSessionToken(): MediaSessionCompat.Token {
+        return mMediaSession.value.sessionToken
+    }
+
     companion object IntentFactory {
         public fun getIntent(context: Context): Intent = Intent(context, MusicService::class.java)
     }
 
     private val callbacks = object : MediaSessionCompat.Callback() {
         override fun onPlay() {
+            log.d("Play called")
             play()
         }
 
         override fun onStop() {
+            log.d("Stop called")
             stop()
         }
 
         override fun onSkipToNext() {
+            log.d("Skip to next called")
             next()
         }
 
         override fun onSeekTo(pos: Long) {
+            log.d("Seek To called, pos: $pos")
             seekTo(pos)
         }
 
         override fun onSkipToPrevious() {
+            log.d("Previous called")
             prev()
         }
+
     }
 }
