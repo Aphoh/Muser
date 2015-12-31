@@ -23,11 +23,18 @@ android {
     }
 
     defaultConfig {
+
+        /*
+        *   Versioning
+        *       Alpha = 1xxxx
+        *       Beta = 2xxx
+        *       Release = 3xxx
+        * */
         applicationId "com.aphoh.muser"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1
-        versionName "0.1-alpha"
+        versionCode 1001
+        versionName "0.1.1-alpha"
     }
     sourceSets {
         main {
