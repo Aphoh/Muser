@@ -13,10 +13,8 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.SparseArray
 import com.aphoh.muser.App
 import com.aphoh.muser.data.db.model.SongItem
-import com.aphoh.muser.ui.view.ControlsView
 import com.aphoh.muser.util.LogUtil
 import rx.Observable
 import rx.Subscription
@@ -46,14 +44,11 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         }
     }
     private val mMediaSession = lazy { MediaSessionCompat(this, MusicService::class.java.simpleName) }
-    val views = SparseArray<MusicView>()
-    val pauseables = ArrayList<ControlsView>()
     var tickerSub: Subscription? = null
 
     val mPlaybackState = PlaybackStateCompat.Builder()
 
-    private var mCurrentSong: SongItem? = null
-    private var mCurrentProgress = -1
+    public var mCurrentSong: SongItem? = null
 
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
     private var mNotification: MediaNotificationManager? = null
@@ -93,41 +88,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     }
 
-    public fun isBound(musicView: MusicView): Boolean {
-        return views.get(musicView.id, null) != null
-    }
-
-    public fun isBound(controlsView: ControlsView): Boolean {
-        return pauseables.contains(controlsView)
-    }
-
-    public fun bind(controlsView: ControlsView) {
-        pauseables.add(controlsView)
-        controlsView.removeCallbacks()
-        controlsView.addPlayPauseCallback {
-            if (it) play() else pause()
-        }
-    }
-
-    public fun unbind(controlsView: ControlsView) {
-        pauseables.remove(controlsView)
-        controlsView.removeCallbacks()
-    }
-
-    public fun bind(musicView: MusicView) {
-        views.put(musicView.id, musicView)
-        mCurrentSong?.let {
-            musicView.publishAlbumArt(it.image)
-            musicView.publishSongArtist(it.artist)
-            musicView.publishProgress(mCurrentProgress)
-            musicView.publishSongName(it.songTitle)
-        }
-    }
-
-    public fun unbind(musicView: MusicView) {
-        views.remove(musicView.id)
-    }
-
     public fun playSongs(songItems: List<SongItem>) {
         log.d("PlaySongs called with songs: $songItems")
         mSongs = ArrayList(songItems)
@@ -139,12 +99,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     public fun playSong(index: Int) {
         var item = mSongs.get(index)
-        doOnViews { view ->
-            view.publishProgress(-1)
-            view.publishAlbumArt(item.image)
-            view.publishSongName(item.songTitle)
-            view.publishSongArtist(item.artist)
-        }
 
         if (item.streamUrl == null) {
             log.d("Stream url was null")
@@ -202,7 +156,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
                 mPlaybackState.setState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
                 publishPlaybackState()
                 tickerSub?.unsubscribe()
-                doOnPauseables { it.playing = false }
                 next()
             }
             mMediaPlayer.setOnErrorListener { mediaPlayer, what, extra ->
@@ -211,8 +164,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
                 publishPlaybackState()
                 tickerSub?.unsubscribe()
                 log.e("Error in mediaPlayer $what-$extra")
-                doOnPauseables { it.playing = false }
-                doOnViews { it.publishError("Error playing media: $what-$extra") }
                 true
             }
             mMediaPlayer.prepareAsync()
@@ -245,8 +196,9 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     private fun SongItem.metadata() =
             MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songTitle)
-                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, songTitle)
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, songTitle)
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, artist)
                     .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, length)
                     .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, image)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, image)
@@ -261,14 +213,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         val state = mPlaybackState.build()
         mMediaSession.value.setPlaybackState(state)
         //log.d("mPlaybackState: $state")
-    }
-
-    private fun doOnViews(operation: (MusicView) -> Unit) {
-        for (i in 0..views.size() - 1) operation.invoke(views.valueAt(i))
-    }
-
-    private fun doOnPauseables(operation: (ControlsView) -> Unit) {
-        for (pauseable in pauseables) operation.invoke(pauseable)
     }
 
     private val playState = arrayOf(
@@ -286,7 +230,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             mMediaPlayer.setVolume(1.0f, 1.0f)
             mMediaPlayer.start()
             mMediaSession.value.isActive = true
-            doOnPauseables { it.playing = true }
 
             mPlaybackState.setState(PlaybackStateCompat.STATE_PLAYING, mMediaPlayer.currentPosition.toLong(), PLAYBACK_SPEED_PLAYING)
             mPlaybackState.setActions(playState.configSeekState())
@@ -301,7 +244,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     )
 
     public fun pause() {
-        doOnPauseables { it.playing = false }
         unregisterReceiver(mNoisyReciever)
         if (mMediaPlayer.isPlaying) {
             mMediaPlayer.pause()
@@ -316,7 +258,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     )
 
     public fun stop() {
-        doOnPauseables { it.playing = false }
         mPlaybackState.setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
         mPlaybackState.setActions(stopState.configSeekState())
         publishPlaybackState()

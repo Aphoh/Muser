@@ -12,13 +12,13 @@ import com.aphoh.muser.R
 /**
  * Created by Will on 11/5/15.
  */
-public class PlayPauseView : View, ControlsView {
+public class PlayPauseView : View{
 
     val play = lazy { ResourcesCompat.getDrawable(context.resources, R.drawable.ic_play_arrow, context.theme) }
     val pause = lazy { ResourcesCompat.getDrawable(context.resources, R.drawable.ic_pause, context.theme) }
 
 
-    public override var playing = false
+    public var playing = false
         set(value) {
             invalidate()
             field = value
@@ -42,18 +42,4 @@ public class PlayPauseView : View, ControlsView {
         drawable.draw(this)
     }
 
-    override fun removeCallbacks() {
-        setOnClickListener(null)
-    }
-
-    override fun addPlayPauseCallback(func: (Boolean) -> Unit) {
-        setOnClickListener {
-            playing = !playing
-            func.invoke(playing)
-        }
-    }
-
-    override fun addPreviousNextCallback(func: (Int) -> Unit) {
-
-    }
 }

@@ -5,6 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -14,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import bindView
@@ -21,7 +24,6 @@ import com.aphoh.muser.BuildConfig
 import com.aphoh.muser.R
 import com.aphoh.muser.base.BaseNucleusActivity
 import com.aphoh.muser.data.db.model.SongItem
-import com.aphoh.muser.music.MusicView
 import com.aphoh.muser.ui.adapter.MainAdapter
 import com.aphoh.muser.ui.presenter.MainPresenter
 import com.aphoh.muser.ui.view.PlayPauseView
@@ -32,7 +34,7 @@ import nucleus.factory.RequiresPresenter
 import java.util.*
 
 @RequiresPresenter(MainPresenter::class)
-public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>(), MusicView {
+public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
     private final val NAV_MENU_SELECTED = "NAV_MENU_SELECTED"
 
     var log = LogUtil(MainActivity::class.java.simpleName)
@@ -47,6 +49,9 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     val titleText: TextView by bindView(R.id.textview_main_song_title)
     val artistText: TextView by bindView(R.id.textview_main_song_artist)
     val playPauseView: PlayPauseView by bindView(R.id.drawer_pause_play_view)
+    val progressLoading: ProgressBar by bindView(R.id.progress_loading)
+    val skipForward: ImageView by bindView(R.id.drawer_fast_forward)
+    val skipBack: ImageView by bindView(R.id.drawer_rewind)
 
     val navigationView: NavigationView by bindView(R.id.navigation_view)
 
@@ -99,7 +104,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
-            if(presenter.isPlaying(adapter.data.get(position))){
+            if (presenter.isPlaying(adapter.data.get(position))) {
                 openDrawer()
             } else if (!drawerLayout.isDrawerOpen(Gravity.END)) {
                 val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size))
@@ -122,7 +127,6 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         navigationView.setNavigationItemSelectedListener {
             presenter.refresh(this)
-            swipeRefreshLayout.isRefreshing = true
             drawerLayout.closeDrawer(Gravity.START)
             setToolbarText(it.title)
             true
@@ -136,6 +140,19 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
                 setToolbarText(item.title)
             }
         }
+
+
+        //OnClick Listeners
+        playPauseView.setOnClickListener {
+            if (playPauseView.playing) {
+                presenter.requestPause()
+            } else {
+                presenter.requestPlay()
+            }
+        }
+
+        skipForward.setOnClickListener { presenter.requestNext() }
+        skipBack.setOnClickListener { presenter.requestPrevious() }
     }
 
     private fun setToolbarText(text: CharSequence) {
@@ -170,6 +187,21 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         if (selected != null && selected != -1) navigationView.setCheckedItem(selected)
     }
 
+    private fun closeDrawer() {
+        drawerLayout.closeDrawer(Gravity.END)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
+    private fun publishToOpenDrawer(action: () -> Unit) {
+        if (!drawerLayout.isDrawerOpen(Gravity.END)) openDrawer()
+        action.invoke()
+    }
+
+    private fun openDrawer() {
+        drawerLayout.openDrawer(Gravity.END)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
+
     /*
     * Presenter-exposed methods
     * */
@@ -178,20 +210,56 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         adapter.invalidateData()
     }
 
+    public fun setRefreshing(refreshing: Boolean) {
+        swipeRefreshLayout.isRefreshing = refreshing
+    }
+
     override fun publish(items: List<SongItem>) {
-        swipeRefreshLayout.isRefreshing = false
-        if (drawerLayout.isDrawerOpen(Gravity.END)) drawerLayout.closeDrawer(Gravity.END)
+        if (drawerLayout.isDrawerOpen(Gravity.END)) closeDrawer()
         adapter.updateItems(items)
     }
 
-    private fun publishToOpenDrawer(action: () -> Unit) {
-        if (!drawerLayout.isDrawerOpen(Gravity.END)) openDrawer()
-        action.invoke()
+    fun publishMetadata(metadata: MediaMetadataCompat) {
+        val iconUri = metadata.description.iconUri
+        if (iconUri != null)
+            publishAlbumArt(iconUri.toString())
+        publishSongName(metadata.description.title.toString())
+        publishSongArtist(metadata.description.subtitle.toString())
+        openDrawer()
     }
 
-    private fun openDrawer(){
-        drawerLayout.openDrawer(Gravity.END)
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    fun publishPlaybackState(state: PlaybackStateCompat) {
+
+        state.position
+        when (state.state) {
+            PlaybackStateCompat.STATE_PLAYING -> {
+                playPauseView.playing = true
+                playPauseView.visibility = View.VISIBLE
+                progressLoading.visibility = View.INVISIBLE
+                openDrawer()
+            }
+            PlaybackStateCompat.STATE_PAUSED -> {
+                playPauseView.playing = false
+                playPauseView.visibility = View.VISIBLE
+                progressLoading.visibility = View.INVISIBLE
+            }
+            PlaybackStateCompat.STATE_NONE, PlaybackStateCompat.STATE_STOPPED -> {
+                playPauseView.visibility = View.VISIBLE
+                playPauseView.playing = false
+                progressLoading.visibility = View.INVISIBLE
+                closeDrawer()
+            }
+            PlaybackStateCompat.STATE_BUFFERING -> {
+                playPauseView.visibility = View.INVISIBLE
+                progressLoading.visibility = View.VISIBLE
+            }
+        }
+
+        publishProgress(state.position.toInt())
+
+        skipForward.visibility = if (state.actions.and(PlaybackStateCompat.ACTION_SKIP_TO_NEXT) == 0.toLong()) View.INVISIBLE else View.VISIBLE
+        skipBack.visibility = if (state.actions.and(PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) == 0.toLong()) View.INVISIBLE else View.VISIBLE
+
     }
 
     public fun getSelectedId(menu: Menu): Int? {
@@ -211,33 +279,25 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         return subreddit
     }
 
-    /*
-    * MusicView Methods
-    * */
-
-    override var id: Int = 0
-
-    override fun publishAlbumArt(albumArt: String) {
+    fun publishAlbumArt(albumArt: String) {
         publishToOpenDrawer { Picasso.with(this).load(albumArt).fit().centerCrop().into(songCover) }
     }
 
-    override fun publishSongName(songName: String) {
+    fun publishSongName(songName: String) {
         publishToOpenDrawer { titleText.text = songName }
     }
 
-    override fun publishSongArtist(songArtist: String?) {
+    fun publishSongArtist(songArtist: String?) {
         songArtist?.let {
             publishToOpenDrawer { artistText.text = it }
         }
     }
 
-    override fun publishProgress(seconds: Int) {
-        log.d("Secs: " + seconds)
+    fun publishProgress(seconds: Int) {
+        log.d("seconds published: $seconds")
     }
 
-    override fun publishError(error: String) {
+    fun publishError(error: String) {
         toast(error)
-        swipeRefreshLayout.isRefreshing = false
     }
-
 }
