@@ -27,6 +27,7 @@ public class MainAdapter(val context: Context) : RecyclerView.Adapter<MainAdapte
         var v = LayoutInflater.from(parent?.context).inflate(R.layout.row_main, parent, false)
         var holder = SongHolder(v)
         v.setOnClickListener(holder)
+        v.setOnLongClickListener(holder)
         return holder
     }
 
