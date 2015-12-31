@@ -61,6 +61,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
         Notification notification = createNotification();
         if (notification != null) {
           mNotificationManager.notify(NOTIFICATION_ID, notification);
+          if (state.getState() == PlaybackStateCompat.STATE_PLAYING) {
+            mService.startForeground(NOTIFICATION_ID, notification);
+          } else {
+            mService.stopForeground(false);
+          }
         }
       }
     }
