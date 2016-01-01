@@ -8,7 +8,12 @@
         android:icon="@drawable/fireemoji"
         android:title="@string/trap"
     />
-
+    <item
+        android:id="@+id/drawer_futurebeats"
+        android:checked="false"
+        android:icon="@drawable/clockemoji"
+        android:title="@string/futurebeats"
+    />
     <item
         android:id="@+id/drawer_chillmusic"
         android:checked="false"
@@ -20,6 +25,18 @@
         android:checked="false"
         android:icon="@drawable/fishemoji"
         android:title="@string/futurebass"
+    />
+    <item
+        android:id="@+id/drawer_electronicmusic"
+        android:checked="false"
+        android:icon="@drawable/headphonesemoji"
+        android:title="@string/electronicmusic"
+    />
+    <item
+        android:id="@+id/drawer_mashups"
+        android:checked="false"
+        android:icon="@drawable/fingerupemoji"
+        android:title="@string/mashups"
     />
   </group>
 

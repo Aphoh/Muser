@@ -10,4 +10,7 @@
   <string name="pause">M11,10 L17,10 17,26 11,26 M20,10 L26,10 26,26 20,26</string>
   <string name="previous">Previous</string>
   <string name="next">Next</string>
+  <string name="electronicmusic">electronicmusic</string>
+  <string name="mashups">mashups</string>
+  <string name="futurebeats">futurebeats</string>
 </resources>
