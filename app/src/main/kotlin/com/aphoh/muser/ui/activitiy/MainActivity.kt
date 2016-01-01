@@ -129,9 +129,9 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         drawerContentSongView.setOnTouchListener { view, motionEvent -> true }
 
         navigationView.setNavigationItemSelectedListener {
-            presenter.refresh(this)
             drawerLayout.closeDrawer(Gravity.START)
             setToolbarText(it.title)
+            presenter.refresh(this, it.title.toString())
             true
         }
         //Allows for colored icons

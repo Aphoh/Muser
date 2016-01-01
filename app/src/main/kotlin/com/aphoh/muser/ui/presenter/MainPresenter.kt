@@ -134,6 +134,10 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
 
     public override fun refresh(view: MainActivity) {
         this.subreddit = view.getSubreddit()
+        refresh(view, subreddit)
+    }
+
+    public fun refresh(view: MainActivity, subreddit: String) {
         view.invalidateDataset()
         loading.set(true)
         view.setRefreshing(loading.get())
