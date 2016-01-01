@@ -69,6 +69,9 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         Picasso.with(this).isLoggingEnabled = BuildConfig.DEBUG
 
+        toolbar.navigationIcon = ContextCompat.getDrawable(this, R.drawable.ic_action_navigation_menu)
+        toolbar.setNavigationOnClickListener { drawerLayout.openDrawer(Gravity.START) }
+
         drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.primary))
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END) //By default lock the song drawer view
         drawerLayout.setDrawerListener(object : DrawerLayout.DrawerListener {
