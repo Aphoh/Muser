@@ -1,18 +1,34 @@
+#! /usr/bin/env python
 import sys
 import praw
 
-sub = sys.argv[1]
+data = sys.argv[1]
 
 user_agent = ("PyMuserBot 0.1")
 r = praw.Reddit(user_agent=user_agent)
 
-subreddit = r.get_subreddit(sub)
-submissions = subreddit.get_top_from_week(limit=100)
 
-sc_links = 0
+def sc_count(r, sub):
+	try:
+		subreddit = r.get_subreddit(sub)
+		submissions = subreddit.get_top_from_week(limit=100)
 
-for sub in submissions:
-	if("soundcloud.com" in sub.domain):
-		sc_links += 1
+		sc_links = 0
 
-print sc_links
+		for sub in submissions:
+			if("soundcloud.com" in sub.domain):
+				sc_links += 1
+
+		return sc_links
+	except Exception, e:
+		return -1
+	
+
+with open(data) as f:
+	for line in f:
+		sub = line.strip()
+		print "%d: %s" % (sc_count(r, sub), sub)
+
+
+
+
