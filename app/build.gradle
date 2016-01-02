@@ -92,7 +92,7 @@ dependencies {
 
 victor {
     // Any assets defined in relative terms needs a base DPI specified
-    svgDpi = 72
+    svgDpi = 42
 
     // Do not generate these densities for SVG assets
     excludeDensities = ['ldpi', 'xxxhdpi']
