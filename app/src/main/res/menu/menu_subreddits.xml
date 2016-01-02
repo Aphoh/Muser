@@ -21,6 +21,12 @@
         android:title="@string/electronicmusic"
     />
     <item
+        android:id="@+id/drawer_hiphopheads"
+        android:checked="false"
+        android:icon="@drawable/illuminati_triangle"
+        android:title="@string/hiphopheads"
+    />
+    <item
         android:id="@+id/drawer_chillmusic"
         android:checked="false"
         android:icon="@drawable/dropletemoji"
