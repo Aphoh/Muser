@@ -46,8 +46,16 @@ public class SongItem {
     if (oembed == null) {
       log.e("Media is null for data with url " + data.getUrl());
     }
-    return new SongItem(data.getId(), oembed.getThumbnail_url(), oembed.getThumbnail_url(),
-        data.getUrl(), null, null, ((int) data.getScore()), -1, oembed.getAuthor_name(),
+    return new SongItem(
+        data.getId(),
+        oembed.getThumbnail_url(),
+        oembed.getThumbnail_url(),
+        data.getUrl(),
+        null,
+        null,
+        ((int) data.getScore()),
+        -1,
+        oembed.getAuthor_name(),
         MuserDataInteractor.Utils.removeByLine(oembed.getTitle()));
   }
 }
