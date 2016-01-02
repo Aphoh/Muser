@@ -178,6 +178,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     override fun onDestroy() {
         super.onDestroy()
+        mNotification?.stopNotification()
         tickerSub?.unsubscribe()
         stop()
         mMediaPlayer.release()
