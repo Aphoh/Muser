@@ -55,6 +55,8 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     val navigationView: NavigationView by bindView(R.id.navigation_view)
 
+    var canOpenSongDrawer = false
+
     var view = this
     var adapter: MainAdapter = MainAdapter(this)
 
@@ -87,6 +89,19 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
             }
 
             override fun onDrawerStateChanged(newState: Int) {
+                if (newState == DrawerLayout.STATE_IDLE) {
+                    //Prevent the closing of one drawer to open the other
+                    if (drawerLayout.isDrawerOpen(Gravity.START)) {
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END)
+                    } else if (drawerLayout.isDrawerOpen(Gravity.END)) {
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.START)
+                    } else {
+                        //Neither drawer is open, set the behavior as normal
+                        if (canOpenSongDrawer) drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END)
+                        //Normal drawer should always be unlocked
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.START)
+                    }
+                }
                 log d("New drawer state: $newState")
             }
 
@@ -191,6 +206,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     }
 
     private fun closeDrawer() {
+        canOpenSongDrawer = false
         drawerLayout.closeDrawer(Gravity.END)
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END)
     }
@@ -201,6 +217,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     }
 
     private fun openDrawer() {
+        canOpenSongDrawer = true
         drawerLayout.openDrawer(Gravity.END)
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
