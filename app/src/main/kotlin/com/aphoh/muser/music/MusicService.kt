@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.Handler
 import android.os.IBinder
 import android.os.PowerManager
 import android.support.v4.media.MediaMetadataCompat
@@ -53,6 +54,8 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
     private var mNotification: MediaNotificationManager? = null
+
+    private var hasntPlayed = true
 
     override fun onCreate() {
         super.onCreate()
@@ -124,7 +127,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         } else {
             mCurrentSong = item
             mMediaSession.value.setMetadata(item.metadata())
-            mNotification?.startNotification()
             log.d("Stream url was not null")
             mMediaPlayer.reset()
             tickerSub?.unsubscribe()
@@ -133,6 +135,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
                 log.d("Prepared, playing...")
                 mIsPrepared = true
                 play()
+                mNotification?.startNotification()
                 tickerSub = Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
                         .subscribeOn(Schedulers.newThread())
@@ -224,6 +227,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     public fun play() {
         if(mMediaPlayer.isPlaying) return
+        hasntPlayed = false
         registerReceiver(mNoisyReciever, mNoisyFilter)
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val result = am.requestAudioFocus(this,
@@ -248,6 +252,11 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     public fun pause() {
         if(!mMediaPlayer.isPlaying) return
+        hasntPlayed = true
+        Observable.timer(30, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.handlerThread(Handler()))
+                .subscribe { if (hasntPlayed == true) mNotification?.stopNotification() }
         unregisterReceiver(mNoisyReciever)
         if (mMediaPlayer.isPlaying) {
             mMediaPlayer.pause()
