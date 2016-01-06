@@ -14,29 +14,38 @@ import javax.inject.Singleton;
 /**
  * Created by Will on 7/12/15.
  */
-@Module public class DataModule {
+@Module
+public class DataModule {
   private final BaseApplication application;
 
   public DataModule(BaseApplication application) {
     this.application = application;
   }
 
-  @Provides @Singleton Context provideApplicationContext() {
+  @Provides
+  @Singleton
+  Context provideApplicationContext() {
     return application;
   }
 
-  @Provides @Singleton OkHttpClient provideHttpClient() {
+  @Provides
+  @Singleton
+  OkHttpClient provideHttpClient() {
     OkHttpClient client = new OkHttpClient();
     if (BuildConfig.DEBUG) client.networkInterceptors().add(new StethoInterceptor());
     return client;
   }
 
-  @Provides @Singleton DataInteractor provideDataInteractor(OkHttpClient client,
-      SoundcloudKeys keys) {
+  @Provides
+  @Singleton
+  DataInteractor provideDataInteractor(OkHttpClient client,
+                                       SoundcloudKeys keys) {
     return new MuserDataInteractor(client, keys);
   }
 
-  @Provides @Singleton SoundcloudKeys provideSoundcloudKeys() {
+  @Provides
+  @Singleton
+  SoundcloudKeys provideSoundcloudKeys() {
     return new MuserSoundcloudKeys();
   }
 }

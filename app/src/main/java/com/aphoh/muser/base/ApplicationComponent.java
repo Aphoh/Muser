@@ -10,7 +10,8 @@ import javax.inject.Singleton;
 /**
  * Created by Will on 7/12/15.
  */
-@Singleton @Component(modules = { DataModule.class, RxModule.class })
+@Singleton
+@Component(modules = {DataModule.class, RxModule.class})
 public interface ApplicationComponent {
   void injectPresenter(MainPresenter presenter);
 

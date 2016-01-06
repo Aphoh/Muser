@@ -14,14 +14,14 @@ import java.util.*
  */
 public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys: SoundcloudKeys) : DataInteractor {
 
-    var log = LogUtil(MuserDataInteractor::class.java.simpleName)
+    private val log = LogUtil(MuserDataInteractor::class.java.simpleName)
 
-    var redditService: RedditService = RestAdapter.Builder()
+    private val redditService: RedditService = RestAdapter.Builder()
             .setEndpoint("http://www.reddit.com")
             .setClient(OkClient(okClient))
             .build().create(RedditService::class.java)
 
-    var soundcloudService: SoundcloudService = RestAdapter.Builder()
+    private val soundcloudService: SoundcloudService = RestAdapter.Builder()
             .setEndpoint("http://api.soundcloud.com")
             .setClient(OkClient(okClient))
             .build().create(SoundcloudService::class.java)
