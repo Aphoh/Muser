@@ -75,7 +75,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         MediaButtonReceiver.handleIntent(mMediaSession.value, intent)
-        return super.onStartCommand(intent, flags, startId)
+        return Service.START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder = mBinder
