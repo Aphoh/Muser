@@ -1,6 +1,7 @@
 package com.aphoh.muser.network
 
 import com.aphoh.muser.data.db.model.SongItem
+import com.aphoh.muser.data.network.model.reddit.Oembed_
 import com.aphoh.muser.util.LogUtil
 import com.squareup.okhttp.OkHttpClient
 import retrofit.RestAdapter
@@ -39,6 +40,7 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
                             .filter { isSoundcloudUrl(it.url) }
                             .filter { it.media != null }
                             .filter { it.media.oembed != null }
+                            .filter { isTrack(it.media.oembed) }
                             .map { SongItem.fromPostData(it) }
                             .toArrayList()
                 }
@@ -62,5 +64,6 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
 
     companion object Utils {
         public fun removeByLine(s: String): String = s.substringBeforeLast(" by")
+        public fun isTrack(oembed: Oembed_): Boolean = kotlin.text.Regex(".*api\\.soundcloud\\.com(.....)tracks.*").containsMatchIn(oembed.html)
     }
 }
