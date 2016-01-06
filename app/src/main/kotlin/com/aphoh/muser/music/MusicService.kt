@@ -124,7 +124,6 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         } else {
             mCurrentSong = item
             mMediaSession.value.setMetadata(item.metadata())
-            mNotification?.startNotification()
             log.d("Stream url was not null")
             mMediaPlayer.reset()
             tickerSub?.unsubscribe()
@@ -133,6 +132,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
                 log.d("Prepared, playing...")
                 mIsPrepared = true
                 play()
+                mNotification?.startNotification()
                 tickerSub = Observable.interval(200, TimeUnit.MILLISECONDS)
                         .repeat()
                         .subscribeOn(Schedulers.newThread())
