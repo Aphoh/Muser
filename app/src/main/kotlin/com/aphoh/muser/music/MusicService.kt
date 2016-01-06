@@ -223,6 +223,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             PlaybackStateCompat.ACTION_STOP)
 
     public fun play() {
+        if(mMediaPlayer.isPlaying) return
         registerReceiver(mNoisyReciever, mNoisyFilter)
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val result = am.requestAudioFocus(this,
@@ -246,6 +247,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     )
 
     public fun pause() {
+        if(!mMediaPlayer.isPlaying) return
         unregisterReceiver(mNoisyReciever)
         if (mMediaPlayer.isPlaying) {
             mMediaPlayer.pause()
