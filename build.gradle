@@ -6,7 +6,7 @@ buildscript {
     ext.androidapt_version = '1.7'
     ext.android_version = '23.1.1'
     ext.dagger_version = '2.0.1'
-    ext.androidgradle_version = '2.0.0-alpha1'
+    ext.androidgradle_version = '2.0.0-alpha3'
     repositories {
         mavenCentral()
         jcenter()
