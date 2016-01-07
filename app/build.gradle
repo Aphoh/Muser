@@ -26,15 +26,15 @@ android {
 
         /*
         *   Versioning
-        *       Alpha = 1xxxx
+        *       Alpha = 1xxx
         *       Beta = 2xxx
         *       Release = 3xxx
         * */
         applicationId "com.aphoh.muser"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1002
-        versionName "0.2.0-alpha"
+        versionCode 1003
+        versionName "0.2.1-alpha"
     }
     sourceSets {
         main {
