@@ -42,6 +42,7 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
                             .filter { it.media.oembed != null }
                             .filter { isTrack(it.media.oembed) }
                             .map { SongItem.fromPostData(it) }
+                            .map { preProcess(it) }
                             .toArrayList()
                 }
     }
@@ -60,6 +61,18 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
 
     private fun isSoundcloudUrl(url: String): Boolean {
         return url.startsWith("http://soundcloud.com") || url.startsWith("https://soundcloud.com") || url.startsWith("http://www.soundcloud.com") || url.startsWith("https://www.soundcloud.com")
+    }
+
+    private fun preProcess(songItem: SongItem): SongItem {
+        //Replace &amp;
+        songItem.artist = songItem.artist.replaceAnd()
+        songItem.songTitle = songItem.songTitle.replaceAnd()
+        return songItem
+    }
+
+    private fun String.replaceAnd(): String {
+        if (this.contains("&amp;")) return replace("&amp;", "&")
+        else return this
     }
 
     companion object Utils {
