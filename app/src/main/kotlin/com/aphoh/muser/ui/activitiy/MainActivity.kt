@@ -236,7 +236,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     override fun publish(items: List<SongItem>) {
         if (drawerLayout.isDrawerOpen(Gravity.END)) closeDrawer()
-        adapter.updateItems(items.sortedBy { it.score })
+        adapter.updateItems(items.sortedBy { it.score }.asReversed())
     }
 
     fun publishMetadata(metadata: MediaMetadataCompat) {
