@@ -23,7 +23,7 @@ public class MockDataInteractor : DataInteractor {
         return Observable.just(songItem)
                 .map {
                     it.length = 267000
-                    it.linkUrl = "http://picosong.com/EPVR"
+                    it.streamUrl = "https://f537bc640baa6c0c16b9c8699e36ca9adfbfe2ce.googledrive.com/host/0B4NLnNU5sKUJTVluQmFVektCeFk"
                     it
                 }
     }
@@ -31,14 +31,16 @@ public class MockDataInteractor : DataInteractor {
     private companion object {
         fun randString() = UUID.randomUUID().toString()
         fun randInt() = ThreadLocalRandom.current().nextInt()
+        fun randScore() = ThreadLocalRandom.current().nextInt(0, 3000)
         fun mockItem(): SongItem {
+            val score = randScore()
             return SongItem(randString(),
-                    "",
+                    "https://www.noao.edu/image_gallery/images/d3/ngc3582-500.jpg",
                     "https://www.noao.edu/image_gallery/images/d3/ngc3582-500.jpg",
                     "",
                     "",
                     "",
-                    randInt(),
+                    score,
                     -1,
                     "mockArtist",
                     "mockSong")

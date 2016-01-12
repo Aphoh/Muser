@@ -52,6 +52,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors{
+        mock{
+            buildConfigField 'boolean', 'mock', 'true'
+        }
+        prod{
+            buildConfigField 'boolean', 'mock', 'false'
+        }
+    }
 }
 repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }

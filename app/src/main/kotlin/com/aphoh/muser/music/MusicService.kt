@@ -104,7 +104,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     public fun playSong(index: Int) {
         var item = mSongs.get(index)
 
-        if (item.streamUrl == null) {
+        if (item.streamUrl == null || item.streamUrl.isEmpty()) {
             log.d("Stream url was null")
             mPlaybackState.setState(PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
             mPlaybackState.setActions(stopState.configSeekState())
