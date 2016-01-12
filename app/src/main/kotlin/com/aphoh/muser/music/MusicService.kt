@@ -309,7 +309,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         mMediaPlayer.seekTo(pos.toInt())
     }
 
-    public fun isPlaying(mSongItem: SongItem): Boolean = mSongItem.id == mCurrentSong?.id
+    public fun isPlaying(mSongItem: SongItem): Boolean = mSongItem.id == mCurrentSong?.id && mMediaPlayer.isPlaying
 
     private fun Array<Long>.bitwise(): Long {
         if (size > 0) {
