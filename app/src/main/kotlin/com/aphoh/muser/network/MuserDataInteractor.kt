@@ -65,8 +65,10 @@ public class MuserDataInteractor(var okClient: OkHttpClient, val soundcloudKeys:
 
     private fun preProcess(songItem: SongItem): SongItem {
         //Replace &amp;
-        songItem.artist = songItem.artist.replaceAnd()
-        songItem.songTitle = songItem.songTitle.replaceAnd()
+        if (songItem.artist != null)
+            songItem.artist = songItem.artist.replaceAnd()
+        if (songItem.songTitle != null)
+            songItem.songTitle = songItem.songTitle.replaceAnd()
         return songItem
     }
 
