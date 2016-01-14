@@ -14,9 +14,9 @@ import com.aphoh.muser.base.BaseNucleusPresenter
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.music.MusicService
 import com.aphoh.muser.network.DataInteractor
+import com.aphoh.muser.network.NetworkException
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil
-import retrofit.RetrofitError
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -137,28 +137,25 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         refresh(view, subreddit)
     }
 
-    public fun refresh(view: MainActivity, subreddit: String) {
-        view.invalidateDataset()
+    public fun refresh(view: MainActivity?, subreddit: String) {
+        view?.invalidateDataset()
         loading.set(true)
-        view.setRefreshing(loading.get())
+        view?.setRefreshing(loading.get())
         dataInteractor.refresh(subreddit)
                 .compose(this.deliver<List<SongItem>>())
                 .compose(transformer.get<List<SongItem>>())
                 .subscribe (
                         { result ->
                             loading.set(false)
-                            view.setRefreshing(loading.get())
+                            getView().setRefreshing(loading.get())
                             getView().publish(result)
                         },
                         { throwable ->
                             getView()?.let {
                                 loading.set(false)
                                 it.setRefreshing(loading.get())
-                                var error = "Non-network error refreshing, this is a bug"
-                                if (throwable is RetrofitError) {
-                                    error = "Network Error ${throwable.response.status}, check your connection"
-                                }
-                                it.publishError(error)
+                                val error = NetworkException.from(throwable)
+                                it.publishError(error.parsedMessage)
                             }
                             log.e("Error refreshing", throwable)
                         })

@@ -38,9 +38,10 @@ public class DataModule {
 
   @Provides
   @Singleton
-  DataInteractor provideDataInteractor(OkHttpClient client,
+  DataInteractor provideDataInteractor(Context context,
+                                       OkHttpClient client,
                                        SoundcloudKeys keys) {
-    return new MuserDataInteractor(client, keys);
+    return new MuserDataInteractor(context, client, keys);
   }
 
   @Provides
