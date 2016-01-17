@@ -69,6 +69,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
             }
 
         }
+        view.setToolbarText(view.getSubreddit())
     }
 
     override fun dropView() {

@@ -173,7 +173,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         skipBack.setOnClickListener { presenter.requestPrevious() }
     }
 
-    private fun setToolbarText(text: CharSequence) {
+    public fun setToolbarText(text: CharSequence) {
         toolbar.title = text
     }
 
