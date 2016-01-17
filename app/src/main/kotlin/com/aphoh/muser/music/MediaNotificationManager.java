@@ -34,7 +34,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
   public static final String ACTION_PLAY = "com.aphoh.muser.play";
   public static final String ACTION_PREV = "com.aphoh.muser.prev";
   public static final String ACTION_NEXT = "com.aphoh.muser.next";
-  private static final int NOTIFICATION_ID = 412;
+  private static final int NOTIFICATION_ID = "com.aphoh.muser".hashCode();
   private static final int REQUEST_CODE = 100;
   private final LogUtil log = new LogUtil(MediaNotificationManager.class.getSimpleName());
   private final MusicService mService;
@@ -51,7 +51,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
   private MediaMetadataCompat mMetadata;
   private boolean mStarted = false;
   private final MediaControllerCompat.Callback mCb = new MediaControllerCompat.Callback() {
-    @Override public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+    @Override
+    public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
       mPlaybackState = state;
       log.d("Received new playback state" + state);
       if (state.getState() == PlaybackStateCompat.STATE_STOPPED
@@ -70,7 +71,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
       }
     }
 
-    @Override public void onMetadataChanged(MediaMetadataCompat metadata) {
+    @Override
+    public void onMetadataChanged(MediaMetadataCompat metadata) {
       mMetadata = metadata;
       log.d("Received new metadata " + metadata);
       Notification notification = createNotification();
@@ -79,7 +81,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
       }
     }
 
-    @Override public void onSessionDestroyed() {
+    @Override
+    public void onSessionDestroyed() {
       super.onSessionDestroyed();
       log.d("Session was destroyed, resetting to the new session token");
       updateSessionToken();
@@ -159,7 +162,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
     }
   }
 
-  @Override public void onReceive(Context context, Intent intent) {
+  @Override
+  public void onReceive(Context context, Intent intent) {
     final String action = intent.getAction();
     log.d("Received intent with action " + action);
     switch (action) {
@@ -244,7 +248,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
     MediaDescriptionCompat description = mMetadata.getDescription();
 
     notificationBuilder.setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(
-        new int[] { playPauseButtonPosition })  // show only play/pause in compact view
+        new int[]{playPauseButtonPosition})  // show only play/pause in compact view
         .setMediaSession(mSessionToken))
         .setColor(mNotificationColor)
         .setSmallIcon(R.drawable.play)
@@ -308,20 +312,23 @@ public class MediaNotificationManager extends BroadcastReceiver {
   }
 
   private void fetchBitmapFromURLAsync(final String bitmapUrl,
-      final NotificationCompat.Builder builder) {
+                                       final NotificationCompat.Builder builder) {
     Picasso.with(mService).load(bitmapUrl).into(new Target() {
-      @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+      @Override
+      public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
         if (mMetadata != null) {
           builder.setLargeIcon(bitmap);
           mNotificationManager.notify(NOTIFICATION_ID, builder.build());
         }
       }
 
-      @Override public void onBitmapFailed(Drawable errorDrawable) {
+      @Override
+      public void onBitmapFailed(Drawable errorDrawable) {
 
       }
 
-      @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
+      @Override
+      public void onPrepareLoad(Drawable placeHolderDrawable) {
 
       }
     });
