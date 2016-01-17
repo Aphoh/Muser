@@ -148,13 +148,13 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
                 .subscribe (
                         { result ->
                             loading.set(false)
-                            getView().setRefreshing(loading.get())
+                            getView().setRefreshing(false)
                             getView().publish(result)
                         },
                         { throwable ->
                             getView()?.let {
                                 loading.set(false)
-                                it.setRefreshing(loading.get())
+                                it.setRefreshing(false)
                                 val error = NetworkException.from(throwable)
                                 it.publishError(error.parsedMessage)
                             }
