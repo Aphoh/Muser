@@ -1,65 +1,114 @@
 package com.aphoh.muser.data.network.model.reddit;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PostData {
 
-  @JsonField(name = "domain") @Expose private String domain;
-  @JsonField(name = "banned_by") @Expose private Object banned_by;
-  @JsonField(name = "media_embed") @Expose private Media_embed media_embed;
-  @JsonField(name = "subreddit") @Expose private String subreddit;
-  @JsonField(name = "selftext_html") @Expose private String selftext_html;
-  @JsonField(name = "selftext") @Expose private String selftext;
-  @JsonField(name = "likes") @Expose private Object likes;
-  @JsonField(name = "suggested_sort") @Expose private Object suggested_sort;
-  @JsonField(name = "user_reports") @Expose private List<Object> user_reports =
+  @JsonField(name = "domain")
+  private String domain;
+  @JsonField(name = "banned_by")
+  private Object banned_by;
+  @JsonField(name = "media_embed")
+  private Media_embed media_embed;
+  @JsonField(name = "subreddit")
+  private String subreddit;
+  @JsonField(name = "selftext_html")
+  private String selftext_html;
+  @JsonField(name = "selftext")
+  private String selftext;
+  @JsonField(name = "likes")
+  private Object likes;
+  @JsonField(name = "suggested_sort")
+  private Object suggested_sort;
+  @JsonField(name = "user_reports")
+  private List<Object> user_reports =
       new ArrayList<Object>();
-  @JsonField(name = "secure_media") @Expose private Secure_media secure_media;
-  @JsonField(name = "link_flair_text") @Expose private String link_flair_text;
-  @JsonField(name = "id") @Expose private String id;
-  @JsonField(name = "from_kind") @Expose private Object from_kind;
-  @JsonField(name = "gilded") @Expose private long gilded;
-  @JsonField(name = "archived") @Expose private boolean archived;
-  @JsonField(name = "clicked") @Expose private boolean clicked;
-  @JsonField(name = "report_reasons") @Expose private Object report_reasons;
-  @JsonField(name = "author") @Expose private String author;
-  @JsonField(name = "media") @Expose private com.aphoh.muser.data.network.model.reddit.Media media;
-  @JsonField(name = "score") @Expose private long score;
-  @JsonField(name = "approved_by") @Expose private Object approved_by;
-  @JsonField(name = "over_18") @Expose private boolean over_18;
-  @JsonField(name = "hidden") @Expose private boolean hidden;
-  @JsonField(name = "preview") @Expose private Preview preview;
-  @JsonField(name = "num_comments") @Expose private long num_comments;
-  @JsonField(name = "thumbnail") @Expose private String thumbnail;
-  @JsonField(name = "subreddit_id") @Expose private String subreddit_id;
-  @JsonField(name = "edited") @Expose private Object edited;
-  @JsonField(name = "link_flair_css_class") @Expose private String link_flair_css_class;
-  @JsonField(name = "author_flair_css_class") @Expose private Object author_flair_css_class;
-  @JsonField(name = "downs") @Expose private long downs;
-  @JsonField(name = "secure_media_embed") @Expose private Secure_media_embed secure_media_embed;
-  @JsonField(name = "saved") @Expose private boolean saved;
-  @JsonField(name = "removal_reason") @Expose private Object removal_reason;
-  @JsonField(name = "post_hint") @Expose private String post_hint;
-  @JsonField(name = "stickied") @Expose private boolean stickied;
-  @JsonField(name = "from") @Expose private Object from;
-  @JsonField(name = "is_self") @Expose private boolean is_self;
-  @JsonField(name = "from_id") @Expose private Object from_id;
-  @JsonField(name = "permalink") @Expose private String permalink;
-  @JsonField(name = "name") @Expose private String name;
-  @JsonField(name = "created") @Expose private long created;
-  @JsonField(name = "url") @Expose private String url;
-  @JsonField(name = "author_flair_text") @Expose private Object author_flair_text;
-  @JsonField(name = "title") @Expose private String title;
-  @JsonField(name = "created_utc") @Expose private long created_utc;
-  @JsonField(name = "distinguished") @Expose private Object distinguished;
-  @JsonField(name = "mod_reports") @Expose private List<Object> mod_reports = new ArrayList<Object>();
-  @JsonField(name = "visited") @Expose private boolean visited;
-  @JsonField(name = "num_reports") @Expose private Object num_reports;
-  @JsonField(name = "ups") @Expose private long ups;
+  @JsonField(name = "secure_media")
+  private Secure_media secure_media;
+  @JsonField(name = "link_flair_text")
+  private String link_flair_text;
+  @JsonField(name = "id")
+  private String id;
+  @JsonField(name = "from_kind")
+  private Object from_kind;
+  @JsonField(name = "gilded")
+  private long gilded;
+  @JsonField(name = "archived")
+  private boolean archived;
+  @JsonField(name = "clicked")
+  private boolean clicked;
+  @JsonField(name = "report_reasons")
+  private Object report_reasons;
+  @JsonField(name = "author")
+  private String author;
+  @JsonField(name = "media")
+  private com.aphoh.muser.data.network.model.reddit.Media media;
+  @JsonField(name = "score")
+  private long score;
+  @JsonField(name = "approved_by")
+  private Object approved_by;
+  @JsonField(name = "over_18")
+  private boolean over_18;
+  @JsonField(name = "hidden")
+  private boolean hidden;
+  @JsonField(name = "preview")
+  private Preview preview;
+  @JsonField(name = "num_comments")
+  private long num_comments;
+  @JsonField(name = "thumbnail")
+  private String thumbnail;
+  @JsonField(name = "subreddit_id")
+  private String subreddit_id;
+  @JsonField(name = "edited")
+  private Object edited;
+  @JsonField(name = "link_flair_css_class")
+  private String link_flair_css_class;
+  @JsonField(name = "author_flair_css_class")
+  private Object author_flair_css_class;
+  @JsonField(name = "downs")
+  private long downs;
+  @JsonField(name = "secure_media_embed")
+  private Secure_media_embed secure_media_embed;
+  @JsonField(name = "saved")
+  private boolean saved;
+  @JsonField(name = "removal_reason")
+  private Object removal_reason;
+  @JsonField(name = "post_hint")
+  private String post_hint;
+  @JsonField(name = "stickied")
+  private boolean stickied;
+  @JsonField(name = "from")
+  private Object from;
+  @JsonField(name = "is_self")
+  private boolean is_self;
+  @JsonField(name = "from_id")
+  private Object from_id;
+  @JsonField(name = "permalink")
+  private String permalink;
+  @JsonField(name = "name")
+  private String name;
+  @JsonField(name = "created")
+  private long created;
+  @JsonField(name = "url")
+  private String url;
+  @JsonField(name = "author_flair_text")
+  private Object author_flair_text;
+  @JsonField(name = "title")
+  private String title;
+  @JsonField(name = "created_utc")
+  private long created_utc;
+  @JsonField(name = "distinguished")
+  private Object distinguished;
+  @JsonField(name = "mod_reports")
+  private List<Object> mod_reports = new ArrayList<Object>();
+  @JsonField(name = "visited")
+  private boolean visited;
+  @JsonField(name = "num_reports")
+  private Object num_reports;
+  @JsonField(name = "ups")
+  private long ups;
 
   /**
    * @return The domain

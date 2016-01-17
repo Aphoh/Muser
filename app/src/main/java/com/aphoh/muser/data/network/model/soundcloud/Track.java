@@ -1,58 +1,103 @@
 package com.aphoh.muser.data.network.model.soundcloud;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 public class Track {
 
-  @JsonField(name = "kind") @Expose private String kind;
-  @JsonField(name = "id") @Expose private long id;
-  @JsonField(name = "created_at") @Expose private String created_at;
-  @JsonField(name = "user_id") @Expose private long user_id;
-  @JsonField(name = "duration") @Expose private long duration;
-  @JsonField(name = "commentable") @Expose private boolean commentable;
-  @JsonField(name = "state") @Expose private String state;
-  @JsonField(name = "original_content_size") @Expose private long original_content_size;
-  @JsonField(name = "last_modified") @Expose private String last_modified;
-  @JsonField(name = "sharing") @Expose private String sharing;
-  @JsonField(name = "tag_list") @Expose private String tag_list;
-  @JsonField(name = "permalink") @Expose private String permalink;
-  @JsonField(name = "streamable") @Expose private boolean streamable;
-  @JsonField(name = "embeddable_by") @Expose private String embeddable_by;
-  @JsonField(name = "downloadable") @Expose private boolean downloadable;
-  @JsonField(name = "purchase_url") @Expose private Object purchase_url;
-  @JsonField(name = "label_id") @Expose private Object label_id;
-  @JsonField(name = "purchase_title") @Expose private Object purchase_title;
-  @JsonField(name = "genre") @Expose private String genre;
-  @JsonField(name = "title") @Expose private String title;
-  @JsonField(name = "description") @Expose private String description;
-  @JsonField(name = "label_name") @Expose private String label_name;
-  @JsonField(name = "release") @Expose private String release;
-  @JsonField(name = "track_type") @Expose private String track_type;
-  @JsonField(name = "key_signature") @Expose private String key_signature;
-  @JsonField(name = "isrc") @Expose private String isrc;
-  @JsonField(name = "video_url") @Expose private Object video_url;
-  @JsonField(name = "bpm") @Expose private long bpm;
-  @JsonField(name = "release_year") @Expose private Object release_year;
-  @JsonField(name = "release_month") @Expose private Object release_month;
-  @JsonField(name = "release_day") @Expose private Object release_day;
-  @JsonField(name = "original_format") @Expose private String original_format;
-  @JsonField(name = "license") @Expose private String license;
-  @JsonField(name = "uri") @Expose private String uri;
-  @JsonField(name = "user") @Expose private User user;
-  @JsonField(name = "permalink_url") @Expose private String permalink_url;
-  @JsonField(name = "artwork_url") @Expose private String artwork_url;
-  @JsonField(name = "waveform_url") @Expose private String waveform_url;
-  @JsonField(name = "stream_url") @Expose private String stream_url;
-  @JsonField(name = "download_url") @Expose private String download_url;
-  @JsonField(name = "playback_count") @Expose private long playback_count;
-  @JsonField(name = "download_count") @Expose private long download_count;
-  @JsonField(name = "favoritings_count") @Expose private long favoritings_count;
-  @JsonField(name = "comment_count") @Expose private long comment_count;
-  @JsonField(name = "attachments_uri") @Expose private String attachments_uri;
-  @JsonField(name = "policy") @Expose private String policy;
-  @JsonField(name = "monetization_model") @Expose private String monetization_model;
+  @JsonField(name = "kind")
+  private String kind;
+  @JsonField(name = "id")
+  private long id;
+  @JsonField(name = "created_at")
+  private String created_at;
+  @JsonField(name = "user_id")
+  private long user_id;
+  @JsonField(name = "duration")
+  private long duration;
+  @JsonField(name = "commentable")
+  private boolean commentable;
+  @JsonField(name = "state")
+  private String state;
+  @JsonField(name = "original_content_size")
+  private long original_content_size;
+  @JsonField(name = "last_modified")
+  private String last_modified;
+  @JsonField(name = "sharing")
+  private String sharing;
+  @JsonField(name = "tag_list")
+  private String tag_list;
+  @JsonField(name = "permalink")
+  private String permalink;
+  @JsonField(name = "streamable")
+  private boolean streamable;
+  @JsonField(name = "embeddable_by")
+  private String embeddable_by;
+  @JsonField(name = "downloadable")
+  private boolean downloadable;
+  @JsonField(name = "purchase_url")
+  private Object purchase_url;
+  @JsonField(name = "label_id")
+  private Object label_id;
+  @JsonField(name = "purchase_title")
+  private Object purchase_title;
+  @JsonField(name = "genre")
+  private String genre;
+  @JsonField(name = "title")
+  private String title;
+  @JsonField(name = "description")
+  private String description;
+  @JsonField(name = "label_name")
+  private String label_name;
+  @JsonField(name = "release")
+  private String release;
+  @JsonField(name = "track_type")
+  private String track_type;
+  @JsonField(name = "key_signature")
+  private String key_signature;
+  @JsonField(name = "isrc")
+  private String isrc;
+  @JsonField(name = "video_url")
+  private Object video_url;
+  @JsonField(name = "bpm")
+  private long bpm;
+  @JsonField(name = "release_year")
+  private Object release_year;
+  @JsonField(name = "release_month")
+  private Object release_month;
+  @JsonField(name = "release_day")
+  private Object release_day;
+  @JsonField(name = "original_format")
+  private String original_format;
+  @JsonField(name = "license")
+  private String license;
+  @JsonField(name = "uri")
+  private String uri;
+  @JsonField(name = "user")
+  private User user;
+  @JsonField(name = "permalink_url")
+  private String permalink_url;
+  @JsonField(name = "artwork_url")
+  private String artwork_url;
+  @JsonField(name = "waveform_url")
+  private String waveform_url;
+  @JsonField(name = "stream_url")
+  private String stream_url;
+  @JsonField(name = "download_url")
+  private String download_url;
+  @JsonField(name = "playback_count")
+  private long playback_count;
+  @JsonField(name = "download_count")
+  private long download_count;
+  @JsonField(name = "favoritings_count")
+  private long favoritings_count;
+  @JsonField(name = "comment_count")
+  private long comment_count;
+  @JsonField(name = "attachments_uri")
+  private String attachments_uri;
+  @JsonField(name = "policy")
+  private String policy;
+  @JsonField(name = "monetization_model")
+  private String monetization_model;
 
   /**
    * @return The kind

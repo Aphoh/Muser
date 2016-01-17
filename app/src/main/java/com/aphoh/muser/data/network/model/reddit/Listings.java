@@ -1,12 +1,12 @@
 package com.aphoh.muser.data.network.model.reddit;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 public class Listings {
-  @JsonField(name = "kind") @Expose private String kind;
-  @JsonField(name = "data") @Expose private Data data;
+  @JsonField(name = "kind")
+  private String kind;
+  @JsonField(name = "data")
+  private Data data;
 
   /**
    * @return The kind

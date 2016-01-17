@@ -1,15 +1,17 @@
 package com.aphoh.muser.data.network.model.reddit;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 public class Media_embed {
 
-  @JsonField(name = "content") @Expose private String content;
-  @JsonField(name = "width") @Expose private long width;
-  @JsonField(name = "scrolling") @Expose private boolean scrolling;
-  @JsonField(name = "height") @Expose private long height;
+  @JsonField(name = "content")
+  private String content;
+  @JsonField(name = "width")
+  private long width;
+  @JsonField(name = "scrolling")
+  private boolean scrolling;
+  @JsonField(name = "height")
+  private long height;
 
   /**
    * @return The content
