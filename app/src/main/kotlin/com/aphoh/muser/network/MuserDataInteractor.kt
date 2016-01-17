@@ -3,6 +3,7 @@ package com.aphoh.muser.network
 import android.content.Context
 import android.net.ConnectivityManager
 import com.aphoh.muser.data.db.model.SongItem
+import com.aphoh.muser.data.network.LoganSquareConverter
 import com.aphoh.muser.data.network.model.reddit.Oembed_
 import com.aphoh.muser.util.LogUtil
 import com.squareup.okhttp.OkHttpClient
@@ -20,11 +21,13 @@ public class MuserDataInteractor(val context: Context, val okClient: OkHttpClien
     private val log = LogUtil(MuserDataInteractor::class.java.simpleName)
 
     private val redditService: RedditService = RestAdapter.Builder()
+            .setConverter(LoganSquareConverter())
             .setEndpoint("http://www.reddit.com")
             .setClient(OkClient(okClient))
             .build().create(RedditService::class.java)
 
     private val soundcloudService: SoundcloudService = RestAdapter.Builder()
+            .setConverter(LoganSquareConverter())
             .setEndpoint("http://api.soundcloud.com")
             .setClient(OkClient(okClient))
             .build().create(SoundcloudService::class.java)
