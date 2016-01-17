@@ -1,13 +1,14 @@
 package com.aphoh.muser.data.network.model.reddit;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Resolution {
 
-  @SerializedName("url") @Expose private String url;
-  @SerializedName("width") @Expose private long width;
-  @SerializedName("height") @Expose private long height;
+  @JsonField(name = "url") @Expose private String url;
+  @JsonField(name = "width") @Expose private long width;
+  @JsonField(name = "height") @Expose private long height;
 
   /**
    * @return The url

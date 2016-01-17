@@ -1,12 +1,13 @@
 package com.aphoh.muser.data.network.model.reddit;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class PostItem {
 
-  @SerializedName("kind") @Expose private String kind;
-  @SerializedName("data") @Expose private PostData data;
+  @JsonField(name = "kind") @Expose private String kind;
+  @JsonField(name = "data") @Expose private PostData data;
 
   /**
    * @return The kind

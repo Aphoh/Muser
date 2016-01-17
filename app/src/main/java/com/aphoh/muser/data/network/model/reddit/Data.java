@@ -1,5 +1,6 @@
 package com.aphoh.muser.data.network.model.reddit;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
@@ -7,10 +8,10 @@ import java.util.List;
 
 public class Data {
 
-  @SerializedName("modhash") @Expose private String modhash;
-  @SerializedName("children") @Expose private List<PostItem> postItems = new ArrayList<PostItem>();
-  @SerializedName("after") @Expose private String after;
-  @SerializedName("before") @Expose private String before;
+  @JsonField(name = "modhash") @Expose private String modhash;
+  @JsonField(name = "children") @Expose private List<PostItem> postItems = new ArrayList<PostItem>();
+  @JsonField(name = "after") @Expose private String after;
+  @JsonField(name = "before") @Expose private String before;
 
   /**
    * @return The modhash

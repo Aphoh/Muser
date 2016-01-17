@@ -1,12 +1,13 @@
 package com.aphoh.muser.data.network.model.reddit;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Media {
 
-  @SerializedName("oembed") @Expose private Oembed_ oembed;
-  @SerializedName("type") @Expose private String type;
+  @JsonField(name = "oembed") @Expose private Oembed_ oembed;
+  @JsonField(name = "type") @Expose private String type;
 
   /**
    * @return The oembed

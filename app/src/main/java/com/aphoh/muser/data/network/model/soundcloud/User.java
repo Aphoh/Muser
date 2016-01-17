@@ -1,18 +1,19 @@
 package com.aphoh.muser.data.network.model.soundcloud;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
 
-  @SerializedName("id") @Expose private long id;
-  @SerializedName("kind") @Expose private String kind;
-  @SerializedName("permalink") @Expose private String permalink;
-  @SerializedName("username") @Expose private String username;
-  @SerializedName("last_modified") @Expose private String last_modified;
-  @SerializedName("uri") @Expose private String uri;
-  @SerializedName("permalink_url") @Expose private String permalink_url;
-  @SerializedName("avatar_url") @Expose private String avatar_url;
+  @JsonField(name = "id") @Expose private long id;
+  @JsonField(name = "kind") @Expose private String kind;
+  @JsonField(name = "permalink") @Expose private String permalink;
+  @JsonField(name = "username") @Expose private String username;
+  @JsonField(name = "last_modified") @Expose private String last_modified;
+  @JsonField(name = "uri") @Expose private String uri;
+  @JsonField(name = "permalink_url") @Expose private String permalink_url;
+  @JsonField(name = "avatar_url") @Expose private String avatar_url;
 
   /**
    * @return The id

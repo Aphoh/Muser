@@ -1,24 +1,25 @@
 package com.aphoh.muser.data.network.model.reddit;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Oembed_ {
 
-  @SerializedName("provider_url") @Expose private String provider_url;
-  @SerializedName("description") @Expose private String description;
-  @SerializedName("title") @Expose private String title;
-  @SerializedName("type") @Expose private String type;
-  @SerializedName("thumbnail_width") @Expose private long thumbnail_width;
-  @SerializedName("height") @Expose private long height;
-  @SerializedName("width") @Expose private long width;
-  @SerializedName("html") @Expose private String html;
-  @SerializedName("author_name") @Expose private String author_name;
-  @SerializedName("version") @Expose private String version;
-  @SerializedName("provider_name") @Expose private String provider_name;
-  @SerializedName("thumbnail_url") @Expose private String thumbnail_url;
-  @SerializedName("thumbnail_height") @Expose private long thumbnail_height;
-  @SerializedName("author_url") @Expose private String author_url;
+  @JsonField(name = "provider_url") @Expose private String provider_url;
+  @JsonField(name = "description") @Expose private String description;
+  @JsonField(name = "title") @Expose private String title;
+  @JsonField(name = "type") @Expose private String type;
+  @JsonField(name = "thumbnail_width") @Expose private long thumbnail_width;
+  @JsonField(name = "height") @Expose private long height;
+  @JsonField(name = "width") @Expose private long width;
+  @JsonField(name = "html") @Expose private String html;
+  @JsonField(name = "author_name") @Expose private String author_name;
+  @JsonField(name = "version") @Expose private String version;
+  @JsonField(name = "provider_name") @Expose private String provider_name;
+  @JsonField(name = "thumbnail_url") @Expose private String thumbnail_url;
+  @JsonField(name = "thumbnail_height") @Expose private long thumbnail_height;
+  @JsonField(name = "author_url") @Expose private String author_url;
 
   /**
    * @return The provider_url

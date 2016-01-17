@@ -1,5 +1,6 @@
 package com.aphoh.muser.data.network.model.reddit;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
@@ -7,11 +8,11 @@ import java.util.List;
 
 public class Image {
 
-  @SerializedName("source") @Expose private Source source;
-  @SerializedName("resolutions") @Expose private List<Resolution> resolutions =
+  @JsonField(name = "source") @Expose private Source source;
+  @JsonField(name = "resolutions") @Expose private List<Resolution> resolutions =
       new ArrayList<Resolution>();
-  @SerializedName("variants") @Expose private Variants variants;
-  @SerializedName("id") @Expose private String id;
+  @JsonField(name = "variants") @Expose private Variants variants;
+  @JsonField(name = "id") @Expose private String id;
 
   /**
    * @return The source
