@@ -73,7 +73,7 @@ dependencies {
     //Networking Libs
     compile "com.squareup.retrofit:retrofit:$retrofit_version"
     compile 'com.squareup.okhttp:okhttp:2.4.0'
-    compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
+    compile 'com.facebook.stetho:stetho-okhttp:1.2.0'
     apt "com.bluelinelabs:logansquare-compiler:$logansquare_version"
     compile "com.bluelinelabs:logansquare:$logansquare_version"
     //Util Libs
