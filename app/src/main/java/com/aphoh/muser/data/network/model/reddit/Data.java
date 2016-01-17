@@ -62,7 +62,7 @@ public class Data {
   /**
    * @return The before
    */
-  public Object getBefore() {
+  public String getBefore() {
     return before;
   }
 

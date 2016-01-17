@@ -171,7 +171,7 @@ public class PostData {
   /**
    * @return The selftext_html
    */
-  public Object getSelftext_html() {
+  public String getSelftext_html() {
     return selftext_html;
   }
 
