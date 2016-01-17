@@ -1,18 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'jsonschema2pojo'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.trello.victor'
-
-buildscript {
-    repositories {
-        jcenter()
-        mavenLocal()
-    }
-    dependencies {
-        classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:0.4.13'
-    }
-}
 
 android {
     compileSdkVersion 23
@@ -104,57 +93,4 @@ victor {
 
     // Do not generate these densities for SVG assets
     excludeDensities = ['ldpi', 'xxxhdpi']
-}
-
-jsonSchema2Pojo {
-
-    generateBuilders = false
-    usePrimitives = false
-    source = files("${project.rootDir}/schema/track.json")
-
-    targetDirectory = file("${project.rootDir}/app/build/generated/source/js2p/")
-
-    // Package name used for generated Java classes (for types where a fully qualified name has not
-    // been supplied in the schema using the 'javaType' property).
-    targetPackage = 'com.aphoh.muser.data.network.model'
-
-    useLongIntegers = true
-
-    useDoubleNumbers = true
-
-    includeHashcodeAndEquals = false
-
-    includeToString = false
-
-    // The style of annotations to use in the generated Java types. Supported values:
-    //  - jackson (alias of jackson2)
-    //  - jackson2 (apply annotations from the Jackson 2.x library)
-    //  - jackson1 (apply annotations from the Jackson 1.x library)
-    //  - gson (apply annotations from the Gson library)
-    //  - none (apply no annotations at all)
-    annotationStyle = 'gson'
-
-    includeJsr303Annotations = false
-
-    sourceType = 'json'
-
-    // Whether to empty the target directory before generation occurs, to clear out all source files
-    // that have been generated previously. <strong>Be warned</strong>, when activated this option
-    // will cause jsonschema2pojo to <strong>indiscriminately delete the entire contents of the target
-    // directory (all files and folders)</strong> before it begins generating sources.
-    boolean removeOldOutput = true
-
-    // The character encoding that should be used when writing the generated Java source files
-    String outputEncoding = 'UTF-8'
-
-    // Whether to use {@link org.joda.time.DateTime} instead of {@link java.util.Date} when adding
-    // date type fields to generated Java types.
-    boolean useJodaDates = false
-
-    // Whether to use commons-lang 3.x imports instead of commons-lang 2.x imports when adding equals,
-    // hashCode and toString methods.
-    boolean useCommonsLang3 = false
-
-    // Whether to initialize Set and List fields as empty collections, or leave them as null.
-    boolean initializeCollections = true
 }
