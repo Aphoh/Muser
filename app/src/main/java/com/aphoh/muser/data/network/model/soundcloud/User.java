@@ -1,7 +1,9 @@
 package com.aphoh.muser.data.network.model.soundcloud;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
+@JsonObject
 public class User {
 
   @JsonField(name = "id")

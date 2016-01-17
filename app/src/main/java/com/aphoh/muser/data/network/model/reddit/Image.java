@@ -1,9 +1,11 @@
 package com.aphoh.muser.data.network.model.reddit;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonObject
 public class Image {
 
   @JsonField(name = "source")

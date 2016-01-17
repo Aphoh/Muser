@@ -1,7 +1,9 @@
 package com.aphoh.muser.data.network.model.reddit;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
+@JsonObject
 public class Listings {
   @JsonField(name = "kind")
   private String kind;
