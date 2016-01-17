@@ -74,6 +74,8 @@ dependencies {
     compile "com.squareup.retrofit:retrofit:$retrofit_version"
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
+    apt "com.bluelinelabs:logansquare-compiler:$logansquare_version"
+    compile "com.bluelinelabs:logansquare:$logansquare_version"
     //Util Libs
     compile 'io.reactivex:rxkotlin:0.24.100'
     compile 'io.reactivex:rxandroid:0.25.0'
