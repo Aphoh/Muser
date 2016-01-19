@@ -2,6 +2,7 @@ package com.aphoh.muser.base;
 
 import android.content.Context;
 import com.aphoh.muser.BuildConfig;
+import com.aphoh.muser.module.MuserSoundcloudKeys;
 import com.aphoh.muser.network.DataInteractor;
 import com.aphoh.muser.network.MuserDataInteractor;
 import com.aphoh.muser.network.SoundcloudKeys;
