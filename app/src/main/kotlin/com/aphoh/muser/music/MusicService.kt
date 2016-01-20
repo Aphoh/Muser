@@ -268,12 +268,8 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     public fun pause() {
         log.d("pause() called");
         if (!mMediaPlayer.isPlaying) return
-        hasntPlayed = true
-        Observable.timer(30, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.handlerThread(Handler()))
-                .subscribe { if (hasntPlayed == true) mNotification?.stopNotification() }
         unregisterReceiver(mNoisyReciever)
+        abandonAudioFocus()
         if (mMediaPlayer.isPlaying) {
             mMediaPlayer.pause()
         }
@@ -291,10 +287,14 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         mPlaybackState.setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
         mPlaybackState.setActions(stopState.configSeekState())
         publishPlaybackState()
-        (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
+        abandonAudioFocus()
         mMediaPlayer.stop()
         mMediaSession.value.isActive = false
         mIsPrepared = false
+    }
+
+    private fun abandonAudioFocus() {
+        (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
     }
 
     private val skippingState = arrayOf(
