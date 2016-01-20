@@ -207,7 +207,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 log.d("onAudioFocusChange() called with:  Stop")
-                stop()
+                pause()
             }
         }
     }
