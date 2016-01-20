@@ -231,7 +231,10 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     }
 
     public fun setRefreshing(refreshing: Boolean) {
-        swipeRefreshLayout.post { swipeRefreshLayout.isRefreshing = refreshing }
+        swipeRefreshLayout.post {
+            if (swipeRefreshLayout.isRefreshing != refreshing)
+                swipeRefreshLayout.isRefreshing = refreshing
+        }
     }
 
     override fun publish(items: List<SongItem>) {
