@@ -43,6 +43,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     private val mNoisyReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             pause()
+            log.d("onRecieve() called");
         }
     }
     private val mMediaSession = lazy { MediaSessionCompat(this, MusicService::class.java.simpleName) }
@@ -59,6 +60,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
 
     override fun onCreate() {
         super.onCreate()
+        log.d("onCreate() called");
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
         mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK)
 
@@ -77,6 +79,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        log.d("onStartCommand() called");
         MediaButtonReceiver.handleIntent(mMediaSession.value, intent)
         return Service.START_NOT_STICKY
     }
@@ -102,6 +105,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     }
 
     public fun playSong(index: Int) {
+        log.d("playSong() called with:  index: $index");
         var item = mSongs.get(index)
 
         if (item.streamUrl == null || item.streamUrl.isEmpty()) {
@@ -175,12 +179,12 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     }
 
     private fun PlaybackStateCompat.Builder.setActions(actions: Array<Long>) {
-        log.d("Actions: ${Arrays.toString(actions)}")
         this.setActions(actions.bitwise())
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        log.d("onDestroy() called");
         mNotification?.stopNotification()
         tickerSub?.unsubscribe()
         stop()
@@ -190,11 +194,21 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
+                log.d("onAudioFocusChange() called with:  Gain")
                 play()
             }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> pause()
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> mMediaPlayer.setVolume(0.5f, 0.5f)
-            AudioManager.AUDIOFOCUS_LOSS -> stop()
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                log.d("onAudioFocusChange() called with:  Transient")
+                pause()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                log.d("onAudioFocusChange() called with:  Duck")
+                mMediaPlayer.setVolume(0.5f, 0.5f)
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                log.d("onAudioFocusChange() called with:  Stop")
+                stop()
+            }
         }
     }
 
@@ -217,7 +231,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     private fun publishPlaybackState() {
         val state = mPlaybackState.build()
         mMediaSession.value.setPlaybackState(state)
-        //log.d("mPlaybackState: $state")
+        log.d("publishPlaybackState() called");
     }
 
     private val playState = arrayOf(
@@ -226,7 +240,8 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
             PlaybackStateCompat.ACTION_STOP)
 
     public fun play() {
-        if(mMediaPlayer.isPlaying) return
+        log.d("play() called");
+        if (mMediaPlayer.isPlaying) return
         hasntPlayed = false
         registerReceiver(mNoisyReciever, mNoisyFilter)
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -251,7 +266,8 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     )
 
     public fun pause() {
-        if(!mMediaPlayer.isPlaying) return
+        log.d("pause() called");
+        if (!mMediaPlayer.isPlaying) return
         hasntPlayed = true
         Observable.timer(30, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.newThread())
@@ -271,6 +287,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     )
 
     public fun stop() {
+        log.d("stop() called");
         mPlaybackState.setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
         mPlaybackState.setActions(stopState.configSeekState())
         publishPlaybackState()
@@ -285,6 +302,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     )
 
     public fun next() {
+        log.d("next() called with:  index: $mIndex");
         mIndex += 1
         if (mIndex < mSongs.size) {
             playSong(mIndex)
@@ -295,6 +313,7 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     }
 
     public fun prev() {
+        log.d("prev() called with:  index: $mIndex");
         mIndex -= 1
         if (mIndex >= 0 && mIndex < mSongs.size) {
             playSong(mIndex)
