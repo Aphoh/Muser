@@ -14,4 +14,10 @@
   <string name="mashups">mashups</string>
   <string name="futurebeats">futurebeats</string>
   <string name="hiphopheads">hiphopheads</string>
+
+  <!-- Action items -->
+  <string name="play_from_here">Play from here</string>
+  <string name="open_on_soundcloud">Open on Soundcloud</string>
+  <string name="open_on_reddit">Open on Reddit</string>
+  <string name="share">Share</string>
 </resources>

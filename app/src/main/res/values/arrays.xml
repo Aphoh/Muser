@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="selection_items">
+        <item>@string/play_from_here</item>
+        <item>@string/open_on_soundcloud</item>
+        <item>@string/open_on_reddit</item>
+        <item>@string/share</item>
+    </array>
+</resources>

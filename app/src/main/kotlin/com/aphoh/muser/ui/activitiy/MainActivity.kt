@@ -20,6 +20,7 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import bindView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.aphoh.muser.BuildConfig
 import com.aphoh.muser.R
 import com.aphoh.muser.base.BaseNucleusActivity
@@ -171,6 +172,30 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         skipForward.setOnClickListener { presenter.requestNext() }
         skipBack.setOnClickListener { presenter.requestPrevious() }
+
+
+    }
+
+    private fun showSelector(songItem: SongItem){
+        MaterialDialog.Builder(this)
+        .title(songItem.songTitle)
+        .items(R.array.selection_items)
+        .itemsCallback { materialDialog, view, i, charSequence ->
+            when(i){
+                0 -> {
+                    //Play from here
+                }
+                1 -> {
+                    //Open on Soundcloud
+                }
+                2 -> {
+                    //Open on Reddit
+                }
+                3 -> {
+                    //Share
+                }
+            }
+        }
     }
 
     public fun setToolbarText(text: CharSequence) {
