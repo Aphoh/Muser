@@ -15,7 +15,7 @@ public class MockDataInteractor : DataInteractor {
         return Observable.defer {
             Observable.just(IntRange(0, 40)
                     .map { mockItem() }
-                    .toArrayList())
+                    .toCollection(ArrayList<SongItem>()))
         }
     }
 

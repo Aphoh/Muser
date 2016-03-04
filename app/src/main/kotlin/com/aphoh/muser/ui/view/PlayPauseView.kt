@@ -14,8 +14,8 @@ import com.aphoh.muser.R
  */
 public class PlayPauseView : View {
 
-    val play = lazy { ResourcesCompat.getDrawable(context.resources, R.drawable.ic_play_arrow, context.theme) }
-    val pause = lazy { ResourcesCompat.getDrawable(context.resources, R.drawable.ic_pause, context.theme) }
+    val play = lazy { ResourcesCompat.getDrawable(context.resources, R.drawable.ic_play_arrow, context.theme)!! }
+    val pause = lazy { ResourcesCompat.getDrawable(context.resources, R.drawable.ic_pause, context.theme)!! }
 
 
     public var playing = false

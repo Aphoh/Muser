@@ -76,7 +76,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.primary))
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END) //By default lock the song drawer view
-        drawerLayout.setDrawerListener(object : DrawerLayout.DrawerListener {
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerClosed(drawerView: View?) {
                 swipeRefreshLayout.setOnTouchListener { view, motionEvent ->
                     false
@@ -193,10 +193,10 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         var selected = getSelectedId(navigationView.menu)
-        if (selected != null) outState?.putInt(NAV_MENU_SELECTED, selected)
+        if (selected != null) outState.putInt(NAV_MENU_SELECTED, selected)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {

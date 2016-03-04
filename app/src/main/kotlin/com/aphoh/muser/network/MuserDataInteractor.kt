@@ -49,7 +49,7 @@ public class MuserDataInteractor(val context: Context, val okClient: OkHttpClien
                                 .filter { isTrack(it.media.oembed) }
                                 .map { SongItem.fromPostData(it) }
                                 .map { preProcess(it) }
-                                .toArrayList()
+                                .toCollection(ArrayList())
                     }
         else
             return Observable.error(NetworkException.from("No Available Networks"))
