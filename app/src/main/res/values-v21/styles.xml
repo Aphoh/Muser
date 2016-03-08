@@ -79,6 +79,10 @@
     <item name="android:windowTranslucentStatus">true</item>
     <item name="android:windowTranslucentNavigation">true</item>
     <item name="colorAccent">@color/primary_dark</item>
+
+    <item name="md_content_color">@color/white</item>
+    <item name="md_background_color">@color/primary</item>
+
   </style>
 
   <style name="ToolbarTheme" parent="ToolbarTheme.Base">
