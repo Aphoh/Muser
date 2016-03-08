@@ -14,6 +14,7 @@ public class SongItem {
   public String image;
   public String thumbnail;
   public String linkUrl;
+  public String redditUrl;
   public String streamUrl;
   public String waveformUrl;
   public int score;
@@ -25,12 +26,13 @@ public class SongItem {
     super();
   }
 
-  public SongItem(String id, String image, String thumbnail, String linkUrl, String streamUrl,
+  public SongItem(String id, String image, String thumbnail, String linkUrl, String redditUrl, String streamUrl,
       String waveformUrl, int score, long length, String artist, String songTitle) {
     this.id = id;
     this.image = image;
     this.thumbnail = thumbnail;
     this.linkUrl = linkUrl;
+    this.redditUrl = redditUrl;
     this.streamUrl = streamUrl;
     this.waveformUrl = waveformUrl;
     this.score = score;
@@ -51,6 +53,7 @@ public class SongItem {
         oembed.getThumbnail_url(),
         oembed.getThumbnail_url(),
         data.getUrl(),
+        "http://www.reddit.com" + data.getPermalink(),
         null,
         null,
         ((int) data.getScore()),

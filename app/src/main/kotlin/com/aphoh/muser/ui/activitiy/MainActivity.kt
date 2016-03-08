@@ -21,6 +21,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import bindView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.Theme
 import com.aphoh.muser.BuildConfig
 import com.aphoh.muser.R
 import com.aphoh.muser.base.BaseNucleusActivity
@@ -29,6 +30,7 @@ import com.aphoh.muser.ui.adapter.MainAdapter
 import com.aphoh.muser.ui.presenter.MainPresenter
 import com.aphoh.muser.ui.view.PlayPauseView
 import com.aphoh.muser.util.LogUtil
+import com.aphoh.muser.util.StringConstants
 import com.squareup.picasso.Picasso
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import nucleus.factory.RequiresPresenter
@@ -123,12 +125,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
-            if (presenter.isPlaying(adapter.data.get(position))) {
-                openDrawer()
-            } else if (!drawerLayout.isDrawerOpen(Gravity.END)) {
-                val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size))
-                presenter.requestPlayAll(afterPositions)
-            }
+            showSelector(position)
         }
 
         adapter.itemLongClickListener = { v, position ->
@@ -176,26 +173,49 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     }
 
-    private fun showSelector(songItem: SongItem){
+    private fun showSelector(position: Int) {
+        val songItem = adapter.data[position]
         MaterialDialog.Builder(this)
-        .title(songItem.songTitle)
-        .items(R.array.selection_items)
-        .itemsCallback { materialDialog, view, i, charSequence ->
-            when(i){
-                0 -> {
-                    //Play from here
-                }
-                1 -> {
-                    //Open on Soundcloud
-                }
-                2 -> {
-                    //Open on Reddit
-                }
-                3 -> {
-                    //Share
-                }
-            }
-        }
+                .theme(Theme.DARK)
+                .title(songItem.songTitle)
+                .items(R.array.selection_items)
+                .itemsCallback { materialDialog, view, i, charSequence ->
+                    when (i) {
+                        0 -> {
+                            //Play from here
+                            if (presenter.isPlaying(adapter.data.get(position))) {
+                                openDrawer()
+                            } else if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+                                val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size))
+                                presenter.requestPlayAll(afterPositions)
+                            }
+                        }
+                        1 -> {
+                            //Open on Soundcloud
+                            if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.linkUrl))
+                                if (intent.resolveActivity(packageManager) != null) startActivity(intent)
+                            }
+                        }
+                        2 -> {
+                            //Open on Reddit
+                            if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.redditUrl))
+                                if (intent.resolveActivity(packageManager) != null) startActivity(intent)
+                            }
+                        }
+                        3 -> {
+                            //Share
+                            if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+                                Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, songItem.linkUrl)
+                                    startActivity(Intent.createChooser(this, "Share link using"))
+                                }
+                            }
+                        }
+                    }
+                }.show()
     }
 
     public fun setToolbarText(text: CharSequence) {
@@ -244,7 +264,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     private fun openDrawer() {
         canOpenSongDrawer = true
         drawerLayout.openDrawer(Gravity.END)
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.END)
     }
 
     /*
