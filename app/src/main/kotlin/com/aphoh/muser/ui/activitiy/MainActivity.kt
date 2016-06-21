@@ -30,13 +30,13 @@ import com.aphoh.muser.ui.adapter.MainAdapter
 import com.aphoh.muser.ui.presenter.MainPresenter
 import com.aphoh.muser.ui.view.PlayPauseView
 import com.aphoh.muser.util.LogUtil
-import com.aphoh.muser.util.StringConstants
 import com.squareup.picasso.Picasso
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import nucleus.factory.RequiresPresenter
 import java.util.*
 
 @RequiresPresenter(MainPresenter::class)
+
 public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
     private final val NAV_MENU_SELECTED = "NAV_MENU_SELECTED"
 
@@ -125,15 +125,12 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
         adapter.setHasStableIds(true)
         adapter.itemClickListener = { v, position ->
-            showSelector(position)
+            playFrom(position)
+            toast("Does it stop services though?")
         }
 
         adapter.itemLongClickListener = { v, position ->
-            if (!drawerLayout.isDrawerOpen(Gravity.END)) {
-                var songItem = adapter.data.get(position)
-                var intent = Intent(Intent.ACTION_VIEW, Uri.parse(songItem.linkUrl))
-                if (intent.resolveActivity(packageManager) != null) startActivity(intent)
-            }
+            showSelector(position)
         }
 
         recyclerViewMain.adapter = adapter
@@ -183,12 +180,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
                     when (i) {
                         0 -> {
                             //Play from here
-                            if (presenter.isPlaying(adapter.data.get(position))) {
-                                openDrawer()
-                            } else if (!drawerLayout.isDrawerOpen(Gravity.END)) {
-                                val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size))
-                                presenter.requestPlayAll(afterPositions)
-                            }
+                            playFrom(position)
                         }
                         1 -> {
                             //Open on Soundcloud
@@ -218,6 +210,15 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
                 }.show()
     }
 
+    private fun playFrom(position: Int) {
+        if (presenter.isPlaying(adapter.data[position])) {
+            openDrawer()
+        } else if (!drawerLayout.isDrawerOpen(Gravity.END)) {
+            val afterPositions = ArrayList(adapter.data.subList(position, adapter.data.size))
+            presenter.requestPlayAll(afterPositions)
+        }
+    }
+
     public fun setToolbarText(text: CharSequence) {
         toolbar.title = text
     }
@@ -240,7 +241,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        var selected = getSelectedId(navigationView.menu)
+        val selected = getSelectedId(navigationView.menu)
         if (selected != null) outState.putInt(NAV_MENU_SELECTED, selected)
     }
 
