@@ -22,7 +22,7 @@ def sc_count(r, subreddit_name):
 				sc_links += 1
 				scores.append(sub.score)
 		print subreddit_name
-		avg_score = if(len(scores) == 0) 0 else sum(scores)/len(scores)
+		avg_score = 0 if len(scores) == 0 else sum(scores)/len(scores)
 		return (subreddit_name, sc_links, avg_score)
 	except Exception, e:
 		print e
