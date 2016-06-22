@@ -2,7 +2,7 @@ package com.aphoh.muser.base;
 
 import com.aphoh.muser.module.TransformerContainer;
 import com.aphoh.muser.music.MusicService;
-import com.aphoh.muser.network.DataInteractor;
+import com.aphoh.muser.network.interactors.DataInteractor;
 import com.aphoh.muser.network.SoundcloudKeys;
 import com.aphoh.muser.ui.presenter.MainPresenter;
 import dagger.Component;

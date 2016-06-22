@@ -1,8 +1,8 @@
 package com.aphoh.muser.base;
 
 import android.content.Context;
-import com.aphoh.muser.network.DataInteractor;
-import com.aphoh.muser.network.MockDataInteractor;
+import com.aphoh.muser.network.interactors.DataInteractor;
+import com.aphoh.muser.network.interactors.MockDataInteractor;
 import com.aphoh.muser.network.SoundcloudKeys;
 import com.squareup.okhttp.OkHttpClient;
 

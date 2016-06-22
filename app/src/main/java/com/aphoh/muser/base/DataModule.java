@@ -3,7 +3,7 @@ package com.aphoh.muser.base;
 import android.content.Context;
 import com.aphoh.muser.BuildConfig;
 import com.aphoh.muser.module.MuserSoundcloudKeys;
-import com.aphoh.muser.network.DataInteractor;
+import com.aphoh.muser.network.interactors.DataInteractor;
 import com.aphoh.muser.network.interactors.MuserDataInteractor;
 import com.aphoh.muser.network.SoundcloudKeys;
 import com.facebook.stetho.okhttp.StethoInterceptor;
