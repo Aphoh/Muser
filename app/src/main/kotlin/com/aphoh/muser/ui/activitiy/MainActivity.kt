@@ -36,8 +36,7 @@ import nucleus.factory.RequiresPresenter
 import java.util.*
 
 @RequiresPresenter(MainPresenter::class)
-
-public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
+class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
     private final val NAV_MENU_SELECTED = "NAV_MENU_SELECTED"
 
     var log = LogUtil(MainActivity::class.java.simpleName)
@@ -219,7 +218,7 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
         }
     }
 
-    public fun setToolbarText(text: CharSequence) {
+    fun setToolbarText(text: CharSequence) {
         toolbar.title = text
     }
 
@@ -272,11 +271,11 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
     * Presenter-exposed methods
     * */
 
-    public fun invalidateDataset() {
+    fun invalidateDataset() {
         adapter.invalidateData()
     }
 
-    public fun setRefreshing(refreshing: Boolean) {
+    fun setRefreshing(refreshing: Boolean) {
         swipeRefreshLayout.post {
             if (swipeRefreshLayout.isRefreshing != refreshing)
                 swipeRefreshLayout.isRefreshing = refreshing
@@ -330,16 +329,16 @@ public class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>()
 
     }
 
-    public fun hasData(): Boolean = adapter.data.isNotEmpty()
+    fun hasData(): Boolean = adapter.data.isNotEmpty()
 
-    public fun getSelectedId(menu: Menu): Int? {
+    fun getSelectedId(menu: Menu): Int? {
         for (i in 0..menu.size() - 1) {
             if (menu.getItem(i).isChecked) return menu.getItem(i).itemId
         }
         return null
     }
 
-    public fun getSubreddit(): String {
+    fun getSubreddit(): String {
         var subreddit = ""
         for (i in 0..navigationView.menu.size() - 1) {
             val item = navigationView.menu.getItem(i);
