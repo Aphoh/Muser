@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.data.network.LoganSquareConverter
 import com.aphoh.muser.data.network.model.reddit.Oembed_
+import com.aphoh.muser.network.retrofit.RedditService
+import com.aphoh.muser.network.retrofit.SoundcloudService
 import com.aphoh.muser.util.LogUtil
 import com.squareup.okhttp.OkHttpClient
 import retrofit.RestAdapter
@@ -37,9 +39,11 @@ public class MuserDataInteractor(val context: Context, val okClient: OkHttpClien
     // ===========================================
 
 
-    public override fun refresh(subreddit: String): Observable<ArrayList<SongItem>> {
+    override fun refresh(subreddit: String) = refresh(subreddit, time = "week")
+
+    public override fun refresh(subreddit: String, time: String): Observable<ArrayList<SongItem>> {
         if (hasNetwork())
-            return redditService.getSubredditSubmissions(subreddit, 100)
+            return redditService.getSubredditSubmissions(subreddit, time, 100)
                     .map { it.data.postItems }
                     .map { items ->
                         items.map { it.data }

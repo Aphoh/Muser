@@ -11,7 +11,9 @@ import java.util.concurrent.ThreadLocalRandom
 
 public class MockDataInteractor : DataInteractor {
 
-    override fun refresh(subreddit: String): Observable<ArrayList<SongItem>> {
+    override fun refresh(subreddit: String) = refresh(subreddit, time = "day")
+
+    override fun refresh(subreddit: String, time: String): Observable<ArrayList<SongItem>> {
         return Observable.defer {
             Observable.just(IntRange(0, 40)
                     .map { mockItem() }

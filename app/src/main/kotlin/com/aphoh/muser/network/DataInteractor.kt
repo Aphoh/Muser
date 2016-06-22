@@ -15,8 +15,8 @@ interface DataInteractor {
 
     public fun refresh(subreddit: String): Observable<ArrayList<SongItem>>
 
-    public fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem>
+    public fun refresh(subreddit: String, time: String): Observable<ArrayList<SongItem>>
 
-    //Observable Getters
+    public fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem>
 
 }
