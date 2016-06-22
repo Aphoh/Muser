@@ -13,7 +13,7 @@ import com.aphoh.muser.App
 import com.aphoh.muser.base.BaseNucleusPresenter
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.music.MusicService
-import com.aphoh.muser.network.DataInteractor
+import com.aphoh.muser.network.interactors.DataInteractor
 import com.aphoh.muser.network.NetworkException
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil

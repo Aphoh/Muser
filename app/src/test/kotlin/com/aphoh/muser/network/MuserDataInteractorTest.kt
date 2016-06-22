@@ -4,6 +4,7 @@ import com.aphoh.muser.data.network.model.reddit.Media
 import com.aphoh.muser.data.network.model.reddit.Oembed_
 import com.aphoh.muser.data.network.model.reddit.PostData
 import com.aphoh.muser.data.network.model.reddit.PostItem
+import com.aphoh.muser.network.interactors.MuserDataInteractor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

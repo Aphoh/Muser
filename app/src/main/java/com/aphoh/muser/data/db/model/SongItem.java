@@ -2,7 +2,7 @@ package com.aphoh.muser.data.db.model;
 
 import com.aphoh.muser.data.network.model.reddit.Oembed_;
 import com.aphoh.muser.data.network.model.reddit.PostData;
-import com.aphoh.muser.network.MuserDataInteractor;
+import com.aphoh.muser.network.interactors.MuserDataInteractor;
 import com.aphoh.muser.util.LogUtil;
 
 /**

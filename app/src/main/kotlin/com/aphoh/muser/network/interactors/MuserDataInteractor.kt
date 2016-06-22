@@ -1,10 +1,12 @@
-package com.aphoh.muser.network
+package com.aphoh.muser.network.interactors
 
 import android.content.Context
 import android.net.ConnectivityManager
 import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.data.network.LoganSquareConverter
 import com.aphoh.muser.data.network.model.reddit.Oembed_
+import com.aphoh.muser.network.NetworkException
+import com.aphoh.muser.network.SoundcloudKeys
 import com.aphoh.muser.network.retrofit.RedditService
 import com.aphoh.muser.network.retrofit.SoundcloudService
 import com.aphoh.muser.util.LogUtil
@@ -100,7 +102,7 @@ public class MuserDataInteractor(val context: Context, val okClient: OkHttpClien
 
     companion object Utils {
         public fun removeByLine(s: String): String = s.substringBeforeLast(" by")
-        public fun isTrack(oembed: Oembed_): Boolean = kotlin.text.Regex(".*api\\.soundcloud\\.com(.....)tracks.*").containsMatchIn(oembed.html)
+        public fun isTrack(oembed: Oembed_): Boolean = Regex(".*api\\.soundcloud\\.com(.....)tracks.*").containsMatchIn(oembed.html)
     }
 
 }

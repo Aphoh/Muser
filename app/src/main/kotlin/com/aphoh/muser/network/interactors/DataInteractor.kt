@@ -1,4 +1,4 @@
-package com.aphoh.muser.network
+package com.aphoh.muser.network.interactors
 
 import com.aphoh.muser.data.db.model.SongItem
 import rx.Observable
