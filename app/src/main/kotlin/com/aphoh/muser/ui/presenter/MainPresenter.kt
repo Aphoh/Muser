@@ -59,7 +59,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         super.onTakeView(view)
         if (!view.hasData()) refresh(view)
         autoBindOperation { //Get session token, subscribe to publish media events to UI
-            mSessionToken = it.service.getSessionToken()
+            mSessionToken = it.service.getCompatSessionToken()
             mMediaController = MediaControllerCompat(view, mSessionToken)
             mMediaController?.let {
                 it.registerCallback(callbacks)
@@ -99,7 +99,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         override fun onSessionDestroyed() {
             val callbacks = this
             autoBindOperation {
-                if (mSessionToken == null || mSessionToken!!.equals(it.service.getSessionToken())) mMediaController?.apply {
+                if (mSessionToken == null || mSessionToken!!.equals(it.service.getCompatSessionToken())) mMediaController?.apply {
                     unregisterCallback(callbacks)
                 }
             }

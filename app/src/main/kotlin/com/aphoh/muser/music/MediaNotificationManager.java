@@ -112,6 +112,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
         PendingIntent.getBroadcast(mService, REQUEST_CODE, new Intent(ACTION_NEXT).setPackage(pkg),
             PendingIntent.FLAG_CANCEL_CURRENT);
 
+
+
     // Cancel all notifications to handle the case where the Service was killed and
     // restarted by the system.
     mNotificationManager.cancelAll();
@@ -191,7 +193,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
    * android.media.session.MediaController.Callback#onSessionDestroyed()})
    */
   private void updateSessionToken() {
-    MediaSessionCompat.Token freshToken = mService.getSessionToken();
+    MediaSessionCompat.Token freshToken = mService.getCompatSessionToken();
     if (mSessionToken == null || !mSessionToken.equals(freshToken)) {
       if (mController != null) {
         mController.unregisterCallback(mCb);

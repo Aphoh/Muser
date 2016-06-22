@@ -6,10 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
+import android.media.MediaDescription
 import android.media.MediaPlayer
-import android.os.Handler
+import android.media.browse.MediaBrowser
+import android.media.browse.MediaBrowser.MediaItem
+import android.media.session.MediaSession
+import android.os.Bundle
 import android.os.IBinder
 import android.os.PowerManager
+import android.service.media.MediaBrowserService
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
@@ -27,7 +32,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Will on 7/12/15.
  */
-public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener {
+public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusChangeListener {
     private val PLAYBACK_SPEED_PAUSED = 0f
     private val PLAYBACK_SPEED_PLAYING = 1.0f
 
@@ -85,6 +90,19 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
     }
 
     override fun onBind(intent: Intent?): IBinder = mBinder
+
+    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
+        log.d("OnLoadChildren Called, mCurrentSong: \n$mCurrentSong")
+        if(mCurrentSong == null) return
+        result.sendResult(
+                Collections.singletonList(MediaItem(mCurrentSong!!.metadata().description.mediaDescription as MediaDescription, MediaItem.FLAG_PLAYABLE))
+        )
+    }
+
+    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle): BrowserRoot {
+        log.d("onGetRoot Called")
+        return BrowserRoot("root", null)
+    }
 
     public inner class NotificationBinder() : android.os.Binder() {
         init {
@@ -352,8 +370,12 @@ public class MusicService() : Service(), AudioManager.OnAudioFocusChangeListener
         }
     }
 
-    public fun getSessionToken(): MediaSessionCompat.Token {
+    public fun getCompatSessionToken(): MediaSessionCompat.Token {
         return mMediaSession.value.sessionToken
+    }
+
+    override fun getSessionToken(): MediaSession.Token {
+        return mMediaSession.value.sessionToken.token as MediaSession.Token
     }
 
     companion object IntentFactory {
