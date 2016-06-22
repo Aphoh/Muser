@@ -15,6 +15,8 @@ import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.music.MusicService
 import com.aphoh.muser.network.interactors.DataInteractor
 import com.aphoh.muser.network.NetworkException
+import com.aphoh.muser.network.SortingConfig
+import com.aphoh.muser.network.SortingConfig.Time
 import com.aphoh.muser.ui.activitiy.MainActivity
 import com.aphoh.muser.util.LogUtil
 import java.util.concurrent.atomic.AtomicBoolean
@@ -39,7 +41,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
     override fun onCreate(savedState: Bundle?) {
         super.onCreate(savedState)
         loading.set(true)
-        dataInteractor.refresh(subreddit)
+        dataInteractor.refresh(subreddit, SortingConfig.top(time = Time.WEEK))
                 .compose(this.deliver<List<SongItem>>())
                 .compose(transformer.get<List<SongItem>>())
                 .subscribe(
@@ -142,7 +144,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         view?.invalidateDataset()
         loading.set(true)
         view?.setRefreshing(loading.get())
-        dataInteractor.refresh(subreddit)
+        dataInteractor.refresh(subreddit, SortingConfig.top(time = Time.WEEK))
                 .compose(this.deliver<List<SongItem>>())
                 .compose(transformer.get<List<SongItem>>())
                 .subscribe (

@@ -10,8 +10,9 @@ import rx.Observable
  * Created by Will on 7/1/2015.
  */
 interface RedditService {
-    @GET("/r/{subreddit}/top.json")
+    @GET("/r/{subreddit}/{category}.json")
     fun getSubredditSubmissions(@Path("subreddit") subreddit: String,
-                                @Query("t") time: String,
+                                @Path("category") category: String,
+                                @Query("t") time: String?,
                                 @Query("limit") limit: Int): Observable<Listings>
 }

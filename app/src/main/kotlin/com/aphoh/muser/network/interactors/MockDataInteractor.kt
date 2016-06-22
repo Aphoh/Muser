@@ -1,6 +1,7 @@
 package com.aphoh.muser.network.interactors
 
 import com.aphoh.muser.data.db.model.SongItem
+import com.aphoh.muser.network.SortingConfig
 import rx.Observable
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
@@ -9,11 +10,9 @@ import java.util.concurrent.ThreadLocalRandom
  * Created by Will on 1/4/16.
  */
 
-public class MockDataInteractor : DataInteractor {
+class MockDataInteractor : DataInteractor {
 
-    override fun refresh(subreddit: String) = refresh(subreddit, time = "day")
-
-    override fun refresh(subreddit: String, time: String): Observable<ArrayList<SongItem>> {
+    override fun refresh(subreddit: String, sortingConfig: SortingConfig): Observable<ArrayList<SongItem>> {
         return Observable.defer {
             Observable.just(IntRange(0, 40)
                     .map { mockItem() }

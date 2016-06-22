@@ -6,6 +6,7 @@ import com.aphoh.muser.data.db.model.SongItem
 import com.aphoh.muser.data.network.LoganSquareConverter
 import com.aphoh.muser.data.network.model.reddit.Oembed_
 import com.aphoh.muser.network.NetworkException
+import com.aphoh.muser.network.SortingConfig
 import com.aphoh.muser.network.SoundcloudKeys
 import com.aphoh.muser.network.retrofit.RedditService
 import com.aphoh.muser.network.retrofit.SoundcloudService
@@ -20,7 +21,7 @@ import java.util.*
 /**
  * Created by Will on 7/5/2015.
  */
-public class MuserDataInteractor(val context: Context, val okClient: OkHttpClient, val soundcloudKeys: SoundcloudKeys) : DataInteractor {
+class MuserDataInteractor(val context: Context, val okClient: OkHttpClient, val soundcloudKeys: SoundcloudKeys) : DataInteractor {
 
     private val log = LogUtil(MuserDataInteractor::class.java.simpleName)
 
@@ -41,27 +42,28 @@ public class MuserDataInteractor(val context: Context, val okClient: OkHttpClien
     // ===========================================
 
 
-    override fun refresh(subreddit: String) = refresh(subreddit, time = "week")
+    override fun refresh(subreddit: String, sortingConfig: SortingConfig): Observable<ArrayList<SongItem>> =
+            if (hasNetwork())
+                redditService.getSubredditSubmissions(
+                        subreddit = subreddit,
+                        category = sortingConfig.category.string,
+                        time = sortingConfig.time?.string,
+                        limit = 100)
+                        .map { it.data.postItems }
+                        .map { items ->
+                            items.map { it.data }
+                                    .filter { isSoundcloudUrl(it.url) }
+                                    .filter { it.media != null }
+                                    .filter { it.media.oembed != null }
+                                    .filter { isTrack(it.media.oembed) }
+                                    .map { SongItem.fromPostData(it) }
+                                    .map { preProcess(it) }
+                                    .toCollection(ArrayList())
+                        }
+            else
+                Observable.error(NetworkException.from("No Available Networks"))
 
-    public override fun refresh(subreddit: String, time: String): Observable<ArrayList<SongItem>> {
-        if (hasNetwork())
-            return redditService.getSubredditSubmissions(subreddit, time, 100)
-                    .map { it.data.postItems }
-                    .map { items ->
-                        items.map { it.data }
-                                .filter { isSoundcloudUrl(it.url) }
-                                .filter { it.media != null }
-                                .filter { it.media.oembed != null }
-                                .filter { isTrack(it.media.oembed) }
-                                .map { SongItem.fromPostData(it) }
-                                .map { preProcess(it) }
-                                .toCollection(ArrayList())
-                    }
-        else
-            return Observable.error(NetworkException.from("No Available Networks"))
-    }
-
-    public override fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem> {
+    override fun requestUrlForSongItem(songItem: SongItem): Observable<SongItem> {
         if (hasNetwork())
             return soundcloudService.getSongFromUrl(songItem.linkUrl, soundcloudKeys.clientId)
                     .map({ track ->
@@ -101,8 +103,8 @@ public class MuserDataInteractor(val context: Context, val okClient: OkHttpClien
     }
 
     companion object Utils {
-        public fun removeByLine(s: String): String = s.substringBeforeLast(" by")
-        public fun isTrack(oembed: Oembed_): Boolean = Regex(".*api\\.soundcloud\\.com(.....)tracks.*").containsMatchIn(oembed.html)
+        fun removeByLine(s: String): String = s.substringBeforeLast(" by")
+        fun isTrack(oembed: Oembed_): Boolean = Regex(".*api\\.soundcloud\\.com(.....)tracks.*").containsMatchIn(oembed.html)
     }
 
 }
