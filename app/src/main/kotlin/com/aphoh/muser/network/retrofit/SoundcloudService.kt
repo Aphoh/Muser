@@ -1,4 +1,4 @@
-package com.aphoh.muser.network
+package com.aphoh.muser.network.retrofit
 
 import com.aphoh.muser.data.network.model.soundcloud.Track
 import retrofit.http.GET
