@@ -1,15 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'com.trello.victor'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
-
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-    }
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
 
@@ -21,14 +15,13 @@ android {
         * */
         applicationId "com.aphoh.muser"
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 3001
         versionName "1.0"
     }
     sourceSets {
         main {
             java.srcDirs += 'src/main/kotlin'
-            svg.srcDir '../imgres'
         }
         test.java.srcDirs += 'src/test/kotlin'
     }
@@ -37,16 +30,15 @@ android {
             buildConfigField 'String', 'SC_CLIENT_ID', "\"$SC_CLIENT_ID\""
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "app_name", "Muser"
         }
-    }
-    productFlavors{
-        mock{
-            buildConfigField 'boolean', 'mock', 'true'
-        }
-        prod{
-            buildConfigField 'boolean', 'mock', 'false'
+        debug {
+            applicationIdSuffix ".debug"
+            resValue "string", "app_name", "Muser-debug"
+            versionNameSuffix "-debug"
+            debuggable true
         }
     }
 }
@@ -77,25 +69,17 @@ dependencies {
     compile "com.squareup.retrofit:retrofit:$retrofit_version"
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.2.0'
-    apt "com.bluelinelabs:logansquare-compiler:$logansquare_version"
+    annotationProcessor "com.bluelinelabs:logansquare-compiler:$logansquare_version"
     compile "com.bluelinelabs:logansquare:$logansquare_version"
     //Util Libs
     compile 'io.reactivex:rxkotlin:0.24.100'
     compile 'io.reactivex:rxandroid:0.25.0'
     //Dependency Injection
     compile "com.google.dagger:dagger:$dagger_version"
-    apt "com.google.dagger:dagger-compiler:$dagger_version"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
     compile 'org.glassfish:javax.annotation:10.0-b28'
 
     //Testing
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:1.7.1'
-}
-
-victor {
-    // Any assets defined in relative terms needs a base DPI specified
-    svgDpi = 42
-
-    // Do not generate these densities for SVG assets
-    excludeDensities = ['ldpi', 'xxxhdpi']
 }

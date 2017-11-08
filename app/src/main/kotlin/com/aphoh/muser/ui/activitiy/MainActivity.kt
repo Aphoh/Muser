@@ -80,7 +80,7 @@ class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END) //By default lock the song drawer view
         drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerClosed(drawerView: View?) {
-                swipeRefreshLayout.setOnTouchListener { view, motionEvent ->
+                swipeRefreshLayout.setOnTouchListener { _, _ ->
                     false
                 }
                 log.d("SetClickable true")
@@ -108,7 +108,7 @@ class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
             }
 
             override fun onDrawerOpened(drawerView: View?) {
-                swipeRefreshLayout.setOnTouchListener { view, motionEvent ->
+                swipeRefreshLayout.setOnTouchListener { _, _ ->
                     log.d("OnTouch return true")
                     true
                 }
@@ -123,7 +123,7 @@ class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
         recyclerViewMain.itemAnimator = FadeInUpAnimator()
 
         adapter.setHasStableIds(true)
-        adapter.itemClickListener = { v, position ->
+        adapter.itemClickListener = { _, position ->
             playFrom(position)
             toast("Does it stop services though?")
         }
@@ -175,7 +175,7 @@ class MainActivity : BaseNucleusActivity<MainPresenter, List<SongItem>>() {
                 .theme(Theme.DARK)
                 .title(songItem.songTitle)
                 .items(R.array.selection_items)
-                .itemsCallback { materialDialog, view, i, charSequence ->
+                .itemsCallback { _, _, i, _ ->
                     when (i) {
                         0 -> {
                             //Play from here

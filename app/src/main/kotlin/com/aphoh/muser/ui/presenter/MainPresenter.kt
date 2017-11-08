@@ -62,7 +62,7 @@ public class MainPresenter : BaseNucleusPresenter<MainActivity, List<SongItem>>(
         if (!view.hasData()) refresh(view)
         autoBindOperation { //Get session token, subscribe to publish media events to UI
             mSessionToken = it.service.getCompatSessionToken()
-            mMediaController = MediaControllerCompat(view, mSessionToken)
+            mMediaController = MediaControllerCompat(view, mSessionToken!!)
             mMediaController?.let {
                 it.registerCallback(callbacks)
                 mTransportControls = it.transportControls

@@ -10,7 +10,7 @@ public abstract class BaseApplication extends Application {
 
   protected ApplicationComponent createApplicationComponent() {
     return DaggerApplicationComponent.builder()
-        .dataModule(BuildConfig.mock ? new MockDataModule(this) : new DataModule(this))
+        .dataModule(new DataModule(this))
         .rxModule(new RxModule())
         .build();
   }

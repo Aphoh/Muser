@@ -5,12 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.AudioManager
-import android.media.MediaDescription
-import android.media.MediaPlayer
-import android.media.browse.MediaBrowser
+import android.media.*
 import android.media.browse.MediaBrowser.MediaItem
 import android.media.session.MediaSession
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.PowerManager
@@ -29,10 +27,7 @@ import rx.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-/**
- * Created by Will on 7/12/15.
- */
-public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusChangeListener {
+class MusicService : MediaBrowserService(), AudioManager.OnAudioFocusChangeListener {
     private val PLAYBACK_SPEED_PAUSED = 0f
     private val PLAYBACK_SPEED_PLAYING = 1.0f
 
@@ -48,7 +43,7 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
     private val mNoisyReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             pause()
-            log.d("onRecieve() called");
+            log.d("onRecieve() called")
         }
     }
     private val mMediaSession = lazy { MediaSessionCompat(this, MusicService::class.java.simpleName) }
@@ -56,17 +51,25 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
 
     val mPlaybackState = PlaybackStateCompat.Builder()
 
-    public var mCurrentSong: SongItem? = null
+    var mCurrentSong: SongItem? = null
+    var audioFocusRequest: AudioFocusRequest? = null
 
     private val mNoisyFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
     private var mNotification: MediaNotificationManager? = null
 
     private var hasntPlayed = true
 
+    private val audioAttributes = AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .build()
+
     override fun onCreate() {
         super.onCreate()
-        log.d("onCreate() called");
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        log.d("onCreate() called")
+        mMediaPlayer.setAudioAttributes(
+                audioAttributes
+        )
         mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK)
 
         mMediaSession.value.setFlags(
@@ -84,7 +87,7 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        log.d("onStartCommand() called");
+        log.d("onStartCommand() called")
         MediaButtonReceiver.handleIntent(mMediaSession.value, intent)
         return Service.START_NOT_STICKY
     }
@@ -104,16 +107,16 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
         return BrowserRoot("root", null)
     }
 
-    public inner class NotificationBinder() : android.os.Binder() {
+    inner class NotificationBinder : android.os.Binder() {
         init {
             log.d("Created Notification binder")
         }
 
-        public var service: MusicService = this@MusicService
+        var service: MusicService = this@MusicService
 
     }
 
-    public fun playSongs(songItems: List<SongItem>) {
+    fun playSongs(songItems: List<SongItem>) {
         log.d("PlaySongs called with songs: $songItems")
         mSongs = ArrayList(songItems)
         if (!mSongs.isEmpty()) {
@@ -122,8 +125,8 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
         }
     }
 
-    public fun playSong(index: Int) {
-        log.d("playSong() called with:  index: $index");
+    fun playSong(index: Int) {
+        log.d("playSong() called with:  index: $index")
         var item = mSongs.get(index)
 
         if (item.streamUrl == null || item.streamUrl.isEmpty()) {
@@ -171,7 +174,7 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
                         }
             }
 
-            mMediaPlayer.setOnBufferingUpdateListener { mediaPlayer, progress ->
+            mMediaPlayer.setOnBufferingUpdateListener { _, _ ->
                 if (!mIsPrepared) {
                     mPlaybackState.setState(PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
                     mPlaybackState.setActions(stopState.configSeekState())
@@ -184,7 +187,7 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
                 tickerSub?.unsubscribe()
                 next()
             }
-            mMediaPlayer.setOnErrorListener { mediaPlayer, what, extra ->
+            mMediaPlayer.setOnErrorListener { _, what, extra ->
                 mPlaybackState.setState(PlaybackStateCompat.STATE_ERROR, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
                 mPlaybackState.setActions(stopState.configSeekState())
                 publishPlaybackState()
@@ -202,7 +205,7 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
 
     override fun onDestroy() {
         super.onDestroy()
-        log.d("onDestroy() called");
+        log.d("onDestroy() called")
         mNotification?.stopNotification()
         tickerSub?.unsubscribe()
         stop()
@@ -249,7 +252,7 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
     private fun publishPlaybackState() {
         val state = mPlaybackState.build()
         mMediaSession.value.setPlaybackState(state)
-        log.d("publishPlaybackState() called");
+        log.d("publishPlaybackState() called")
     }
 
     private val playState = arrayOf(
@@ -257,16 +260,28 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
             PlaybackStateCompat.ACTION_SEEK_TO,
             PlaybackStateCompat.ACTION_STOP)
 
-    public fun play() {
-        log.d("play() called");
+    fun play() {
+        log.d("play() called")
         if (mMediaPlayer.isPlaying) return
         hasntPlayed = false
         registerReceiver(mNoisyReciever, mNoisyFilter)
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val result = am.requestAudioFocus(this,
-                AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN)
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+
+        val audioFocusRequestResult = if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+         am.requestAudioFocus(this,
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN)
+        } else {
+            audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setAudioAttributes(audioAttributes)
+                    .setOnAudioFocusChangeListener(this)
+                    .build()
+            am.requestAudioFocus(
+                    audioFocusRequest
+            )
+        }
+
+        if (audioFocusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             mMediaPlayer.setVolume(1.0f, 1.0f)
             mMediaPlayer.start()
             mMediaSession.value.isActive = true
@@ -283,8 +298,8 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
             PlaybackStateCompat.ACTION_STOP
     )
 
-    public fun pause() {
-        log.d("pause() called");
+    fun pause() {
+        log.d("pause() called")
         if (!mMediaPlayer.isPlaying) return
         unregisterReceiver(mNoisyReciever)
         abandonAudioFocus()
@@ -300,8 +315,8 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
             PlaybackStateCompat.ACTION_PLAY_PAUSE
     )
 
-    public fun stop() {
-        log.d("stop() called");
+    fun stop() {
+        log.d("stop() called")
         mPlaybackState.setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, PLAYBACK_SPEED_PAUSED)
         mPlaybackState.setActions(stopState.configSeekState())
         publishPlaybackState()
@@ -312,15 +327,23 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
     }
 
     private fun abandonAudioFocus() {
-        (getSystemService(Context.AUDIO_SERVICE) as AudioManager).abandonAudioFocus(this)
+        (getSystemService(Context.AUDIO_SERVICE) as AudioManager).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioFocusRequest?.let {
+                    abandonAudioFocusRequest(audioFocusRequest)
+                }
+            } else {
+                abandonAudioFocus(this@MusicService)
+            }
+        }
     }
 
     private val skippingState = arrayOf(
             PlaybackStateCompat.ACTION_STOP
     )
 
-    public fun next() {
-        log.d("next() called with:  index: $mIndex");
+    fun next() {
+        log.d("next() called with:  index: $mIndex")
         mIndex += 1
         if (mIndex < mSongs.size) {
             playSong(mIndex)
@@ -330,8 +353,8 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
         }
     }
 
-    public fun prev() {
-        log.d("prev() called with:  index: $mIndex");
+    fun prev() {
+        log.d("prev() called with:  index: $mIndex")
         mIndex -= 1
         if (mIndex >= 0 && mIndex < mSongs.size) {
             playSong(mIndex)
@@ -341,12 +364,12 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
         }
     }
 
-    public fun seekTo(pos: Long) {
+    fun seekTo(pos: Long) {
         //Should update playing/buffering listeners
         mMediaPlayer.seekTo(pos.toInt())
     }
 
-    public fun isPlaying(mSongItem: SongItem): Boolean = mSongItem.id == mCurrentSong?.id && mMediaPlayer.isPlaying
+    fun isPlaying(mSongItem: SongItem): Boolean = mSongItem.id == mCurrentSong?.id && mMediaPlayer.isPlaying
 
     private fun Array<Long>.bitwise(): Long {
         if (size > 0) {
@@ -370,7 +393,7 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
         }
     }
 
-    public fun getCompatSessionToken(): MediaSessionCompat.Token {
+    fun getCompatSessionToken(): MediaSessionCompat.Token {
         return mMediaSession.value.sessionToken
     }
 
@@ -379,7 +402,7 @@ public class MusicService() : MediaBrowserService(), AudioManager.OnAudioFocusCh
     }
 
     companion object IntentFactory {
-        public fun getIntent(context: Context): Intent = Intent(context, MusicService::class.java)
+        fun getIntent(context: Context): Intent = Intent(context, MusicService::class.java)
     }
 
     private val callbacks = object : MediaSessionCompat.Callback() {

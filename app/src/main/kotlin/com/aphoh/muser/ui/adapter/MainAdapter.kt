@@ -20,8 +20,8 @@ import java.util.*
 public class MainAdapter(val context: Context) : RecyclerView.Adapter<MainAdapter.SongHolder>() {
     var data: ArrayList<SongItem> = ArrayList()
     var log: LogUtil = LogUtil(MainAdapter::class.java.simpleName)
-    public var itemClickListener: (View, Int) -> Unit = { v, int -> }
-    public var itemLongClickListener: (View, Int) -> Unit = { v, int -> }
+    public var itemClickListener: (View, Int) -> Unit = { _, _ -> }
+    public var itemLongClickListener: (View, Int) -> Unit = { _, _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SongHolder {
         var v = LayoutInflater.from(parent?.context).inflate(R.layout.row_main, parent, false)
